@@ -5,6 +5,9 @@ import { formatDate } from '@/utill/utill';
 
 
 export default function ProjectsPage() {
+
+  const [viewMode, setviewMode] = useState('list');
+
   const [projects, setProjects] = useState([
     {
       id: 'proj_001',
@@ -103,6 +106,19 @@ export default function ProjectsPage() {
     }
   ]);
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [modelFilter, setModelFilter] = useState('all');
+
+  const filteredProjects = projects.filter((p) => {
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
+    const matchesModel = modelFilter === 'all' || p.model === modelFilter;
+
+    return matchesSearch && matchesStatus && matchesModel;
+  });
+
+
 
 
   return (
@@ -129,17 +145,23 @@ export default function ProjectsPage() {
           <div className="toolbar-left">
             <div className="search-container">
               <div className="search-input-wrapper">
-                <input type="text"
+                <input
+                  type="text"
                   className="search-input"
                   placeholder="프로젝트 검색..."
-                  id="project-search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <div className="search-icon">🔍</div>
               </div>
             </div>
 
             <div className="filter-group">
-              <select className="filter-select" id="status-filter">
+              <select
+                className="filter-select"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
                 <option value="all">모든 상태</option>
                 <option value="active">진행중</option>
                 <option value="planning">계획중</option>
@@ -147,7 +169,12 @@ export default function ProjectsPage() {
                 <option value="paused">일시정지</option>
               </select>
 
-              <select className="filter-select" id="model-filter">
+
+              <select
+                className="filter-select"
+                value={modelFilter}
+                onChange={(e) => setModelFilter(e.target.value)}
+              >
                 <option value="all">모든 모델</option>
                 <option value="claude-3-opus">Claude 3 Opus</option>
                 <option value="claude-3-sonnet">Claude 3 Sonnet</option>
@@ -155,6 +182,7 @@ export default function ProjectsPage() {
                 <option value="gpt-4">GPT-4</option>
                 <option value="gpt-4-vision">GPT-4 Vision</option>
               </select>
+
             </div>
           </div>
 
@@ -173,60 +201,70 @@ export default function ProjectsPage() {
             </div>
 
             <div className="view-toggle">
-              <button className="view-btn ${this.viewMode === 'list' ? 'active' : ''}"
-                data-view="list" title="리스트 보기">☰</button>
-              <button className="view-btn ${this.viewMode === 'grid' ? 'active' : ''}"
-                data-view="grid" title="그리드 보기">⊞</button>
+              <button className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                data-view="list" title="리스트 보기"
+                onClick={() => setviewMode('list')}
+              >☰</button>
+              <button className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                data-view="grid" title="그리드 보기"
+                onClick={() => setviewMode('grid')}
+              >⊞</button>
             </div>
           </div>
         </div>
 
+
+
         <div className="projects-stats">
           <div className="stat-item">
             <span className="stat-label">전체</span>
-            <span className="stat-value">5</span>
+            <span className="stat-value">{projects.length}</span>
           </div>
           <div className="stat-item">
             <span className="stat-label">진행중</span>
-            <span className="stat-value">1</span>
+            <span className="stat-value">{projects.filter(p => p.status === 'active').length}</span>
           </div>
           <div className="stat-item">
             <span className="stat-label">완료</span>
-            <span className="stat-value">4</span>
+            <span className="stat-value">{projects.filter(p => p.status === 'completed').length}</span>
           </div>
           <div className="stat-item">
             <span className="stat-label">총 비용</span>
-            <span className="stat-value">$83.55</span>
+            <span className="stat-value">${projects.reduce((sum, p) => sum + p.actualCost, 0).toFixed(2)}</span>
           </div>
         </div>
 
         <div className="projects-container" id="projects-container">
-          <div className="projects-list">
-            {projects.map((p) => (
-              <ProjectRow
-                key={p.id}
-                project={p}
-                onEdit={(id) => console.log('편집:', id)}
-                onDuplicate={(id) => console.log('복제:', id)}
-                onDelete={(id) => console.log('삭제:', id)}
-              />
-            ))}
-          </div>
-
-          <div className="projects-grid">
-            {projects.map((p) => (
-              <Projectcard
-                key={p.id}
-                project={p}
-                onEdit={(id) => console.log('편집:', id)}
-                onDuplicate={(id) => console.log('복제:', id)}
-                onDelete={(id) => console.log('삭제:', id)}
-              />
-            ))}
-
-          </div>
+          {viewMode === 'list' ? (
+            <div className="projects-list">
+              {filteredProjects.map((p) => (
+                <ProjectRow
+                  key={p.id}
+                  project={p}
+                  onEdit={(id) => console.log('편집:', id)}
+                  onDuplicate={(id) => console.log('복제:', id)}
+                  onDelete={(id) => console.log('삭제:', id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="projects-grid">
+              {filteredProjects.map((p) => (
+                <Projectcard
+                  key={p.id}
+                  project={p}
+                  onEdit={(id) => console.log('편집:', id)}
+                  onDuplicate={(id) => console.log('복제:', id)}
+                  onDelete={(id) => console.log('삭제:', id)}
+                />
+              ))}
+            </div>
+          )}
 
         </div>
+
+
+
 
       </div>
     </div>

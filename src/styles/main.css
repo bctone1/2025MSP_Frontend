@@ -601,3 +601,34 @@ body {
     outline: 2px solid var(--primary-blue);
     outline-offset: 2px;
 }
+
+
+
+
+
+/* 모달창 */
+.metric-detail {
+    padding: 20px 0;
+}
+
+.metric-description {
+    margin-bottom: 20px;
+    line-height: 1.6;
+    color: var(--gray-600);
+}
+
+.metric-details {
+    list-style: none;
+    padding: 0;
+}
+
+.metric-details li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: space-between;
+}
+
+.metric-details li:last-child {
+    border-bottom: none;
+}

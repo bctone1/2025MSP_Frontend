@@ -50,6 +50,20 @@ export function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
+export function modalheader({ headerTitle, setModalClose }) {
+    return (
+        <div className="modal-header">
+            <h3 className="modal-title">{headerTitle}</h3>
+            <button
+                className="modal-close"
+                onClick={() => setModalClose(false)}
+            >
+                ×
+            </button>
+        </div>
+    );
+}
+
 
 
 

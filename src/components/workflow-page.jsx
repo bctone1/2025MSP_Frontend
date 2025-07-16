@@ -73,37 +73,6 @@ export default function WorkflowPage() {
                                 <h3 className="workflow-sidebar-title">템플릿 워크플로우</h3>
                                 {/* 템플릿들이 여기에 렌더링됩니다 */}
                             </div>
-
-                            <div className="workflow-sidebar-section">
-                                <h3 className="workflow-sidebar-title">노드 타입</h3>
-                                <div
-                                    className="workflow-template"
-                                // onclick="WorkflowDesigner.createNode('collector', 200, 200)"
-                                >
-                                    <div className="workflow-template-icon">📥</div>
-                                    <div className="workflow-template-info">
-                                        <div className="workflow-template-name">데이터 수집기</div>
-                                    </div>
-                                </div>
-                                <div
-                                    className="workflow-template"
-                                // onclick="WorkflowDesigner.createNode('analyzer', 200, 200)"
-                                >
-                                    <div className="workflow-template-icon">📊</div>
-                                    <div className="workflow-template-info">
-                                        <div className="workflow-template-name">분석기</div>
-                                    </div>
-                                </div>
-                                <div
-                                    className="workflow-template"
-                                // onclick="WorkflowDesigner.createNode('visualizer', 200, 200)"
-                                >
-                                    <div className="workflow-template-icon">📈</div>
-                                    <div className="workflow-template-info">
-                                        <div className="workflow-template-name">시각화기</div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

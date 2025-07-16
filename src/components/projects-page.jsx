@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { formatDate } from '@/utill/utill';
+import { formatDate, modalheader } from '@/utill/utill';
 
 
 
@@ -118,6 +118,8 @@ export default function ProjectsPage() {
     return matchesSearch && matchesStatus && matchesModel;
   });
 
+  const [newProject, setNewProject] = useState(false);
+
 
 
 
@@ -132,13 +134,19 @@ export default function ProjectsPage() {
               <p className="page-subtitle">AI 프로젝트를 생성하고 관리하세요</p>
             </div>
             <div className="header-controls">
-              <button className="primary-btn" id="create-project-btn">
+              <button className="primary-btn" id="create-project-btn"
+                onClick={() => setNewProject(true)}
+              >
                 <span>+</span>
                 <span>새 프로젝트</span>
               </button>
             </div>
           </div>
         </div>
+
+        {newProject && (
+          <NewProjectform setNewProject={setNewProject} />
+        )}
 
 
         <div className="projects-toolbar">
@@ -241,9 +249,9 @@ export default function ProjectsPage() {
                 <ProjectRow
                   key={p.id}
                   project={p}
-                  onEdit={(id) => console.log('편집:', id)}
-                  onDuplicate={(id) => console.log('복제:', id)}
-                  onDelete={(id) => console.log('삭제:', id)}
+                // onEdit={(id) => console.log('편집:', id)}
+                // onDuplicate={(id) => console.log('복제:', id)}
+                // onDelete={(id) => console.log('삭제:', id)}
                 />
               ))}
             </div>
@@ -253,33 +261,108 @@ export default function ProjectsPage() {
                 <Projectcard
                   key={p.id}
                   project={p}
-                  onEdit={(id) => console.log('편집:', id)}
-                  onDuplicate={(id) => console.log('복제:', id)}
-                  onDelete={(id) => console.log('삭제:', id)}
+                // onEdit={(id) => console.log('편집:', id)}
+                // onDuplicate={(id) => console.log('복제:', id)}
+                // onDelete={(id) => console.log('삭제:', id)}
                 />
               ))}
             </div>
           )}
-
         </div>
-
-
-
 
       </div>
     </div>
   );
 }
 
+function NewProjectform({ setNewProject }) {
+  return (
+    <>
+      <div className="modal-overlay active">
+        <div className="modal">
+          {modalheader({ headerTitle: "새 프로젝트 생성", setModalClose: setNewProject })}
+
+          <div className="modal-body">
+            <form id="new-project-form" className="project-form">
+              <div className="form-group">
+                <label htmlFor="project-name">프로젝트 이름 *</label>
+                <input type="text" id="project-name" name="name" required placeholder="프로젝트 이름을 입력하세요" />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="project-description">설명</label>
+                <textarea id="project-description" name="description" placeholder="프로젝트 설명을 입력하세요" rows="3"></textarea>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="project-model">AI 모델 *</label>
+                  <select id="project-model" name="model" required>
+                    <option value="">모델 선택</option>
+                    <option value="claude-3-opus">Claude 3 Opus</option>
+                    <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                    <option value="claude-3-haiku">Claude 3 Haiku</option>
+                    <option value="gpt-4">GPT-4</option>
+                    <option value="gpt-4-vision">GPT-4 Vision</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="project-budget">예상 예산 ($)</label>
+                  <input type="number" id="project-budget" name="budget" placeholder="0.00" step="0.01" min="0" />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="project-tags">태그 (쉼표로 구분)</label>
+                <input type="text" id="project-tags" name="tags" placeholder="예: 데이터분석, 자동화, 테스트" />
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <input type="checkbox" id="auto-start" name="autoStart" />
+                  프로젝트 생성 후 자동 시작
+                </label>
+              </div>
+            </form>
+
+          </div>
+
+
+          <div className="modal-footer">
+            <button type="button" className="secondary-btn" onClick={() => setNewProject(false)}>취소</button>
+            <button type="button" className="primary-btn"
+            //  onClick="ProjectManager.saveNewProject()"
+            >생성</button>
+          </div>
+
+
+        </div>
+      </div>
+    </>
+  );
+}
+
+// const getStatusInfo = (status) => {
+//   const map = {
+//     active: { label: '진행중' },
+//     planning: { label: '계획중' },
+//     completed: { label: '완료' },
+//     paused: { label: '일시정지' }
+//   };
+//   return map[status] || { label: '알수없음' };
+// };
+
+
 const getStatusInfo = (status) => {
-  const map = {
-    active: { label: '진행중' },
-    planning: { label: '계획중' },
-    completed: { label: '완료' },
-    paused: { label: '일시정지' }
+  const statusMap = {
+    active: { label: '진행중', color: '#10b981' },
+    planning: { label: '계획중', color: '#f59e0b' },
+    completed: { label: '완료', color: '#6366f1' },
+    paused: { label: '일시정지', color: '#6b7280' }
   };
-  return map[status] || { label: '알수없음' };
-};
+  return statusMap[status] || statusMap.planning;
+}
 
 
 
@@ -346,90 +429,293 @@ function Projectcard({ project, onEdit, onDuplicate, onDelete }) {
   );
 }
 
-function ProjectRow({ project, onEdit, onDuplicate, onDelete }) {
+function ProjectRow({ project }) {
   const statusInfo = getStatusInfo(project.status);
+  const [onview, setonView] = useState(false);
+  const [onEdit, setonEdit] = useState(false);
+  const [onDuplicate, setonDuplicate] = useState(false);
+  const [onDelete, setonDelete] = useState(false);
+  // console.log(project);
 
   return (
-    // < div className='projects-list'></div>
-    <div className="project-row" data-project-id={project.id}>
-      <div className="row-main">
-        <div className="row-left">
-          <div className="project-info">
-            <div className="project-name">
-              <h3>{project.name}</h3>
-              <div className={`status-pill status-${project.status}`}>
-                {statusInfo.label}
+    <>
+      <div className="project-row" data-project-id={project.id}>
+        <div className="row-main">
+          <div className="row-left">
+            <div className="project-info">
+              <div className="project-name">
+                <h3>{project.name}</h3>
+                <div className={`status-pill status-${project.status}`}>
+                  {statusInfo.label}
+                </div>
+              </div>
+              <div className="project-description">{project.description}</div>
+              <div className="project-meta-inline">
+                <span className="meta-item">📊 {project.model}</span>
+                <span className="meta-item">👥 {project.agents.length}개 에이전트</span>
+                <span className="meta-item">💰 ${project.actualCost}</span>
+                <span className="meta-item">🕒 {formatDate(project.updated, 'MM/DD HH:mm')}</span>
               </div>
             </div>
-            <div className="project-description">{project.description}</div>
-            <div className="project-meta-inline">
-              <span className="meta-item">📊 {project.model}</span>
-              <span className="meta-item">👥 {project.agents.length}개 에이전트</span>
-              <span className="meta-item">💰 ${project.actualCost}</span>
-              <span className="meta-item">🕒 {formatDate(project.updated, 'MM/DD HH:mm')}</span>
-            </div>
           </div>
-        </div>
 
-        <div className="row-center">
-          <div className="progress-section">
-            <div className="progress-info">
-              <span className="progress-percentage">{project.progress}%</span>
-              <span className="progress-tasks">
-                {project.tasks.completed}/{project.tasks.total}
-              </span>
-            </div>
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${project.progress}%` }}
-              ></div>
+          <div className="row-center">
+            <div className="progress-section">
+              <div className="progress-info">
+                <span className="progress-percentage">{project.progress}%</span>
+                <span className="progress-tasks">
+                  {project.tasks.completed}/{project.tasks.total}
+                </span>
+              </div>
+              <div className="progress-bar">
+                <div
+                  className="progress-fill"
+                  style={{ width: `${project.progress}%` }}
+                ></div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="row-right">
-          <div className="project-tags">
-            {project.tags.map((tag, i) => (
-              <span key={i} className="tag">
-                {tag}
-              </span>
-            ))}
-          </div>
-          <div className="project-actions">
-            <button
-              className="action-btn"
-              onClick={() => onView(project.id)}
-              title="보기"
-            >
-              👁️
-            </button>
-            <button
-              className="action-btn"
-              onClick={() => onEdit(project.id)}
-              title="편집"
-            >
-              ✏️
-            </button>
-            <button
-              className="action-btn"
-              onClick={() => onDuplicate(project.id)}
-              title="복제"
-            >
-              📋
-            </button>
-            <button
-              className="action-btn"
-              onClick={() => onDelete(project.id)}
-              title="삭제"
-            >
-              🗑️
-            </button>
+          <div className="row-right">
+            <div className="project-tags">
+              {project.tags.map((tag, i) => (
+                <span key={i} className="tag">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <div className="project-actions">
+              <button
+                className="action-btn"
+                onClick={() => setonView(true)}
+                // onClick={() => viewProject()}
+                title="보기"
+              >
+                👁️
+              </button>
+
+              <button
+                className="action-btn"
+                onClick={() => setonEdit(true)}
+                title="편집"
+              >
+                ✏️
+              </button>
+              <button
+                className="action-btn"
+                onClick={() => setonDuplicate(true)}
+                title="복제"
+              >
+                📋
+              </button>
+              <button
+                className="action-btn"
+                onClick={() => setonDelete(true)}
+                title="삭제"
+              >
+                🗑️
+              </button>
+            </div>
+
+
           </div>
         </div>
       </div>
-    </div>
-  )
+      {onview && (
+        <ViewProject setonEdit={setonEdit} setonView={setonView} project={project} />
+      )}
+      {onEdit && (
+        <ViewEdit setonEdit={setonEdit} project={project} />
+      )}
 
+
+    </>
+  )
 }
 
+
+
+
+function ViewEdit({ setonEdit, project }) {
+  const [formData, setFormData] = useState(project);
+  return (
+    <>
+      <div className="modal-overlay active">
+        <div className="modal">
+          {modalheader({ headerTitle: "프로젝트 편집", setModalClose: setonEdit })}
+
+          <div className="modal-body">
+            <form id="edit-project-form" className="project-form">
+              <div className="form-group">
+                <label htmlFor="edit-project-name">프로젝트 이름 *</label>
+                <input type="text" id="edit-project-name" name="name" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-project-description">설명</label>
+                <textarea
+                  id="edit-project-description"
+                  name="description"
+                  rows="3"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="edit-project-model">AI 모델 *</label>
+                  <select id="edit-project-model" name="model" required value={formData.model}
+                    onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+                  >
+                    <option value="claude-3-opus">Claude 3 Opus</option>
+                    <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                    <option value="claude-3-haiku">Claude 3 Haiku</option>
+                    <option value="gpt-4">GPT-4</option>
+                    <option value="gpt-4-vision">GPT-4 Vision</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="edit-project-status">상태</label>
+                  <select id="edit-project-status" name="status" required value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  >
+                    <option value="planning">계획중</option>
+                    <option value="active">진행중</option>
+                    <option value="paused">일시정지</option>
+                    <option value="completed">완료</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-project-budget">예상 예산 ($)</label>
+                <input type="number" id="edit-project-budget" name="budget" value={formData.estimatedCost} step="0.01" min="0"
+                  onChange={(e) => setFormData({ ...formData, estimatedCost: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-project-tags">태그 (쉼표로 구분)</label>
+                <input type="text" id="edit-project-tags" name="tags" value={formData.tags}
+                  onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                />
+              </div>
+            </form>
+          </div>
+
+
+          <div className="modal-footer">
+            <button type="button" className="secondary-btn" onClick={() => setonEdit(false)}>취소</button>
+            <button type="button" className="primary-btn"
+            // onClick="ProjectManager.saveEditedProject('${project.id}')"
+            >저장</button>
+          </div>
+
+
+        </div>
+      </div>
+
+    </>
+  );
+}
+
+
+function ViewProject({ setonEdit, setonView, project }) {
+  return (
+    <div className="modal-overlay active">
+      <div className="modal">
+
+        {modalheader({ headerTitle: "프로젝트 상세", setModalClose: setonView })}
+
+        <div className="modal-body">
+          <div className="project-detail">
+            <div className="project-detail-header">
+              <div className="project-title">
+                <h2>{project.name}</h2>
+                <div className={`status-pill status-${project.status}`}>{getStatusInfo(project.status).label}</div>
+              </div>
+              <div className="project-meta">
+                <span>생성: {formatDate(project.created, 'YYYY-MM-DD HH:mm')}</span>
+                <span>수정: {formatDate(project.updated, 'YYYY-MM-DD HH:mm')}</span>
+              </div>
+            </div>
+
+            <div className="project-description">
+              <h4>설명</h4>
+              <p>${project.description || '설명이 없습니다.'}</p>
+            </div>
+
+            <div className="project-progress-detail">
+              <h4>진행 상황</h4>
+              <div className="progress-bar large">
+                <div className="progress-fill" style={{ width: `${project.progress}%` }}></div>
+              </div>
+              <div className="progress-stats">
+                <div className="stat">
+                  <span className="stat-label">전체 작업</span>
+                  <span className="stat-value">{project.tasks.total}</span>
+                </div>
+                <div className="stat">
+                  <span className="stat-label">완료</span>
+                  <span className="stat-value">{project.tasks.completed}</span>
+                </div>
+                <div className="stat">
+                  <span className="stat-label">남은 작업</span>
+                  <span className="stat-value">{project.tasks.remaining}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="project-info-grid">
+              <div className="info-item">
+                <h4>AI 모델</h4>
+                <p>{project.model}</p>
+              </div>
+              <div className="info-item">
+                <h4>사용 에이전트</h4>
+                <div className="agents-list">
+                  {project.agents.length > 0 ? (
+                    project.agents.map(agent => (
+                      <span className="agent-tag" key={agent}>{agent}</span>
+                    ))
+                  ) : (
+                    <span className="no-data">설정된 에이전트가 없습니다</span>
+                  )}
+                </div>
+
+              </div>
+              <div className="info-item">
+                <h4>예산 및 비용</h4>
+                <div className="cost-info">
+                  <div>예상: ${project.estimatedCost}</div>
+                  <div>실제: ${project.actualCost}</div>
+                </div>
+              </div>
+              <div className="info-item">
+                <h4>태그</h4>
+                <div className="tags-list">
+                  {project.tags.length > 0 ?
+                    project.tags.map(tag => (<span className="tag" key={tag}>{tag}</span>)) : (<span className="no-data">태그가 없습니다</span>)}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="modal-footer">
+          <button type="button" className="secondary-btn"
+            onClick={() => setonEdit(true)}
+          >편집</button>
+          <button type="button" className="secondary-btn"
+            onClick={() => setonView(false)}
+          >닫기</button>
+          <button type="button" className="primary-btn"
+          // onClick="ProjectManager.manageProject('${project.id}')"
+          >관리</button>
+        </div>
+      </div>
+    </div>
+  );
+}

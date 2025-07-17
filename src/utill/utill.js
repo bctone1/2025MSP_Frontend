@@ -50,6 +50,11 @@ export function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
+export function generateId() {
+    return Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
+}
+
 export function modalheader({ headerTitle, setModalClose }) {
     return (
         <div className="modal-header">

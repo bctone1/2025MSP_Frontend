@@ -47,7 +47,7 @@ export default function HomePage() {
       case 'knowledge':
         return <KnowledgePage />;
       case 'history':
-        return <HistoryPage />;
+        return <HistoryPage onMenuClick={handleMenuClick} />;
 
       default:
         return <div>준비 중입니다: {view}</div>;

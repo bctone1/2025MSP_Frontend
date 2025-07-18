@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { formatDate, storage, formatFileSize, formatNumber, formatTimestamp } from '@/utill/utill';
 
-export default function History() {
+export default function History({ onMenuClick }) {
     const [currentSort, setcurrentSort] = useState('newest');
     const [dateRange, setdateRange] = useState({
         start: null,
@@ -10,6 +10,7 @@ export default function History() {
     });
     const [searchQuery, setsearchQuery] = useState('');
     const [currentFilter, setcurrentFilter] = useState('all');
+
     const historyData = [
         {
             id: 'hist-001',
@@ -126,6 +127,8 @@ export default function History() {
             status: 'running'
         }
     ]
+
+
     return (
         <div className="app-container">
             <div className="container">
@@ -155,32 +158,56 @@ export default function History() {
                     <div className="search-filter-top">
                         <div className="search-box">
                             <span className="search-icon">🔍</span>
-                            <input type="text" placeholder="히스토리 검색..." className="search-input" />
+                            <input type="text" placeholder="히스토리 검색..." className="search-input" onChange={(e) => setsearchQuery(e.target.value)} />
                         </div>
 
                         <div className="filter-buttons">
-                            <button className="filter-btn active" data-filter="all">전체</button>
-                            <button className="filter-btn" data-filter="analysis">분석</button>
-                            <button className="filter-btn" data-filter="code-review">코드리뷰</button>
-                            <button className="filter-btn" data-filter="research">리서치</button>
-                            <button className="filter-btn" data-filter="visualization">시각화</button>
+                            <button className={`filter-btn ${currentFilter === 'all' ? 'active' : ''}`} onClick={() => setcurrentFilter('all')}>전체</button>
+                            <button className={`filter-btn ${currentFilter === 'analysis' ? 'active' : ''}`} onClick={() => setcurrentFilter('analysis')}>분석</button>
+                            <button className={`filter-btn ${currentFilter === 'code-review' ? 'active' : ''}`} onClick={() => setcurrentFilter('code-review')}>코드리뷰</button>
+                            <button className={`filter-btn ${currentFilter === 'research' ? 'active' : ''}`} onClick={() => setcurrentFilter('research')}>리서치</button>
+                            <button className={`filter-btn ${currentFilter === 'visualization' ? 'active' : ''}`} onClick={() => setcurrentFilter('visualization')}>시각화</button>
                         </div>
                     </div>
 
                     <div className="history-filters">
                         <div className="history-date-range">
                             <span>📅</span>
-                            <input type="date" className="history-date-input" name="start-date" />
+                            <input type="date" className="history-date-input" name="start-date"
+                                onChange={(e) =>
+                                    setdateRange(prev => ({
+                                        ...prev,
+                                        start: e.target.value
+                                    }))
+                                }
+                            />
                             <span>-</span>
-                            <input type="date" className="history-date-input" name="end-date" />
+                            <input type="date" className="history-date-input" name="end-date"
+                                onChange={(e) =>
+                                    setdateRange(prev => ({
+                                        ...prev,
+                                        end: e.target.value
+                                    }))
+                                }
+                            />
                         </div>
 
-                        <select className="sort-select" style={{ padding: "8px 12px; border-radius: 8px; border: 1px solid var(--gray-300)" }}>
+                        <select
+                            className="sort-select"
+                            style={{
+                                padding: "8px 12px",
+                                borderRadius: "8px",
+                                border: "1px solid var(--gray-300)"
+                            }}
+                            value={currentSort}
+                            onChange={(e) => setcurrentSort(e.target.value)}
+                        >
                             <option value="newest">최신순</option>
                             <option value="oldest">오래된순</option>
                             <option value="duration">소요시간순</option>
                             <option value="cost">비용순</option>
                         </select>
+
                     </div>
                 </div>
 
@@ -218,7 +245,7 @@ export default function History() {
 
 
                 {/* 히스토리 아이템들이 여기에 렌더링됩니다  */}
-                {renderHistory({ historyData, currentFilter, searchQuery, dateRange, currentSort })}
+                {renderHistory({ historyData, currentFilter, searchQuery, dateRange, currentSort, onMenuClick })}
 
             </div>
         </div >
@@ -337,7 +364,7 @@ function drawSimpleChart(canvasId, data, color) {
 }
 
 
-function renderHistory({ historyData, currentFilter, searchQuery, dateRange, currentSort }) {
+function renderHistory({ historyData, currentFilter, searchQuery, dateRange, currentSort, onMenuClick }) {
     const filteredHistory = getFilteredHistory({ historyData, currentFilter, searchQuery, dateRange, currentSort });
     // alert(filteredHistory.length);
     if (filteredHistory.length === 0) {
@@ -352,7 +379,7 @@ function renderHistory({ historyData, currentFilter, searchQuery, dateRange, cur
                         AI 에이전트와 작업을 시작하면 히스토리가 기록됩니다.
                     </p>
                     <button className="action-btn"
-                    // onClick={() => navigateToPage('assistant')}
+                        onClick={() => onMenuClick('assistant')}
                     >
                         <span>💬</span>
                         <span>AI 어시스턴트 시작</span>
@@ -417,6 +444,25 @@ function getFilteredHistory({ historyData, currentFilter, searchQuery, dateRange
 
     return filtered;
 }
+
+function parseDuration(duration) {
+    const parts = duration.split(' ');
+    let totalSeconds = 0;
+
+    for (let i = 0; i < parts.length; i += 2) {
+        const value = parseInt(parts[i]);
+        const unit = parts[i + 1];
+
+        if (unit.includes('분')) {
+            totalSeconds += value * 60;
+        } else if (unit.includes('초')) {
+            totalSeconds += value;
+        }
+    }
+
+    return totalSeconds;
+}
+
 function getTypeInfo(type) {
     const types = {
         analysis: { icon: '📊', label: '분석' },

@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { formatDate, storage, formatFileSize } from '@/utill/utill';
+import { formatDate, storage, formatFileSize, modalheader } from '@/utill/utill';
 
 export default function AssistantPage() {
     const [chatMode, setChatMode] = useState('single');
@@ -100,10 +100,8 @@ export default function AssistantPage() {
         }
     }
 
-
-
-
     const [activeAgents, setActiveAgents] = useState([]);
+
     useEffect(() => {
         const saved = storage.get('active_agents', ['researcher', 'coder']);
         const filtered = saved.filter(agentId => availableAgents[agentId]);
@@ -117,10 +115,116 @@ export default function AssistantPage() {
     }, [conversations, currentConversationId]);
 
 
+    const knowledgeItems = [
+        {
+            id: 'kb_001',
+            name: 'AI 개발 가이드.pdf',
+            description: 'AI 시스템 개발을 위한 종합 가이드 문서',
+            category: 'documents',
+            size: 2450000,
+            status: 'completed',
+            chunks: 145,
+            queries: 23,
+            tokens: 12450,
+            tags: ['가이드', 'AI', '개발'],
+            color: '#3b82f6'
+        },
+        {
+            id: 'kb_002',
+            name: '마케팅 전략 데이터.xlsx',
+            description: '2024년 2분기 마케팅 전략 및 성과 분석 데이터',
+            category: 'spreadsheets',
+            size: 1200000,
+            status: 'completed',
+            chunks: 67,
+            queries: 15,
+            tokens: 8750,
+            tags: ['마케팅', '데이터', '분석'],
+            color: '#10b981'
+        },
+        {
+            id: 'kb_003',
+            name: 'API 문서.md',
+            description: 'RESTful API 상세 문서 및 사용 예제',
+            category: 'code',
+            size: 350000,
+            status: 'processing',
+            chunks: 0,
+            queries: 0,
+            tokens: 0,
+            tags: ['API', '문서', '개발'],
+            color: '#f59e0b'
+        },
+        {
+            id: 'kb_004',
+            name: '제품 프레젠테이션.pptx',
+            description: '신제품 출시 전략 및 마케팅 계획 프레젠테이션',
+            category: 'presentations',
+            size: 4500000,
+            status: 'failed',
+            chunks: 0,
+            queries: 0,
+            tokens: 0,
+            tags: ['제품', '프레젠테이션', '런칭'],
+            color: '#8b5cf6'
+        },
+        {
+            id: 'kb_005',
+            name: '사용자 매뉴얼.pdf',
+            description: '제품 사용자 매뉴얼 최신 버전',
+            category: 'documents',
+            size: 1800000,
+            status: 'indexing',
+            chunks: 89,
+            queries: 2,
+            tokens: 9200,
+            tags: ['매뉴얼', '사용자', '가이드'],
+            color: '#3b82f6'
+        }
+    ];
+    const selectedKnowledgeItems = ['kb_001', 'kb_002'];
+
+    // 카테고리 아이콘 맵핑
+    const categoryIcons = {
+        'documents': '📄',
+        'presentations': '📊',
+        'spreadsheets': '📈',
+        'code': '💻',
+        'images': '🖼️',
+        'audio': '🎵',
+        'video': '🎬',
+        'other': '📎'
+    };
+
+    // 상태 아이콘 맵핑
+    const statusIcons = {
+        'completed': '✅',
+        'processing': '⚙️',
+        'failed': '❌',
+        'pending': '⏳',
+        'indexing': '🔍'
+    };
+    const [AgentEdit, setAgentEdit] = useState(false);
+    const [RagEdit, setRagEdit] = useState(false);
+
+
     return (
         <div className="app-container">
-            <div className="container">
+            <div>
+                <div className={`modal-overlay ${AgentEdit ? 'active' : ''}`}>
+                    <ManageAgents conversations={conversations} availableAgents={availableAgents} activeAgents={activeAgents} setAgentEdit={setAgentEdit} />
+                </div>
 
+                <div className={`modal-overlay ${RagEdit ? 'active' : ''}`}>
+                    <ManageRags setRagEdit={setRagEdit} selectedKnowledgeItems={selectedKnowledgeItems} knowledgeItems={knowledgeItems} categoryIcons={categoryIcons} statusIcons={statusIcons} />
+                </div>
+            </div>
+
+            {/* {AgentEdit && (<ManageAgents conversations={conversations} availableAgents={availableAgents} activeAgents={activeAgents} setAgentEdit={setAgentEdit} />)}
+            {RagEdit && (<ManageRags setRagEdit={setRagEdit} selectedKnowledgeItems={selectedKnowledgeItems} knowledgeItems={knowledgeItems} categoryIcons={categoryIcons} statusIcons={statusIcons} />)} */}
+
+
+            <div className="container">
                 <div className="header">
                     <div className="header-title">
                         <div>
@@ -160,7 +264,7 @@ export default function AssistantPage() {
                                 <span>🤖</span>
                                 <span>활성 에이전트</span>
                                 <button className="manage-agents-btn"
-                                // onClick="AssistantManager.manageAgents()"
+                                    onClick={() => setAgentEdit(true)}
                                 >관리</button>
                             </h3>
                             <div className="active-agents-list" id="active-agents-list">
@@ -175,64 +279,56 @@ export default function AssistantPage() {
                                 <span>📚</span>
                                 <span>지식베이스 (RAG)</span>
                                 <button className="manage-agents-btn"
-                                // onClick="openKnowledgeSelector()"
+                                    onClick={() => setRagEdit(true)}
                                 >선택</button>
                             </h3>
-
-
                             <div className="card-content">
                                 <p className="knowledge-count">📁 선택된 파일 (<span id="selected-count">2</span>개)</p>
 
                                 <div className="knowledge-files" id="knowledge-files">
-                                    {/* 선택된 지식베이스 파일들  */}
-                                    <div className="knowledge-file completed selected" data-file-id="kb_001">
-                                        <div className="knowledge-file-header">
-                                            <div className="file-icon" style={{ backgroundColor: "#3b82f620", color: "#3b82f6" }}>📄</div>
-                                            <div className="file-status completed">✅</div>
-                                        </div>
-                                        <div className="knowledge-checkbox checked"></div>
-                                        <div className="file-name">AI 개발 가이드.pdf</div>
-                                        <div className="file-desc">AI 시스템 개발을 위한 종합 가이드 문서</div>
-                                        <div className="file-meta">
-                                            <span className="file-size">2.3 MB</span>
-                                            <span className="file-chunks">145 청크</span>
-                                        </div>
-                                        <div className="knowledge-stats">
-                                            <div className="mini-stat">
-                                                <div className="mini-stat-value">23</div>
-                                                <div className="mini-stat-label">쿼리</div>
+                                    {knowledgeItems
+                                        .filter(item => selectedKnowledgeItems.includes(item.id))
+                                        .map(item => (
+                                            <div
+                                                key={item.id}
+                                                className={`knowledge-file ${item.status} selected`}
+                                                data-file-id={item.id}
+                                            >
+                                                <div className="knowledge-file-header">
+                                                    <div
+                                                        className="file-icon"
+                                                        style={{
+                                                            backgroundColor: `${item.color}20`,
+                                                            color: item.color
+                                                        }}
+                                                    >
+                                                        {categoryIcons[item.category] || '📎'}
+                                                    </div>
+                                                    <div className={`file-status ${item.status}`}>
+                                                        {statusIcons[item.status] || '⏳'}
+                                                    </div>
+                                                </div>
+                                                <div className="knowledge-checkbox checked"></div>
+                                                <div className="file-name">{item.name}</div>
+                                                <div className="file-desc">{item.description}</div>
+                                                <div className="file-meta">
+                                                    <span className="file-size">{(item.size / 1000000).toFixed(1)} MB</span>
+                                                    <span className="file-chunks">{item.chunks} 청크</span>
+                                                </div>
+                                                <div className="knowledge-stats">
+                                                    <div className="mini-stat">
+                                                        <div className="mini-stat-value">{item.queries}</div>
+                                                        <div className="mini-stat-label">쿼리</div>
+                                                    </div>
+                                                    <div className="mini-stat">
+                                                        <div className="mini-stat-value">{(item.tokens / 1000).toFixed(1)}K</div>
+                                                        <div className="mini-stat-label">토큰</div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="mini-stat">
-                                                <div className="mini-stat-value">12.4K</div>
-                                                <div className="mini-stat-label">토큰</div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="knowledge-file completed selected" data-file-id="kb_002">
-                                        <div className="knowledge-file-header">
-                                            <div className="file-icon" style={{ backgroundColor: '#10b98120', color: '#10b981' }}>📈</div>
-                                            <div className="file-status completed">✅</div>
-                                        </div>
-                                        <div className="knowledge-checkbox checked"></div>
-                                        <div className="file-name">마케팅 전략 데이터.xlsx</div>
-                                        <div className="file-desc">2024년 2분기 마케팅 전략 및 성과 분석 데이터</div>
-                                        <div className="file-meta">
-                                            <span className="file-size">1.2 MB</span>
-                                            <span className="file-chunks">67 청크</span>
-                                        </div>
-                                        <div className="knowledge-stats">
-                                            <div className="mini-stat">
-                                                <div className="mini-stat-value">15</div>
-                                                <div className="mini-stat-label">쿼리</div>
-                                            </div>
-                                            <div className="mini-stat">
-                                                <div className="mini-stat-value">8.7K</div>
-                                                <div className="mini-stat-label">토큰</div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        ))}
                                 </div>
+
 
                                 <div className="knowledge-summary">
                                     <div className="summary-stats">
@@ -393,6 +489,262 @@ export default function AssistantPage() {
                 </div>
             </div>
         </div >
+    );
+}
+function ManageRags({ setRagEdit, selectedKnowledgeItems, knowledgeItems, categoryIcons, statusIcons }) {
+    const availableItems = knowledgeItems.filter(item =>
+        item.status === 'completed' || item.status === 'indexing'
+    );
+    return (
+        <>
+            {/* <div className="modal-overlay active"> */}
+            <div className="modal">
+                {modalheader({ headerTitle: "지식베이스 파일 선택", setModalClose: setRagEdit })}
+
+                <div className="modal-body">
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '1rem',
+                            padding: '1rem',
+                            background: 'rgba(99, 102, 241, 0.05)',
+                            borderRadius: '8px'
+                        }}
+                    >
+                        <div>
+                            선택됨:{' '}
+                            <span
+                                id="modal-selected-count"
+                                style={{
+                                    fontWeight: 700,
+                                    color: '#6366f1'
+                                }}
+                            >
+                                {selectedKnowledgeItems.length}
+                            </span>
+                            개
+                        </div>
+                        <div>사용 가능: {availableItems.length}개</div>
+                    </div>
+
+
+                    <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: '12px', background: 'white' }}>
+                        {availableItems.length > 0 ? (
+                            availableItems.map(item => {
+                                const isSelected = selectedKnowledgeItems.includes(item.id);
+                                const icon = categoryIcons[item.category] || '📎';
+                                const statusIcon = statusIcons[item.status] || '⏳';
+
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className={`selector-item ${isSelected ? 'selected' : ''}`}
+                                        data-item-id={item.id}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'flex-start',
+                                            gap: '1rem',
+                                            padding: '1rem',
+                                            borderBottom: '1px solid #f3f4f6',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.15s ease'
+                                        }}
+                                    >
+                                        <div style={{ flexShrink: 0, marginTop: '2px' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={isSelected}
+                                                onChange={() => handleSelectItem(item.id)} // 필요시 함수 정의
+                                                style={{
+                                                    width: '18px',
+                                                    height: '18px',
+                                                    accentColor: '#6366f1'
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                                                <div
+                                                    style={{
+                                                        width: '24px',
+                                                        height: '24px',
+                                                        borderRadius: '6px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        backgroundColor: `${item.color}20`,
+                                                        color: item.color,
+                                                        fontSize: '12px',
+                                                        fontWeight: 700
+                                                    }}
+                                                >
+                                                    {icon}
+                                                </div>
+                                                <div style={{ flex: 1 }}>
+                                                    <div style={{ fontWeight: 600, color: '#1f2937', marginBottom: '2px', fontSize: '0.875rem' }}>
+                                                        {item.name}
+                                                    </div>
+                                                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                                                        <span
+                                                            style={{
+                                                                padding: '2px 6px',
+                                                                background: `${item.color}20`,
+                                                                color: item.color,
+                                                                borderRadius: '4px',
+                                                                fontSize: '10px',
+                                                                fontWeight: 600
+                                                            }}
+                                                        >
+                                                            {item.category}
+                                                        </span>
+                                                        <span
+                                                            style={{
+                                                                padding: '2px 6px',
+                                                                background: 'rgba(107, 114, 128, 0.1)',
+                                                                color: '#6b7280',
+                                                                borderRadius: '4px',
+                                                                fontSize: '10px',
+                                                                fontWeight: 600
+                                                            }}
+                                                        >
+                                                            {statusIcon} {item.status}
+                                                        </span>
+                                                        <span style={{ fontSize: '10px', color: '#9ca3af' }}>
+                                                            {formatFileSize(item.size)}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div style={{ fontSize: '0.875rem', color: '#6b7280', lineHeight: 1.5, marginBottom: '0.75rem' }}>
+                                                {item.description}
+                                            </div>
+
+                                            {item.status === 'completed' && (
+                                                <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', color: '#6b7280' }}>
+                                                        <span>🧩</span>
+                                                        <span>{item.chunks} 청크</span>
+                                                    </div>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', color: '#6b7280' }}>
+                                                        <span>🔍</span>
+                                                        <span>{item.queries} 쿼리</span>
+                                                    </div>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', color: '#6b7280' }}>
+                                                        <span>🎯</span>
+                                                        <span>{(item.tokens / 1000).toFixed(1)}K 토큰</span>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
+                                                {item.tags.map((tag, index) => (
+                                                    <span
+                                                        key={index}
+                                                        style={{
+                                                            padding: '2px 6px',
+                                                            background: 'rgba(99, 102, 241, 0.1)',
+                                                            color: '#6366f1',
+                                                            borderRadius: '8px',
+                                                            fontSize: '10px',
+                                                            fontWeight: 600
+                                                        }}
+                                                    >
+                                                        {tag}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
+                                <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.5 }}>📚</div>
+                                <h4>사용 가능한 파일이 없습니다</h4>
+                                <p>먼저 지식베이스 페이지에서 파일을 업로드하고 처리를 완료해주세요.</p>
+                            </div>
+                        )}
+                    </div>
+
+                </div>
+
+                <div className="modal-footer">
+                    <button type="button" className="secondary-btn"
+                        onClick={() => setRagEdit(false)}
+                    >취소</button>
+                    <button type="button" className="primary-btn"
+                        onClick={() => alert("저장누름")}
+                    >저장</button>
+                </div>
+
+            </div>
+            {/* </div> */}
+
+        </>
+    );
+}
+
+function ManageAgents({ conversations, availableAgents, activeAgents, setAgentEdit }) {
+
+    return (
+        <>
+            {/* <div className="modal-overlay active"> */}
+            <div className="modal">
+                {modalheader({ headerTitle: "에이전트 관리", setModalClose: setAgentEdit })}
+
+                <div className="modal-body">
+                    <div className="agents-management">
+                        <div className="available-agents">
+                            <h4>사용 가능한 에이전트</h4>
+                            <div className="agents-grid">
+                                {Object.entries(availableAgents).map(([agentId, agent]) => (
+                                    <div key={agentId} className={`agent-card ${activeAgents.includes(agentId) ? 'active' : ''}`} data-agent-id={agentId}>
+
+                                        <div className="agent-header">
+                                            <div className="agent-avatar" style={{ backgroundColor: `${agent.color}` }}>
+                                                {agent.name.split(' ')[0]}
+                                            </div>
+                                            <div className="agent-toggle">
+                                                <input
+                                                    type="checkbox"
+                                                    id={`agent-${agentId}`}
+                                                    checked={activeAgents.includes(agentId)}
+                                                    onChange={() => alert("버튼 누름")}
+                                                />
+                                                <label htmlFor={`agent-${agentId}`}></label>
+                                            </div>
+                                        </div>
+                                        <div className="agent-info">
+                                            <h5>{agent.name}</h5>
+                                            <p>{agent.description}</p>
+                                            <div className="agent-capabilities">
+                                                {agent.capabilities.map((cap, index) => (<span key={index} className="capability-tag">{cap}</span>))}
+                                            </div>
+                                            <div className="agent-model">모델: {agent.model}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="modal-footer">
+                    <button type="button" className="secondary-btn"
+                        onClick={() => setAgentEdit(false)}
+                    >취소</button>
+                    <button type="button" className="primary-btn"
+                        onClick={() => alert("저장누름")}
+                    >저장</button>
+                </div>
+
+            </div>
+            {/* </div> */}
+        </>
     );
 }
 

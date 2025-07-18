@@ -312,9 +312,13 @@ function MetricCard({ metric, metricInfo }) {
         <div className="metric-sub positive">{metric.sub}</div>
       </div>
 
-      {showModal && (
+
+      <div className={`modal-overlay ${showModal ? 'active' : ''}`}>
         <ShowMetricDetail handleClose={handleClose} metric={metric} metricInfo={metricInfo} />
-      )}
+      </div>
+
+      {/* {showModal && (<ShowMetricDetail handleClose={handleClose} metric={metric} metricInfo={metricInfo} />)} */}
+
     </>
   );
 }
@@ -364,42 +368,42 @@ function ShowMetricDetail({ handleClose, metric, metricInfo }) {
   if (!info) return;
 
   return (
-    <div className="modal-overlay active">
-      <div className="modal">
+    // <div className="modal-overlay active">
+    <div className="modal">
 
-        <div className="modal-header">
-          <h3 className="modal-title">{info.title}</h3>
-          <button
-            className="modal-close"
-            onClick={handleClose}
-          >
-            ×
-          </button>
-        </div>
+      <div className="modal-header">
+        <h3 className="modal-title">{info.title}</h3>
+        <button
+          className="modal-close"
+          onClick={handleClose}
+        >
+          ×
+        </button>
+      </div>
 
-        <div className="modal-body">
-          <div className="metric-detail">
-            <p className="metric-description">{info.description}</p>
-            <ul className="metric-details">
-              {info.details.map((item, index) => {
-                return <li key={index}> {item}</li>;
-              })}
+      <div className="modal-body">
+        <div className="metric-detail">
+          <p className="metric-description">{info.description}</p>
+          <ul className="metric-details">
+            {info.details.map((item, index) => {
+              return <li key={index}> {item}</li>;
+            })}
 
-            </ul>
-          </div>
-        </div>
-
-        <div className="modal-footer">
-          <button
-            type="button"
-            className="primary-btn"
-            onClick={handleClose}
-          // onclick="MetaLLM.closeModal(closest('.modal-overlay'))"
-          >
-            확인
-          </button>
+          </ul>
         </div>
       </div>
+
+      <div className="modal-footer">
+        <button
+          type="button"
+          className="primary-btn"
+          onClick={handleClose}
+        // onclick="MetaLLM.closeModal(closest('.modal-overlay'))"
+        >
+          확인
+        </button>
+      </div>
     </div>
+    // </div>
   );
 }

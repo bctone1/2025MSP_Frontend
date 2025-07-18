@@ -26,8 +26,6 @@ export default function Sidebar({ onMenuClick, currentPage }) {
           { page: 'knowledge', icon: '📚', title: '지식베이스', desc: 'RAG 파일 관리' },
           { page: 'agents', icon: '🤖', title: 'AI Agent 관리', desc: '에이전트 생성 및 설정' },
           { page: 'workflow', icon: '🔀', title: '워크플로우 디자이너', desc: '에이전트 연결 설계' },
-
-
           { page: 'assistant', icon: '💬', title: 'AI 어시스턴트', desc: '멀티에이전트 대화' },
           { page: 'history', icon: '📈', title: '히스토리', desc: '작업 기록 및 분석' },
           { page: 'api-keys', icon: '🔗', title: 'API 키 관리', desc: 'API 연결 관리' },

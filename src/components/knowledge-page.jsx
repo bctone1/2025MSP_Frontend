@@ -369,7 +369,7 @@ export default function Knowledge() {
                         <span>카테고리별 현황</span>
                     </h3>
                     <div className="categories-grid">
-                        {renderCategoriesGrid({ categories, knowledgeItems })}
+                        {renderCategoriesGrid({ categories, knowledgeItems, setfilters })}
                     </div>
                 </div>
 
@@ -414,7 +414,7 @@ function getStorageUsage({ knowledgeItems }) {
 }
 
 
-function renderCategoriesGrid({ categories, knowledgeItems }) {
+function renderCategoriesGrid({ categories, knowledgeItems, setfilters }) {
     try {
         return Object.entries(categories).map(([key, category]) => {
             const count = knowledgeItems.filter(item => item.category === key).length;
@@ -425,7 +425,8 @@ function renderCategoriesGrid({ categories, knowledgeItems }) {
             return (
                 <div className="category-card" data-category={key}
                     key={key}
-                // onClick="KnowledgeManager.filterByCategory('${key}')"
+                    // onClick={() => alert(category.name)}
+                    onClick={(e) => setfilters(prev => ({ ...prev, category: key }))}
                 >
                     <div className="category-header">
                         <div className="category-icon" style={{ background: `${category.color}20`, color: `${category.color}` }}>

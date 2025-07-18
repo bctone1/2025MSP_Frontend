@@ -130,9 +130,11 @@ export default function AgentsPage() {
                     </div>
                 </div>
 
-                {newAgent && (
+
+                <div className={`modal-overlay ${newAgent ? 'active' : ''}`}>
                     <NewAgentform setnewAgnet={setnewAgnet} />
-                )}
+                </div>
+                {/* {newAgent && (<NewAgentform setnewAgnet={setnewAgnet} />)} */}
 
                 <div className="search-section">
                     <div className="search-filter-top">
@@ -192,60 +194,60 @@ export default function AgentsPage() {
 function NewAgentform({ setnewAgnet }) {
     return (
         <>
-            <div className="modal-overlay active">
-                <div className="modal">
-                    {modalheader({ headerTitle: "새 AI 에이전트 생성", setModalClose: setnewAgnet })}
+            {/* <div className="modal-overlay active"> */}
+            <div className="modal">
+                {modalheader({ headerTitle: "새 AI 에이전트 생성", setModalClose: setnewAgnet })}
 
-                    <div className="modal-body">
+                <div className="modal-body">
 
-                        <form id="new-agent-form">
-                            <div className="form-group">
-                                <label className="form-label">에이전트 이름</label>
-                                <input type="text" className="form-input" name="name" required placeholder="예: 번역 에이전트" />
-                            </div>
+                    <form id="new-agent-form">
+                        <div className="form-group">
+                            <label className="form-label">에이전트 이름</label>
+                            <input type="text" className="form-input" name="name" required placeholder="예: 번역 에이전트" />
+                        </div>
 
-                            <div className="form-group">
-                                <label className="form-label">에이전트 타입</label>
-                                <select className="form-input form-select" name="type" required>
-                                    <option value="">타입 선택</option>
-                                    <option value="researcher">리서치 전문가</option>
-                                    <option value="coder">개발 전문가</option>
-                                    <option value="analyst">분석 전문가</option>
-                                    <option value="writer">글쓰기 전문가</option>
-                                    <option value="translator">번역 전문가</option>
-                                    <option value="assistant">일반 어시스턴트</option>
-                                </select>
-                            </div>
+                        <div className="form-group">
+                            <label className="form-label">에이전트 타입</label>
+                            <select className="form-input form-select" name="type" required>
+                                <option value="">타입 선택</option>
+                                <option value="researcher">리서치 전문가</option>
+                                <option value="coder">개발 전문가</option>
+                                <option value="analyst">분석 전문가</option>
+                                <option value="writer">글쓰기 전문가</option>
+                                <option value="translator">번역 전문가</option>
+                                <option value="assistant">일반 어시스턴트</option>
+                            </select>
+                        </div>
 
-                            <div className="form-group">
-                                <label className="form-label">설명</label>
-                                <textarea className="form-input form-textarea" name="description" required placeholder="이 에이전트가 수행할 작업을 설명해주세요."></textarea>
-                            </div>
+                        <div className="form-group">
+                            <label className="form-label">설명</label>
+                            <textarea className="form-input form-textarea" name="description" required placeholder="이 에이전트가 수행할 작업을 설명해주세요."></textarea>
+                        </div>
 
-                            <div className="form-group">
-                                <label className="form-label">사용할 모델</label>
-                                <select className="form-input form-select" name="model" required>
-                                    <option value="claude-3.5-sonnet">Claude 3.5 Sonnet (추천)</option>
-                                    <option value="claude-3-haiku">Claude 3 Haiku (빠름)</option>
-                                    <option value="gpt-4">GPT-4</option>
-                                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                                </select>
-                            </div>
-                        </form>
-
-                    </div>
-
-
-                    <div className="modal-footer">
-                        <button type="button" className="secondary-btn" onClick={() => setnewAgnet(false)}>취소</button>
-                        <button type="button" className="primary-btn"
-                        // onClick="ProjectManager.saveNewProject()"
-                        >생성</button>
-                    </div>
-
+                        <div className="form-group">
+                            <label className="form-label">사용할 모델</label>
+                            <select className="form-input form-select" name="model" required>
+                                <option value="claude-3.5-sonnet">Claude 3.5 Sonnet (추천)</option>
+                                <option value="claude-3-haiku">Claude 3 Haiku (빠름)</option>
+                                <option value="gpt-4">GPT-4</option>
+                                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                            </select>
+                        </div>
+                    </form>
 
                 </div>
+
+
+                <div className="modal-footer">
+                    <button type="button" className="secondary-btn" onClick={() => setnewAgnet(false)}>취소</button>
+                    <button type="button" className="primary-btn"
+                    // onClick="ProjectManager.saveNewProject()"
+                    >생성</button>
+                </div>
+
+
             </div>
+            {/* </div> */}
 
         </>
     );
@@ -312,7 +314,11 @@ function AgentCard({ agent }) {
                     >⚙️</button>
                 </div>
             </div>
-            {onEdit && (<OpenAgentSettings agent={agent} setonEdit={setonEdit} />)}
+
+            <div className={`modal-overlay ${onEdit ? 'active' : ''}`}>
+                <OpenAgentSettings agent={agent} setonEdit={setonEdit} />
+            </div>
+            {/* {onEdit && (<OpenAgentSettings agent={agent} setonEdit={setonEdit} />)} */}
 
         </>
     );
@@ -321,73 +327,73 @@ function AgentCard({ agent }) {
 function OpenAgentSettings({ agent, setonEdit }) {
     const [formData, setFormData] = useState(agent);
     return (
-        <div className="modal-overlay active">
-            <div className="modal">
-                {modalheader({ headerTitle: `${agent.name} 설정`, setModalClose: setonEdit })}
+        // <div className="modal-overlay active">
+        <div className="modal">
+            {modalheader({ headerTitle: `${agent.name} 설정`, setModalClose: setonEdit })}
 
 
-                <div className="modal-body">
-                    <form id="agent-settings-form">
-                        <div className="form-group">
-                            <label className="form-label">에이전트 이름</label>
-                            <input type="text" className="form-input" name="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
-                        </div>
+            <div className="modal-body">
+                <form id="agent-settings-form">
+                    <div className="form-group">
+                        <label className="form-label">에이전트 이름</label>
+                        <input type="text" className="form-input" name="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+                    </div>
 
-                        <div className="form-group">
-                            <label className="form-label">설명</label>
-                            <textarea className="form-input form-textarea" name="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
-                        </div>
+                    <div className="form-group">
+                        <label className="form-label">설명</label>
+                        <textarea className="form-input form-textarea" name="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
+                    </div>
 
-                        <div className="form-group">
-                            <label className="form-label">모델</label>
-                            <select className="form-input form-select" name="model" value={formData.model} onChange={(e) => setFormData({ ...formData, model: e.target.value })}>
-                                <option value="claude-3.5-sonnet" >Claude 3.5 Sonnet</option>
-                                <option value="claude-3-haiku" >Claude 3 Haiku</option>
-                                <option value="gpt-4">GPT-4</option>
-                                <option value="gpt-3.5-turbo" >GPT-3.5 Turbo</option>
-                            </select>
-                        </div>
+                    <div className="form-group">
+                        <label className="form-label">모델</label>
+                        <select className="form-input form-select" name="model" value={formData.model} onChange={(e) => setFormData({ ...formData, model: e.target.value })}>
+                            <option value="claude-3.5-sonnet" >Claude 3.5 Sonnet</option>
+                            <option value="claude-3-haiku" >Claude 3 Haiku</option>
+                            <option value="gpt-4">GPT-4</option>
+                            <option value="gpt-3.5-turbo" >GPT-3.5 Turbo</option>
+                        </select>
+                    </div>
 
-                        <div className="form-group">
-                            <label className="form-label">최대 토큰 수</label>
-                            <input type="number" className="form-input" name="maxTokens" value={formData.settings.maxTokens} min="100" max="32000"
-                                onChange={(e) =>
-                                    setFormData({
-                                        ...formData,
-                                        settings: {
-                                            ...formData.settings,
-                                            maxTokens: Number(e.target.value) // 숫자 변환도 권장
-                                        }
-                                    })
-                                }
-                            />
-                        </div>
+                    <div className="form-group">
+                        <label className="form-label">최대 토큰 수</label>
+                        <input type="number" className="form-input" name="maxTokens" value={formData.settings.maxTokens} min="100" max="32000"
+                            onChange={(e) =>
+                                setFormData({
+                                    ...formData,
+                                    settings: {
+                                        ...formData.settings,
+                                        maxTokens: Number(e.target.value) // 숫자 변환도 권장
+                                    }
+                                })
+                            }
+                        />
+                    </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Temperature (창의성)</label>
-                            <input type="range" className="form-input" name="temperature" value={formData.settings.temperature} min="0" max="1" step="0.1"
-                                onChange={(e) =>
-                                    setFormData({
-                                        ...formData,
-                                        settings: {
-                                            ...formData.settings,
-                                            temperature: Number(e.target.value) // 숫자 변환도 권장
-                                        }
-                                    })
-                                }
-                            />
-                            <small style={{ color: "var(--gray-500)" }}>현재 값: {formData.settings.temperature}</small>
-                        </div>
-                    </form>
-                </div>
+                    <div className="form-group">
+                        <label className="form-label">Temperature (창의성)</label>
+                        <input type="range" className="form-input" name="temperature" value={formData.settings.temperature} min="0" max="1" step="0.1"
+                            onChange={(e) =>
+                                setFormData({
+                                    ...formData,
+                                    settings: {
+                                        ...formData.settings,
+                                        temperature: Number(e.target.value) // 숫자 변환도 권장
+                                    }
+                                })
+                            }
+                        />
+                        <small style={{ color: "var(--gray-500)" }}>현재 값: {formData.settings.temperature}</small>
+                    </div>
+                </form>
+            </div>
 
-                <div className="modal-footer">
-                    <button type="button" className="secondary-btn" onClick={() => setonEdit(false)}>취소</button>
-                    <button type="button" className="primary-btn"
-                    // onClick="AgentManager.saveAgentSettings('${agentId}')"
-                    >저장</button>
-                </div>
+            <div className="modal-footer">
+                <button type="button" className="secondary-btn" onClick={() => setonEdit(false)}>취소</button>
+                <button type="button" className="primary-btn"
+                // onClick="AgentManager.saveAgentSettings('${agentId}')"
+                >저장</button>
             </div>
         </div>
+        // </div>
     );
 }

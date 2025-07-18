@@ -148,7 +148,7 @@ export default function ApikeysPage() {
                                 <span>256-bit 암호화</span>
                             </div>
                             <button className="primary-btn" id="add-api-key-btn"
-                                onClick={() => setnewKey(true)}>
+                                onClick={() => setnewKey('none')}>
                                 <span>+</span>
                                 <span>새 API 키</span>
                             </button>
@@ -156,9 +156,9 @@ export default function ApikeysPage() {
                     </div>
                 </div>
 
-                {newKey && (
-                    <NewApiform setnewKey={setnewKey} providers={providers} />
-                )}
+
+
+                {/* {newKey && (<NewApiform setnewKey={setnewKey} providers={providers} />)} */}
 
                 <div className="api-keys-toolbar">
                     <div className="toolbar-left">
@@ -274,7 +274,7 @@ export default function ApikeysPage() {
                                 <div className="provider-actions">
                                     <button
                                         className="provider-btn"
-                                    // onClick={addApiKey(key)}
+                                        onClick={() => setnewKey(key)}
                                     >키 추가</button>
                                     <button
                                         className="provider-btn secondary"
@@ -289,6 +289,10 @@ export default function ApikeysPage() {
                 <div className="api-keys-container" id="api-keys-container">
                     {/* API 키 목록이 여기에 렌더링됩니다 */}
                     <RenderApiKeys apiKeys={apiKeys} providers={providers} />
+                </div>
+
+                <div className={`modal-overlay ${newKey ? 'active' : ''}`}>
+                    <NewApiform setnewKey={setnewKey} providers={providers} provider={newKey} />
                 </div>
 
 
@@ -519,81 +523,92 @@ function getStatusInfo(status) {
     return statusMap[status] || statusMap.inactive;
 }
 
-function NewApiform({ setnewKey, providers }) {
-    const [formData, setFormData] = useState([]);
+function NewApiform({ setnewKey, providers, provider }) {
+    const [formData, setFormData] = useState({});
+    useEffect(() => {
+        if (provider) {
+            setFormData({ provider });
+        }
+    }, [provider]);
+
     return (
         <>
-            <div className="modal-overlay active">
-                <div className="modal">
-                    {modalheader({ headerTitle: "새 API 키 추가", setModalClose: setnewKey })}
 
-                    <div className="modal-body">
-                        <form id="add-api-key-form" className="api-key-form">
-                            <div className="form-group">
-                                <label htmlFor="key-provider">AI 제공업체 *</label>
-                                <select id="key-provider" name="provider" required>
-                                    <option value="">제공업체 선택</option>
-                                    {Object.entries(providers).map(([key, p]) => (
-                                        <option key={key} value={key}>{p.icon} {p.name}</option>
-                                    ))}
-                                </select>
+            <div className="modal">
+                {modalheader({ headerTitle: "새 API 키 추가", setModalClose: setnewKey })}
+
+                <div className="modal-body">
+                    <form id="add-api-key-form" className="api-key-form">
+                        <div className="form-group">
+                            <label htmlFor="key-provider">AI 제공업체 *</label>
+                            <select id="key-provider" name="provider" required value={formData.provider}
+                                onChange={(e) => setFormData(prev => ({
+                                    ...prev,
+                                    provider: e.target.value
+                                }))}
+                            >
+                                <option value="none">제공업체 선택</option>
+                                {Object.entries(providers).map(([key, p]) => (
+                                    <option key={key} value={key}>{p.icon} {p.name}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="key-name">키 이름 *</label>
+                            <input type="text" id="key-name" name="name" required placeholder="예: Production API Key" />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="api-key-value">API 키 *</label>
+                            <div className="key-input-wrapper">
+                                <input type="password" id="api-key-value" name="apiKey" required placeholder="API 키를 입력하세요" />
+                                <button type="button" className="toggle-visibility"
+                                // onClick="ApiKeyManager.toggleKeyVisibility('api-key-value')"
+                                >👁️</button>
                             </div>
+                            <div className="input-help">키는 암호화되어 안전하게 저장됩니다</div>
+                        </div>
 
-                            <div className="form-group">
-                                <label htmlFor="key-name">키 이름 *</label>
-                                <input type="text" id="key-name" name="name" required placeholder="예: Production API Key" />
+                        <div className="form-group">
+                            <label htmlFor="key-notes">메모 (선택사항)</label>
+                            <textarea id="key-notes" name="notes" placeholder="이 API 키에 대한 설명을 입력하세요" rows="3"></textarea>
+                        </div>
+
+                        <div className="form-group">
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    id="test-on-save"
+                                    name="testOnSave"
+                                    checked={formData.testOnSave}
+                                    onChange={(e) => setFormData({ ...formData, testOnSave: e.target.checked })}
+                                />
+                                저장 후 연결 테스트 실행
+                            </label>
+                        </div>
+
+                        <div className="security-notice">
+                            <div className="notice-icon">🔒</div>
+                            <div className="notice-text">
+                                <strong>보안 정보:</strong> API 키는 AES-256 암호화로 보호되며, 브라우저 로컬 스토리지에만 저장됩니다. 서버로 전송되지 않습니다.
                             </div>
-
-                            <div className="form-group">
-                                <label htmlFor="api-key-value">API 키 *</label>
-                                <div className="key-input-wrapper">
-                                    <input type="password" id="api-key-value" name="apiKey" required placeholder="API 키를 입력하세요" />
-                                    <button type="button" className="toggle-visibility"
-                                    // onClick="ApiKeyManager.toggleKeyVisibility('api-key-value')"
-                                    >👁️</button>
-                                </div>
-                                <div className="input-help">키는 암호화되어 안전하게 저장됩니다</div>
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="key-notes">메모 (선택사항)</label>
-                                <textarea id="key-notes" name="notes" placeholder="이 API 키에 대한 설명을 입력하세요" rows="3"></textarea>
-                            </div>
-
-                            <div className="form-group">
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        id="test-on-save"
-                                        name="testOnSave"
-                                        checked={formData.testOnSave}
-                                        onChange={(e) => setFormData({ ...formData, testOnSave: e.target.checked })}
-                                    />
-                                    저장 후 연결 테스트 실행
-                                </label>
-                            </div>
-
-                            <div className="security-notice">
-                                <div className="notice-icon">🔒</div>
-                                <div className="notice-text">
-                                    <strong>보안 정보:</strong> API 키는 AES-256 암호화로 보호되며, 브라우저 로컬 스토리지에만 저장됩니다. 서버로 전송되지 않습니다.
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div className="modal-footer">
-                        <button type="button" className="secondary-btn"
-                            onClick={() => setnewKey(false)}
-                        >취소</button>
-                        <button type="button" className="primary-btn"
-                        //  onClick="ApiKeyManager.saveApiKey()"
-                        >저장</button>
-                    </div>
-
-
+                        </div>
+                    </form>
                 </div>
+
+                <div className="modal-footer">
+                    <button type="button" className="secondary-btn"
+                        onClick={() => setnewKey(false)}
+                    >취소</button>
+                    <button type="button" className="primary-btn"
+                    //  onClick="ApiKeyManager.saveApiKey()"
+                    >저장</button>
+                </div>
+
+
             </div>
+
         </>
     );
 }

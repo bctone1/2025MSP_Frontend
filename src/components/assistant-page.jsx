@@ -169,6 +169,96 @@ export default function AssistantPage() {
                             </div>
                         </div>
 
+                        {/* 지식베이스 섹션  */}
+                        <div className="sidebar-section">
+                            <h3 className="sidebar-title">
+                                <span>📚</span>
+                                <span>지식베이스 (RAG)</span>
+                                <button className="manage-agents-btn"
+                                // onClick="openKnowledgeSelector()"
+                                >선택</button>
+                            </h3>
+
+
+                            <div className="card-content">
+                                <p className="knowledge-count">📁 선택된 파일 (<span id="selected-count">2</span>개)</p>
+
+                                <div className="knowledge-files" id="knowledge-files">
+                                    {/* 선택된 지식베이스 파일들  */}
+                                    <div className="knowledge-file completed selected" data-file-id="kb_001">
+                                        <div className="knowledge-file-header">
+                                            <div className="file-icon" style={{ backgroundColor: "#3b82f620", color: "#3b82f6" }}>📄</div>
+                                            <div className="file-status completed">✅</div>
+                                        </div>
+                                        <div className="knowledge-checkbox checked"></div>
+                                        <div className="file-name">AI 개발 가이드.pdf</div>
+                                        <div className="file-desc">AI 시스템 개발을 위한 종합 가이드 문서</div>
+                                        <div className="file-meta">
+                                            <span className="file-size">2.3 MB</span>
+                                            <span className="file-chunks">145 청크</span>
+                                        </div>
+                                        <div className="knowledge-stats">
+                                            <div className="mini-stat">
+                                                <div className="mini-stat-value">23</div>
+                                                <div className="mini-stat-label">쿼리</div>
+                                            </div>
+                                            <div className="mini-stat">
+                                                <div className="mini-stat-value">12.4K</div>
+                                                <div className="mini-stat-label">토큰</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="knowledge-file completed selected" data-file-id="kb_002">
+                                        <div className="knowledge-file-header">
+                                            <div className="file-icon" style={{ backgroundColor: '#10b98120', color: '#10b981' }}>📈</div>
+                                            <div className="file-status completed">✅</div>
+                                        </div>
+                                        <div className="knowledge-checkbox checked"></div>
+                                        <div className="file-name">마케팅 전략 데이터.xlsx</div>
+                                        <div className="file-desc">2024년 2분기 마케팅 전략 및 성과 분석 데이터</div>
+                                        <div className="file-meta">
+                                            <span className="file-size">1.2 MB</span>
+                                            <span className="file-chunks">67 청크</span>
+                                        </div>
+                                        <div className="knowledge-stats">
+                                            <div className="mini-stat">
+                                                <div className="mini-stat-value">15</div>
+                                                <div className="mini-stat-label">쿼리</div>
+                                            </div>
+                                            <div className="mini-stat">
+                                                <div className="mini-stat-value">8.7K</div>
+                                                <div className="mini-stat-label">토큰</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="knowledge-summary">
+                                    <div className="summary-stats">
+                                        <div className="summary-stat">
+                                            <div className="summary-value" id="total-chunks">212</div>
+                                            <div className="summary-label">총 청크</div>
+                                        </div>
+                                        <div className="summary-stat">
+                                            <div className="summary-value" id="total-size">3.5MB</div>
+                                            <div className="summary-label">전체 크기</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+
                         <div className="sidebar-section">
                             <h3 className="sidebar-title">
                                 <span>⚙️</span>
@@ -302,7 +392,7 @@ export default function AssistantPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 
@@ -574,10 +664,10 @@ function renderAttachments(attachments) {
 
 function formatMessageText(text) {
     // text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-    //     return <div class="code-block">
-    //         <div class="code-header">
-    //             <span class="code-lang">${lang || 'code'}</span>
-    //             <button class="copy-code-btn"
+    //     return <div className="code-block">
+    //         <div className="code-header">
+    //             <span className="code-lang">${lang || 'code'}</span>
+    //             <button className="copy-code-btn"
     //             // onClick="AssistantManager.copyCode(this)"
     //             >📋</button>
     //         </div>
@@ -586,10 +676,10 @@ function formatMessageText(text) {
     // });
 
     // // 인라인 코드 처리
-    // text = text.replace(/`([^`]+)`/g, <code class="inline-code">$1</code>);
+    // text = text.replace(/`([^`]+)`/g, <code className="inline-code">$1</code>);
 
     // // 링크 처리
-    // text = text.replace(/(https?:\/\/[^\s]+)/g, <a href="$1" target="_blank" class="message-link">$1</a>);
+    // text = text.replace(/(https?:\/\/[^\s]+)/g, <a href="$1" target="_blank" className="message-link">$1</a>);
 
     text = text.replace(/\n/g, '<br>');
 

@@ -11,6 +11,9 @@ import ApikeysPage from '@/components/api-keys-page';
 import AssistantPage from '@/components/assistant-page';
 import KnowledgePage from '@/components/knowledge-page';
 import HistoryPage from '@/components/history-page';
+import "@/styles/components.css"
+import "@/styles/main.css"
+import "@/styles/pages.css"
 
 // 필요한 다른 페이지 컴포넌트들도 import
 

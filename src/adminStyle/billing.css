@@ -1,0 +1,1272 @@
+/* css/billing.css - 과금 관리 페이지 스타일 */
+
+/* ===========================================
+   과금 통계 카드
+   =========================================== */
+.billing-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-2xl);
+    padding: 20px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(229, 231, 235, 0.6);
+    transition: var(--transition-normal);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-2xl);
+}
+
+.stat-card.revenue::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.stat-card.subscription::before {
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+}
+
+.stat-card.arpu::before {
+    background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+}
+
+.stat-card.churn::before {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.stat-card.outstanding::before {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.stat-icon.revenue {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.stat-icon.subscription {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.stat-icon.arpu {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.stat-icon.churn {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.stat-icon.outstanding {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.stat-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--gray-900);
+    margin-bottom: 4px;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--gray-500);
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.stat-change {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 12px;
+}
+
+.stat-change.positive {
+    color: #059669;
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.stat-change.negative {
+    color: #dc2626;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.stat-change.warning {
+    color: #d97706;
+    background: rgba(245, 158, 11, 0.1);
+}
+
+/* ===========================================
+   과금 대시보드 레이아웃
+   =========================================== */
+.billing-dashboard {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.dashboard-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 차트 섹션 */
+.chart-section {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-2xl);
+    padding: 24px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(229, 231, 235, 0.6);
+}
+
+.chart-container {
+    height: 300px;
+    margin-top: 20px;
+}
+
+.chart-placeholder {
+    height: 100%;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(5, 150, 105, 0.05));
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-500);
+    font-size: 16px;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.chart-demo {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    height: 100px;
+}
+
+.chart-bars {
+    display: flex;
+    align-items: end;
+    gap: 8px;
+    height: 100%;
+}
+
+.chart-bar {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    opacity: 0.8;
+    animation: chartGrow 1.5s ease-out;
+}
+
+.chart-bars.revenue .chart-bar {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+@keyframes chartGrow {
+    from {
+        height: 0%;
+    }
+
+    to {
+        height: var(--height, 50%);
+    }
+}
+
+.chart-controls {
+    display: flex;
+    gap: 12px;
+}
+
+/* 구독 현황 */
+.subscription-overview {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-2xl);
+    padding: 24px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(229, 231, 235, 0.6);
+}
+
+.plan-distribution {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.plan-item {
+    padding: 16px;
+    background: rgba(249, 250, 251, 0.8);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(229, 231, 235, 0.6);
+    transition: var(--transition-fast);
+}
+
+.plan-item:hover {
+    background: rgba(243, 244, 246, 0.9);
+    transform: translateY(-2px);
+}
+
+.plan-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.plan-name {
+    font-weight: 700;
+    color: var(--gray-900);
+    font-size: 16px;
+}
+
+.plan-price {
+    font-weight: 600;
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.plan-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.plan-users {
+    font-size: 14px;
+    color: var(--gray-700);
+    font-weight: 500;
+}
+
+.plan-percentage {
+    font-size: 14px;
+    color: var(--blue);
+    font-weight: 700;
+}
+
+.plan-bar {
+    height: 8px;
+    background: var(--gray-200);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.plan-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 4px;
+    transition: width 0.8s ease;
+}
+
+/* ===========================================
+   사이드바 섹션
+   =========================================== */
+.sidebar-section {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(229, 231, 235, 0.6);
+}
+
+.sidebar-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.sidebar-section .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin: 0;
+}
+
+.notification-count {
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+}
+
+.refresh-btn {
+    background: none;
+    border: none;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    font-size: 14px;
+    color: var(--gray-500);
+}
+
+.refresh-btn:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--blue);
+    transform: rotate(90deg);
+}
+
+/* 거래 내역 */
+.transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: rgba(249, 250, 251, 0.8);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(229, 231, 235, 0.5);
+    transition: var(--transition-fast);
+}
+
+.transaction-item:hover {
+    background: rgba(243, 244, 246, 0.9);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.transaction-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.transaction-user {
+    font-weight: 600;
+    color: var(--gray-900);
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.transaction-plan {
+    font-size: 12px;
+    color: var(--gray-500);
+}
+
+.transaction-amount {
+    font-weight: 700;
+    color: #059669;
+    font-size: 14px;
+}
+
+.transaction-time {
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 2px;
+}
+
+/* 미납 내역 */
+.overdue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.overdue-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: rgba(254, 242, 242, 0.8);
+    border: 1px solid rgba(252, 165, 165, 0.4);
+    border-radius: var(--radius-lg);
+    transition: var(--transition-fast);
+}
+
+.overdue-item:hover {
+    background: rgba(254, 226, 226, 0.9);
+}
+
+.overdue-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.overdue-user {
+    font-weight: 600;
+    color: var(--gray-900);
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+.overdue-days {
+    font-size: 11px;
+    color: #dc2626;
+    font-weight: 500;
+}
+
+.overdue-amount {
+    font-weight: 700;
+    color: #dc2626;
+    font-size: 13px;
+}
+
+/* 결제 방법 */
+.payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.payment-method {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(249, 250, 251, 0.8);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.payment-icon {
+    font-size: 20px;
+    width: 32px;
+    text-align: center;
+}
+
+.payment-info {
+    flex: 1;
+}
+
+.payment-name {
+    font-weight: 600;
+    color: var(--gray-900);
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.payment-count {
+    font-size: 12px;
+    color: var(--gray-500);
+}
+
+/* ===========================================
+   탭 시스템
+   =========================================== */
+.billing-tabs {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(229, 231, 235, 0.6);
+    overflow: hidden;
+}
+
+.tab-navigation {
+    display: flex;
+    background: rgba(249, 250, 251, 0.8);
+    border-bottom: 1px solid rgba(229, 231, 235, 0.6);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    color: var(--gray-600);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    position: relative;
+    font-size: 14px;
+}
+
+.tab-btn:hover {
+    background: rgba(229, 231, 235, 0.5);
+    color: var(--gray-800);
+}
+
+.tab-btn.active {
+    background: white;
+    color: var(--blue);
+    font-weight: 700;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+}
+
+.tab-content {
+    padding: 24px;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* ===========================================
+   테이블 스타일
+   =========================================== */
+.invoices-toolbar,
+.subscriptions-toolbar,
+.transactions-toolbar,
+.plans-toolbar,
+.reports-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 300px;
+}
+
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 검색 박스 */
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    transition: var(--transition-fast);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-500);
+    font-size: 14px;
+}
+
+/* 필터 그룹 */
+.filter-group {
+    display: flex;
+    gap: 12px;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 13px;
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    min-width: 120px;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 테이블 컨테이너 */
+.invoices-table-container,
+.transactions-table-container {
+    background: white;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(229, 231, 235, 0.6);
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.invoices-table,
+.transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.invoices-table th,
+.transactions-table th {
+    background: rgba(249, 250, 251, 0.9);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-700);
+    border-bottom: 1px solid var(--gray-200);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.invoices-table td,
+.transactions-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+    vertical-align: middle;
+}
+
+.invoices-table tr:hover,
+.transactions-table tr:hover {
+    background: rgba(59, 130, 246, 0.02);
+}
+
+/* 상태 배지 */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.paid {
+    background: rgba(34, 197, 94, 0.1);
+    color: #059669;
+}
+
+.status-badge.pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+
+.status-badge.overdue {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+.status-badge.cancelled {
+    background: rgba(107, 114, 128, 0.1);
+    color: var(--gray-600);
+}
+
+.status-badge.active {
+    background: rgba(34, 197, 94, 0.1);
+    color: #059669;
+}
+
+.status-badge.expired {
+    background: rgba(107, 114, 128, 0.1);
+    color: var(--gray-600);
+}
+
+.status-badge.trial {
+    background: rgba(139, 92, 246, 0.1);
+    color: #7c3aed;
+}
+
+.status-badge.success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #059669;
+}
+
+.status-badge.failed {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+.status-badge.processing {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+}
+
+/* 테이블 액션 */
+.table-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.table-action-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    font-size: 11px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.table-action-btn:hover {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+    transform: scale(1.1);
+}
+
+/* ===========================================
+   구독 및 요금제 그리드
+   =========================================== */
+.subscriptions-grid,
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.subscription-card,
+.plan-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(229, 231, 235, 0.6);
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.subscription-card::before,
+.plan-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+}
+
+.subscription-card.expired::before {
+    background: linear-gradient(90deg, var(--gray-400), var(--gray-500));
+}
+
+.subscription-card.trial::before {
+    background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+}
+
+.subscription-card:hover,
+.plan-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-xl);
+}
+
+.subscription-header,
+.plan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.subscription-user,
+.plan-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 4px;
+}
+
+.subscription-plan,
+.plan-description {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-bottom: 8px;
+}
+
+.subscription-info,
+.plan-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.info-item {
+    text-align: center;
+    padding: 12px;
+    background: rgba(249, 250, 251, 0.8);
+    border-radius: var(--radius-lg);
+}
+
+.info-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 4px;
+}
+
+.info-label {
+    font-size: 11px;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.subscription-actions,
+.plan-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    text-align: center;
+}
+
+.action-btn.primary {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+}
+
+.action-btn.secondary {
+    background: rgba(107, 114, 128, 0.1);
+    color: var(--gray-600);
+    border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* ===========================================
+   요금제 특별 스타일
+   =========================================== */
+.plan-card.featured {
+    border: 2px solid #3b82f6;
+    position: relative;
+}
+
+.plan-card.featured::after {
+    content: '추천';
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin: 12px 0;
+}
+
+.plan-amount {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--gray-900);
+}
+
+.plan-currency {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gray-600);
+}
+
+.plan-period {
+    font-size: 14px;
+    color: var(--gray-500);
+}
+
+.plan-features {
+    margin: 16px 0;
+}
+
+.plan-features ul {
+    list-style: none;
+    padding: 0;
+}
+
+.plan-features li {
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--gray-700);
+}
+
+.plan-features li::before {
+    content: '✓';
+    color: #059669;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+/* ===========================================
+   보고서 섹션
+   =========================================== */
+.reports-content {
+    margin-top: 20px;
+}
+
+.report-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.summary-card {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+}
+
+.summary-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+}
+
+.summary-label {
+    font-size: 14px;
+    color: var(--gray-600);
+    font-weight: 500;
+}
+
+.report-chart {
+    background: white;
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+}
+
+.report-table {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+/* ===========================================
+   반응형 디자인
+   =========================================== */
+@media (max-width: 1024px) {
+    .billing-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .billing-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-sidebar {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .sidebar-section {
+        min-width: 250px;
+        flex-shrink: 0;
+    }
+
+    .subscriptions-grid,
+    .plans-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .billing-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .tab-navigation {
+        flex-direction: column;
+    }
+
+    .invoices-toolbar,
+    .subscriptions-toolbar,
+    .transactions-toolbar,
+    .plans-toolbar,
+    .reports-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .toolbar-left {
+        flex-direction: column;
+        min-width: auto;
+        gap: 12px;
+    }
+
+    .toolbar-right {
+        justify-content: stretch;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .filter-select {
+        min-width: auto;
+    }
+
+    .dashboard-sidebar {
+        flex-direction: column;
+        overflow-x: visible;
+    }
+
+    .sidebar-section {
+        min-width: auto;
+    }
+
+    .subscriptions-grid,
+    .plans-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .subscription-info,
+    .plan-info {
+        grid-template-columns: 1fr;
+    }
+
+    .report-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+
+    .chart-section,
+    .subscription-overview,
+    .sidebar-section {
+        padding: 16px;
+    }
+
+    .tab-content {
+        padding: 16px;
+    }
+
+    .subscription-actions,
+    .plan-actions {
+        flex-direction: column;
+    }
+
+    .report-summary {
+        grid-template-columns: 1fr;
+    }
+
+    /* 테이블을 카드로 변환 */
+    .invoices-table,
+    .transactions-table,
+    .invoices-table thead,
+    .transactions-table thead,
+    .invoices-table tbody,
+    .transactions-table tbody,
+    .invoices-table th,
+    .transactions-table th,
+    .invoices-table td,
+    .transactions-table td,
+    .invoices-table tr,
+    .transactions-table tr {
+        display: block;
+    }
+
+    .invoices-table thead tr,
+    .transactions-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .invoices-table tr,
+    .transactions-table tr {
+        background: white;
+        margin-bottom: 12px;
+        border-radius: var(--radius-lg);
+        padding: 16px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--gray-200);
+    }
+
+    .invoices-table td,
+    .transactions-table td {
+        border: none;
+        padding: 8px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .invoices-table td::before,
+    .transactions-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--gray-600);
+        font-size: 12px;
+        text-transform: uppercase;
+        flex: 1;
+    }
+}
+
+/* ===========================================
+   다크 모드 지원
+   =========================================== */
+@media (prefers-color-scheme: dark) {
+
+    .stat-card,
+    .chart-section,
+    .subscription-overview,
+    .sidebar-section,
+    .billing-tabs,
+    .subscription-card,
+    .plan-card {
+        background: rgba(31, 41, 59, 0.9);
+        border-color: rgba(75, 85, 99, 0.3);
+    }
+
+    .tab-navigation {
+        background: rgba(15, 23, 42, 0.8);
+    }
+
+    .tab-btn.active {
+        background: rgba(31, 41, 59, 0.9);
+    }
+
+    .invoices-table-container,
+    .transactions-table-container {
+        background: rgba(31, 41, 59, 0.9);
+        border-color: rgba(75, 85, 99, 0.3);
+    }
+
+    .invoices-table th,
+    .transactions-table th {
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--gray-300);
+    }
+
+    .invoices-table tr:hover,
+    .transactions-table tr:hover {
+        background: rgba(59, 130, 246, 0.1);
+    }
+
+    .search-input,
+    .filter-select {
+        background: rgba(31, 41, 59, 0.8);
+        border-color: rgba(75, 85, 99, 0.3);
+        color: var(--gray-100);
+    }
+
+    .plan-item,
+    .transaction-item,
+    .payment-method,
+    .info-item {
+        background: rgba(15, 23, 42, 0.6);
+        border-color: rgba(75, 85, 99, 0.3);
+    }
+
+    .stat-value,
+    .plan-name,
+    .subscription-user,
+    .plan-amount {
+        color: var(--gray-100);
+    }
+}

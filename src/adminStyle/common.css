@@ -1,0 +1,906 @@
+/* css/common.css - 공통 스타일 시스템 (여백 최적화) */
+
+/* ===========================================
+   CSS 변수 시스템
+   =========================================== */
+:root {
+    /* 메인 브랜드 컬러 */
+    --primary-red: #dc2626;
+    --primary-red-hover: #b91c1c;
+    --primary-red-light: rgba(220, 38, 38, 0.1);
+
+    /* 보조 컬러 */
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+    --green: #10b981;
+    --orange: #f59e0b;
+    --yellow: #eab308;
+
+    /* 상태 컬러 */
+    --success: #16a34a;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #3b82f6;
+
+    /* 그레이 스케일 */
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+
+    /* 레이아웃 */
+    --sidebar-width: 280px;
+    /* 200px에서 280px로 복원 */
+    --header-height: 50px;
+    /* 현재 상태 유지 */
+    --content-max-width: none;
+    /* 현재 상태 유지 */
+
+    /* 그림자 */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+    /* 애니메이션 */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+
+    /* Border Radius */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-2xl: 20px;
+}
+
+/* ===========================================
+   기본 리셋 및 글로벌 스타일
+   =========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 50%, #f3e8ff 100%);
+    color: var(--gray-800);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===========================================
+   레이아웃 컨테이너
+   =========================================== */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: 8px;
+    /* 12px에서 8px로 더 감소 */
+    max-width: none;
+    min-height: 100vh;
+}
+
+.page-container {
+    padding: 8px;
+    /* 16px에서 8px로 더 감소 */
+    max-width: none;
+    /* 제한 제거 */
+    margin: 0;
+    width: 100%;
+}
+
+/* ===========================================
+   사이드바 스타일
+   =========================================== */
+.sidebar {
+    width: var(--sidebar-width);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(229, 231, 235, 0.8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+}
+
+.sidebar-header {
+    padding: 24px 20px;
+    /* 원래 크기로 복원 */
+    border-bottom: 1px solid var(--gray-200);
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    /* 원래 크기로 복원 */
+    text-decoration: none;
+    color: inherit;
+}
+
+.sidebar-logo-icon {
+    width: 40px;
+    /* 원래 크기로 복원 */
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary-red), var(--primary-red-hover));
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    /* 원래 크기로 복원 */
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.sidebar-logo-text h1 {
+    font-size: 18px;
+    /* 원래 크기로 복원 */
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-red), var(--primary-red-hover));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+    /* 원래 크기로 복원 */
+}
+
+.sidebar-logo-text p {
+    font-size: 12px;
+    /* 원래 크기로 복원 */
+    color: var(--gray-500);
+    font-weight: 500;
+}
+
+/* ===========================================
+   네비게이션 메뉴
+   =========================================== */
+.nav-menu {
+    padding: 20px 0;
+    /* 원래 크기로 복원 */
+}
+
+.nav-section {
+    margin-bottom: 32px;
+    /* 원래 크기로 복원 */
+}
+
+.nav-section-title {
+    padding: 0 20px 12px 20px;
+    /* 원래 크기로 복원 */
+    font-size: 11px;
+    /* 원래 크기로 복원 */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-400);
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    /* 원래 크기로 복원 */
+    margin: 2px 8px;
+    /* 원래 크기로 복원 */
+    border-radius: var(--radius-lg);
+    color: var(--gray-700);
+    text-decoration: none;
+    transition: var(--transition-fast);
+    cursor: pointer;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+}
+
+.nav-item:hover {
+    background: var(--primary-red-light);
+    color: var(--primary-red);
+    border-left-color: var(--primary-red);
+    transform: translateX(4px);
+}
+
+.nav-item.active {
+    background: linear-gradient(135deg, var(--primary-red), var(--primary-red-hover));
+    color: white;
+    border-left-color: var(--primary-red-hover);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.nav-item.active:hover {
+    transform: translateX(0);
+}
+
+.nav-icon {
+    font-size: 16px;
+    /* 원래 크기로 복원 */
+    margin-right: 12px;
+    /* 원래 크기로 복원 */
+    width: 20px;
+    /* 원래 크기로 복원 */
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.nav-text {
+    font-size: 14px;
+    /* 원래 크기로 복원 */
+    flex: 1;
+}
+
+/* ===========================================
+   페이지 헤더
+   =========================================== */
+.page-header {
+    margin-bottom: 12px;
+    /* 20px에서 12px로 더 감소 */
+    padding-bottom: 8px;
+    /* 16px에서 8px로 더 감소 */
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.page-title {
+    font-size: 24px;
+    /* 28px에서 24px로 더 감소 */
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-red), var(--primary-red-hover));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+    /* 6px에서 4px로 더 감소 */
+    line-height: 1.2;
+}
+
+.page-subtitle {
+    font-size: 14px;
+    /* 16px에서 14px로 더 감소 */
+    color: var(--gray-500);
+    margin-bottom: 8px;
+    /* 12px에서 8px로 더 감소 */
+}
+
+.page-actions {
+    display: flex;
+    gap: 10px;
+    /* 12px에서 10px로 감소 */
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* ===========================================
+   카드 컴포넌트
+   =========================================== */
+.card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-2xl);
+    padding: 20px;
+    /* 24px에서 20px로 감소 */
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(229, 231, 235, 0.6);
+    transition: var(--transition-normal);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-2xl);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    /* 16px에서 12px로 감소 */
+}
+
+.card-title {
+    font-size: 16px;
+    /* 18px에서 16px로 감소 */
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.card-content {
+    color: var(--gray-700);
+}
+
+/* ===========================================
+   버튼 컴포넌트
+   =========================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    /* 8px에서 6px로 감소 */
+    padding: 10px 16px;
+    /* 12px 20px에서 10px 16px로 감소 */
+    border: none;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 13px;
+    /* 14px에서 13px로 감소 */
+    cursor: pointer;
+    transition: var(--transition-fast);
+    text-decoration: none;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* 버튼 변형들 */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-red), var(--primary-red-hover));
+    color: white;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+    background: var(--gray-50);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success), #059669);
+    color: white;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(22, 163, 74, 0.4);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--warning), #d97706);
+    color: white;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger), #dc2626);
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+}
+
+/* 버튼 크기 */
+.btn-sm {
+    padding: 6px 12px;
+    /* 8px 16px에서 6px 12px로 감소 */
+    font-size: 11px;
+    /* 12px에서 11px로 감소 */
+}
+
+.btn-lg {
+    padding: 12px 20px;
+    /* 16px 24px에서 12px 20px로 감소 */
+    font-size: 15px;
+    /* 16px에서 15px로 감소 */
+}
+
+/* ===========================================
+   상태 배지
+   =========================================== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    /* 6px에서 4px로 감소 */
+    padding: 4px 10px;
+    /* 6px 12px에서 4px 10px로 감소 */
+    border-radius: 16px;
+    /* 20px에서 16px로 감소 */
+    font-size: 11px;
+    /* 12px에서 11px로 감소 */
+    font-weight: 600;
+    line-height: 1;
+}
+
+.badge-success {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.badge-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.badge-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.badge-info {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--info);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.badge-primary {
+    background: var(--primary-red-light);
+    color: var(--primary-red);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+/* ===========================================
+   폼 컴포넌트
+   =========================================== */
+.form-group {
+    margin-bottom: 16px;
+    /* 20px에서 16px로 감소 */
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 6px;
+    /* 8px에서 6px로 감소 */
+    font-weight: 600;
+    color: var(--gray-700);
+    font-size: 13px;
+    /* 14px에서 13px로 감소 */
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    padding: 10px 14px;
+    /* 12px 16px에서 10px 14px로 감소 */
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-lg);
+    font-size: 13px;
+    /* 14px에서 13px로 감소 */
+    background: rgba(255, 255, 255, 0.9);
+    transition: var(--transition-fast);
+    color: var(--gray-900);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-red);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    background: white;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 80px;
+    /* 100px에서 80px로 감소 */
+}
+
+/* ===========================================
+   그리드 시스템
+   =========================================== */
+.grid {
+    display: grid;
+    gap: 16px;
+    /* 24px에서 16px로 감소 */
+}
+
+.grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.grid-auto {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    /* 300px에서 260px로 감소 */
+}
+
+/* 메트릭 그리드 */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    /* 220px에서 200px로 더 감소 */
+    gap: 8px;
+    /* 12px에서 8px로 더 감소 */
+    margin-bottom: 12px;
+    /* 16px에서 12px로 더 감소 */
+}
+
+/* ===========================================
+   유틸리티 클래스
+   =========================================== */
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-sm {
+    font-size: 11px;
+    /* 12px에서 11px로 감소 */
+}
+
+.text-base {
+    font-size: 13px;
+    /* 14px에서 13px로 감소 */
+}
+
+.text-lg {
+    font-size: 15px;
+    /* 16px에서 15px로 감소 */
+}
+
+.text-xl {
+    font-size: 17px;
+    /* 18px에서 17px로 감소 */
+}
+
+.text-2xl {
+    font-size: 22px;
+    /* 24px에서 22px로 감소 */
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.text-gray-500 {
+    color: var(--gray-500);
+}
+
+.text-gray-600 {
+    color: var(--gray-600);
+}
+
+.text-gray-700 {
+    color: var(--gray-700);
+}
+
+.text-gray-900 {
+    color: var(--gray-900);
+}
+
+.mb-4 {
+    margin-bottom: 12px;
+    /* 16px에서 12px로 감소 */
+}
+
+.mb-6 {
+    margin-bottom: 18px;
+    /* 24px에서 18px로 감소 */
+}
+
+.mb-8 {
+    margin-bottom: 24px;
+    /* 32px에서 24px로 감소 */
+}
+
+.mt-4 {
+    margin-top: 12px;
+    /* 16px에서 12px로 감소 */
+}
+
+.mt-6 {
+    margin-top: 18px;
+    /* 24px에서 18px로 감소 */
+}
+
+.mt-8 {
+    margin-top: 24px;
+    /* 32px에서 24px로 감소 */
+}
+
+.hidden {
+    display: none !important;
+}
+
+.block {
+    display: block !important;
+}
+
+.flex {
+    display: flex !important;
+}
+
+.inline-flex {
+    display: inline-flex !important;
+}
+
+/* ===========================================
+   모바일 네비게이션
+   =========================================== */
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 15px;
+    /* 20px에서 15px로 감소 */
+    left: 15px;
+    z-index: 1001;
+    background: var(--primary-red);
+    color: white;
+    border: none;
+    padding: 10px;
+    /* 12px에서 10px로 감소 */
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    font-size: 16px;
+    /* 18px에서 16px로 감소 */
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition-fast);
+}
+
+.mobile-menu-btn:hover {
+    background: var(--primary-red-hover);
+    transform: scale(1.05);
+}
+
+/* ===========================================
+   반응형 디자인
+   =========================================== */
+@media (max-width: 1024px) {
+    .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform var(--transition-normal);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .page-container {
+        padding: 12px;
+        /* 20px 16px에서 12px로 감소 */
+    }
+
+    .page-title {
+        font-size: 24px;
+        /* 28px에서 24px로 감소 */
+    }
+
+    .page-subtitle {
+        font-size: 14px;
+        /* 16px에서 14px로 감소 */
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+        grid-template-columns: 1fr;
+    }
+
+    .page-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .page-container {
+        padding: 10px;
+        /* 16px 12px에서 10px로 감소 */
+    }
+
+    .card {
+        padding: 16px;
+        /* 20px에서 16px로 감소 */
+    }
+
+    .btn {
+        padding: 8px 14px;
+        /* 10px 16px에서 8px 14px로 감소 */
+        font-size: 12px;
+        /* 13px에서 12px로 감소 */
+    }
+}
+
+/* ===========================================
+   스크롤바 커스터마이징
+   =========================================== */
+::-webkit-scrollbar {
+    width: 6px;
+    /* 8px에서 6px로 감소 */
+}
+
+::-webkit-scrollbar-track {
+    background: var(--gray-100);
+    border-radius: 3px;
+    /* 4px에서 3px로 감소 */
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gray-300);
+    border-radius: 3px;
+    /* 4px에서 3px로 감소 */
+    transition: background var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-400);
+}
+
+/* ===========================================
+   다크 모드 지원 (선택사항)
+   =========================================== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --gray-50: #1f2937;
+        --gray-100: #374151;
+        --gray-200: #4b5563;
+        --gray-300: #6b7280;
+        --gray-800: #f9fafb;
+        --gray-900: #ffffff;
+    }
+
+    body {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 50%, #0f172a 100%);
+        color: var(--gray-100);
+    }
+
+    .sidebar {
+        background: rgba(31, 41, 59, 0.95);
+        border-right-color: rgba(75, 85, 99, 0.3);
+    }
+
+    .card {
+        background: rgba(31, 41, 59, 0.9);
+        border-color: rgba(75, 85, 99, 0.3);
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+    padding: 20px;
+}
+
+.modal-overlay.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.modal {
+    background: white;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 40px;
+    transform: scale(0.9);
+    transition: transform 0.3s;
+    transform: scale(1) !important;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 24px 0;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 24px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.modal-header button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}

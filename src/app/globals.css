@@ -26,30 +26,5 @@ body {
 }
 
 
-/* loading-overlay 스타일 */
-.loading-overlay {
-  position: absolute;
-  inset: 0; /* top, right, bottom, left = 0 */
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-/* 회전 애니메이션 */
-.spinner {
-  width: 48px;
-  height: 48px;
-  border: 5px solid rgba(255, 255, 255, 0.2);
-  border-top: 5px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 0.5rem;
-}
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}

@@ -1,10 +1,101 @@
 'use client';
-import "@/adminStyle/users.css";
-import "@/adminStyle/common.css";
 
-import { useState } from 'react';
+// import "@/adminStyle/common.css";
+import "@/adminStyle/users.css";
+
+import { useState, useMemo } from 'react';
 
 export default function Users({ onMenuClick }) {
+
+    const selectedUsers = new Set();
+
+    const firstNames = ['김', '이', '박', '정', '최', '조', '윤', '장', '임', '한', '오', '서', '신', '권', '황'];
+    const lastNames = ['민준', '서연', '예준', '하윤', '도윤', '시우', '주원', '지우', '지훈', '시은', '서준', '지호', '지민', '예린', '수빈'];
+    const domains = ['gmail.com', 'naver.com', 'kakao.com', 'outlook.com', 'company.com'];
+    const plans = ['free', 'pro', 'enterprise'];
+    const statuses = ['active', 'inactive', 'suspended', 'pending'];
+    const roles = ['user', 'admin', 'developer'];
+
+    const generateAvatar = (name) => {
+        return name.substring(0, 2).toUpperCase();
+    };
+
+    const getRandomCountry = () => {
+        const countries = ['South Korea', 'USA', 'Germany', 'Japan', 'Canada', 'France'];
+        return countries[Math.floor(Math.random() * countries.length)];
+    };
+
+    const generateIP = () => {
+        return Array(4).fill(0).map(() => Math.floor(Math.random() * 256)).join('.');
+    };
+
+    const users = useMemo(() => {
+        const tempUsers = [];
+
+        for (let i = 1; i <= 147; i++) {
+            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            const name = firstName + lastName;
+            const email = `${name.toLowerCase()}${i}@${domains[Math.floor(Math.random() * domains.length)]}`;
+            const planRand = Math.random();
+            const finalPlan = planRand > 0.875 ? 'pro' : (planRand > 0.95 ? 'enterprise' : 'free');
+            const status = Math.random() > 0.3 ? 'active' : statuses[Math.floor(Math.random() * statuses.length)];
+            const role = roles[Math.floor(Math.random() * roles.length)];
+
+            tempUsers.push({
+                id: i,
+                name,
+                email,
+                plan: finalPlan,
+                status,
+                role,
+                usage: Math.floor(Math.random() * 100),
+                usageLimit: finalPlan === 'free' ? 1000 : finalPlan === 'pro' ? 10000 : 100000,
+                apiCalls: Math.floor(Math.random() * 50000),
+                lastLogin: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+                created: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
+                avatar: generateAvatar(name),
+                country: getRandomCountry(),
+                ipAddress: generateIP(),
+                totalCost: parseFloat((Math.random() * 1000).toFixed(2)),
+            });
+        }
+
+        return tempUsers;
+    }, []);
+    // console.log(users);
+    const [currentPage, setcurrentPage] = useState(1);
+    const pageSize = 20;
+    const [filters, setfilters] = useState({
+        search: '',
+        status: 'all',
+        plan: 'all',
+        role: 'all'
+    });
+
+
+    const filteredUsers = users.filter(user => {
+        const matchesSearch = !filters.search ||
+            user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+            user.email.toLowerCase().includes(filters.search.toLowerCase());
+
+        const matchesStatus = filters.status === 'all' || user.status === filters.status;
+        const matchesPlan = filters.plan === 'all' || user.plan === filters.plan;
+        const matchesRole = filters.role === 'all' || user.role === filters.role;
+
+        return matchesSearch && matchesStatus && matchesPlan && matchesRole;
+    });
+
+    // console.log(filteredUsers);
+
+
+
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const pageUsers = filteredUsers.slice(startIndex, endIndex);
+    console.log(pageUsers);
+
+
     return (
         <>
             <div className="page-container">
@@ -74,7 +165,14 @@ export default function Users({ onMenuClick }) {
                         </div>
 
                         <div className="filter-group">
-                            <select id="status-filter" className="filter-select">
+                            <select id="status-filter" className="filter-select" value={filters.status}
+                                onChange={(e) =>
+                                    setfilters((prev) => ({
+                                        ...prev,
+                                        status: e.target.value
+                                    }))
+                                }
+                            >
                                 <option value="all">모든 상태</option>
                                 <option value="active">활성</option>
                                 <option value="inactive">비활성</option>
@@ -142,6 +240,8 @@ export default function Users({ onMenuClick }) {
                                 </thead>
                                 <tbody id="users-tbody">
                                     {/* 사용자 데이터가 여기에 동적으로 추가됩니다 */}
+                                    {<RenderUsersTable pageUsers={pageUsers} selectedUsers={selectedUsers} />}
+
                                 </tbody>
                             </table>
                         </div>
@@ -155,6 +255,7 @@ export default function Users({ onMenuClick }) {
                     {/* 페이지네이션 */}
                     <div className="pagination" id="pagination">
                         {/* 페이지네이션이 여기에 동적으로 추가됩니다 */}
+                        {<UpdatePagination filteredUsers={filteredUsers} currentPage={currentPage} pageSize={pageSize} setcurrentPage={setcurrentPage} />}
                     </div>
                 </div>
 
@@ -175,4 +276,173 @@ export default function Users({ onMenuClick }) {
             </div>
         </>
     );
+}
+
+function UpdatePagination({ filteredUsers, currentPage, pageSize, setcurrentPage }) {
+    const totalPages = Math.ceil(filteredUsers.length / pageSize);
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+    const startIndex = (currentPage - 1) * pageSize + 1;
+    const endIndex = Math.min(currentPage * pageSize, filteredUsers.length);
+    return (<>
+        <button
+            className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
+            onClick={() => setcurrentPage(currentPage - 1)}
+        >
+            이전
+        </button>
+
+        {startPage > 1 && (
+            <>
+                <button className="pagination-btn" onClick={() => setcurrentPage(1)}>1</button>
+                {startPage > 2 && (
+                    <span className="pagination-ellipsis">...</span>
+                )}
+            </>
+        )}
+
+        {Array.from({ length: endPage - startPage + 1 }, (_, idx) => {
+            const i = startPage + idx;
+            return (
+                <button
+                    key={i}
+                    className={`pagination-btn ${i === currentPage ? 'active' : ''}`}
+                    onClick={() => setcurrentPage(i)}
+                >
+                    {i}
+                </button>
+            );
+        })}
+
+        {endPage < totalPages && (
+            <>
+                {endPage < totalPages - 1 && (
+                    <span className="pagination-ellipsis">...</span>
+                )}
+                <button
+                    className="pagination-btn"
+                    onClick={() => setcurrentPage(totalPages)}
+                >
+                    {totalPages}
+                </button>
+            </>
+        )}
+
+        <button
+            className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+            onClick={() => setcurrentPage(currentPage + 1)}
+        >
+            다음
+        </button>
+
+        <div className="pagination-info">
+            {formatNumber(startIndex)}-{formatNumber(endIndex)} / {formatNumber(filteredUsers.length)}명
+        </div>
+
+    </>);
+}
+
+function formatNumber(num) {
+    return new Intl.NumberFormat('ko-KR').format(num);
+}
+
+
+function RenderUsersTable({ pageUsers, selectedUsers }) {
+    return (<>
+        {pageUsers.map(user => (
+            <tr key={user.id} data-user-id={user.id} className={`${selectedUsers.has(user.id) ? 'selected' : ''}`}>
+                <td>
+                    <input type="checkbox" className="checkbox user-checkbox"
+                        data-user-id={user.id}
+                    />
+                </td>
+                <td>
+                    <div className="user-info">
+                        <div className="user-avatar">{user.avatar}</div>
+                        <div className="user-details">
+                            <div className="user-name">{user.name}</div>
+                            <div className="user-role">{getRoleText(user.role)}</div>
+                        </div>
+                    </div>
+                </td>
+                <td className="user-email">{user.email}</td>
+                <td>
+                    <span className={`plan-badge ${user.plan}`}>{getPlanText(user.plan)}</span>
+                </td>
+                <td>
+                    <span className={`status-badge ${user.status}`}>
+                        <span className="status-dot"></span>
+                        {getStatusText(user.status)}
+                    </span>
+                </td>
+                <td>
+                    <div className="usage-bar">
+                        <div className={`usage-fill ${getUsageLevel(user.usage)}`}
+                            style={{ width: `${user.usage}%` }}></div>
+                    </div>
+                    <div className="usage-text">{user.usage}%</div>
+                </td>
+                <td className="date-cell">{formatDate(user.lastLogin)}</td>
+                <td className="date-cell">{formatDate(user.created)}</td>
+                <td>
+                    <div className="user-actions">
+                        <button className="action-btn" data-action="view" data-user-id={user.id} title="보기">👁️</button>
+                        <button className="action-btn" data-action="edit" data-user-id={user.id} title="편집">✏️</button>
+                        <button className="action-btn" data-action="suspend" data-user-id={user.id} title="정지">⏸️</button>
+                        <button className="action-btn" data-action="delete" data-user-id={user.id} title="삭제">🗑️</button>
+                    </div>
+                </td>
+            </tr>
+        ))}
+    </>);
+}
+
+function getRoleText(role) {
+    const roleMap = {
+        user: '일반 사용자',
+        admin: '관리자',
+        developer: '개발자'
+    };
+    return roleMap[role] || role;
+}
+
+function getPlanText(plan) {
+    const planMap = {
+        free: '무료',
+        pro: 'PRO',
+        enterprise: 'Enterprise'
+    };
+    return planMap[plan] || plan;
+}
+
+function getStatusText(status) {
+    const statusMap = {
+        active: '활성',
+        inactive: '비활성',
+        suspended: '정지',
+        pending: '대기'
+    };
+    return statusMap[status] || status;
+}
+
+function getUsageLevel(usage) {
+    if (usage < 50) return 'low';
+    if (usage < 80) return 'medium';
+    return 'high';
+}
+
+function formatDate(date, format = 'YYYY-MM-DD') {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+
+    return format
+        .replace('YYYY', year)
+        .replace('MM', month)
+        .replace('DD', day)
+        .replace('HH', hours)
+        .replace('mm', minutes);
 }

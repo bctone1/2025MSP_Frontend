@@ -1,6 +1,6 @@
 'use client';
 import "@/adminStyle/dashboard.css";
-import "@/adminStyle/common.css";
+
 
 import { useState } from 'react';
 

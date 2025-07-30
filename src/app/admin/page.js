@@ -11,15 +11,13 @@ import { useState } from 'react';
 // import "@/adminStyle/logs.css";
 // import "@/adminStyle/mcp.css";
 // import "@/adminStyle/providers.css";
-import "@/adminStyle/settings.css";
+// import "@/adminStyle/settings.css";
 // import "@/adminStyle/users.css";
 
 import Sidebar from '@/adminComponents/Sidebar';
 import Dashboard from '@/adminComponents/Dashboard';
 import Users from '@/adminComponents/Users';
-
-
-
+import Providers from '@/adminComponents/Providers';
 
 export default function AdminPage() {
     const [view, setView] = useState('dashboard');
@@ -39,6 +37,8 @@ export default function AdminPage() {
                 return <Dashboard onMenuClick={handleMenuClick} />;
             case 'users':
                 return <Users />;
+            case 'providers':
+                return <Providers />;
             // case 'agents':
             //     return <AgentsPage />;
             // case 'workflow':
@@ -74,7 +74,7 @@ export default function AdminPage() {
                     </div>
                 </div>
             )}
-            
+
 
             <div className="main-content">
                 {renderView()}

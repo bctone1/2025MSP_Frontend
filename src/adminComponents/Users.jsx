@@ -1,6 +1,4 @@
 'use client';
-
-// import "@/adminStyle/common.css";
 import "@/adminStyle/users.css";
 
 import { useState, useMemo } from 'react';
@@ -64,8 +62,25 @@ export default function Users({ onMenuClick }) {
         return tempUsers;
     }, []);
     // console.log(users);
+
+    // 사용자 통계 업데이트
+    const totalUsers = users.length;
+    const activeUsers = users.filter(u => u.status === 'active').length;
+    const newUsers = users.filter(u => {
+        const oneDay = 24 * 60 * 60 * 1000;
+        return (Date.now() - u.created.getTime()) < oneDay;
+    }).length;
+    const proUsers = users.filter(u => u.plan === 'pro' || u.plan === 'enterprise').length;
+
+
+
     const [currentPage, setcurrentPage] = useState(1);
     const pageSize = 20;
+    const [viewMode, setviewMode] = useState('table');
+
+    const [sortBy, setsortBy] = useState('created');
+    const [sortOrder, setsortOrder] = useState('desc');
+
     const [filters, setfilters] = useState({
         search: '',
         status: 'all',
@@ -74,26 +89,56 @@ export default function Users({ onMenuClick }) {
     });
 
 
-    const filteredUsers = users.filter(user => {
-        const matchesSearch = !filters.search ||
-            user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-            user.email.toLowerCase().includes(filters.search.toLowerCase());
+    const filteredUsers = users
+        .filter(user => {
+            const matchesSearch =
+                !filters.search ||
+                user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+                user.email.toLowerCase().includes(filters.search.toLowerCase());
 
-        const matchesStatus = filters.status === 'all' || user.status === filters.status;
-        const matchesPlan = filters.plan === 'all' || user.plan === filters.plan;
-        const matchesRole = filters.role === 'all' || user.role === filters.role;
+            const matchesStatus = filters.status === 'all' || user.status === filters.status;
+            const matchesPlan = filters.plan === 'all' || user.plan === filters.plan;
+            const matchesRole = filters.role === 'all' || user.role === filters.role;
 
-        return matchesSearch && matchesStatus && matchesPlan && matchesRole;
-    });
+            return matchesSearch && matchesStatus && matchesPlan && matchesRole;
+        })
+        .sort((a, b) => {
+            let valA = a[sortBy];
+            let valB = b[sortBy];
 
-    // console.log(filteredUsers);
+            // 날짜 필드 처리
+            if (sortBy === 'created' || sortBy === 'lastLogin') {
+                valA = new Date(valA);
+                valB = new Date(valB);
+            }
 
+            // 문자열 비교 처리
+            if (typeof valA === 'string') valA = valA.toLowerCase();
+            if (typeof valB === 'string') valB = valB.toLowerCase();
+
+            // 숫자나 Date는 그대로 비교
+            if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+            if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+    // sort-by 변경 핸들러
+    const handleSortByChange = (e) => {
+        setsortBy(e.target.value);
+    };
+
+    // sort-order 변경 핸들러
+    const handleSortOrderToggle = () => {
+        setsortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    };
+
+    
 
 
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     const pageUsers = filteredUsers.slice(startIndex, endIndex);
-    console.log(pageUsers);
+    // console.log(pageUsers);
 
 
     return (
@@ -122,7 +167,7 @@ export default function Users({ onMenuClick }) {
                     <div className="stat-card">
                         <div className="stat-icon users-total">👥</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="total-users">1,247</div>
+                            <div className="stat-value" id="total-users">{totalUsers}</div>
                             <div className="stat-label">총 사용자</div>
                             <div className="stat-change positive">+24명 증가</div>
                         </div>
@@ -131,7 +176,7 @@ export default function Users({ onMenuClick }) {
                     <div className="stat-card">
                         <div className="stat-icon users-active">⚡</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="active-users">892</div>
+                            <div className="stat-value" id="active-users">{activeUsers}</div>
                             <div className="stat-label">활성 사용자</div>
                             <div className="stat-change positive">71.5% 활성화율</div>
                         </div>
@@ -140,7 +185,7 @@ export default function Users({ onMenuClick }) {
                     <div className="stat-card">
                         <div className="stat-icon users-new">🆕</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="new-users">43</div>
+                            <div className="stat-value" id="new-users">{newUsers}</div>
                             <div className="stat-label">오늘 신규</div>
                             <div className="stat-change positive">+15명 증가</div>
                         </div>
@@ -149,7 +194,7 @@ export default function Users({ onMenuClick }) {
                     <div className="stat-card">
                         <div className="stat-icon users-pro">⭐</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="pro-users">156</div>
+                            <div className="stat-value" id="pro-users">{proUsers}</div>
                             <div className="stat-label">PRO 사용자</div>
                             <div className="stat-change positive">12.5% 전환율</div>
                         </div>
@@ -180,14 +225,28 @@ export default function Users({ onMenuClick }) {
                                 <option value="pending">대기</option>
                             </select>
 
-                            <select id="plan-filter" className="filter-select">
+                            <select id="plan-filter" className="filter-select" value={filters.plan}
+                                onChange={(e) =>
+                                    setfilters((prev) => ({
+                                        ...prev,
+                                        paln: e.target.value
+                                    }))
+                                }
+                            >
                                 <option value="all">모든 플랜</option>
                                 <option value="free">무료</option>
                                 <option value="pro">PRO</option>
                                 <option value="enterprise">Enterprise</option>
                             </select>
 
-                            <select id="role-filter" className="filter-select">
+                            <select id="role-filter" className="filter-select" value={filters.role}
+                                onChange={(e) =>
+                                    setfilters((prev) => ({
+                                        ...prev,
+                                        role: e.target.value
+                                    }))
+                                }
+                            >
                                 <option value="all">모든 역할</option>
                                 <option value="user">일반 사용자</option>
                                 <option value="admin">관리자</option>
@@ -198,15 +257,21 @@ export default function Users({ onMenuClick }) {
 
                     <div className="toolbar-right">
                         <div className="sort-controls">
-                            <select id="sort-by" className="sort-select">
+                            <select
+                                id="sort-by"
+                                className="sort-select"
+                                value={sortBy}
+                                onChange={handleSortByChange}
+                            >
                                 <option value="created">가입일</option>
                                 <option value="name">이름</option>
                                 <option value="email">이메일</option>
                                 <option value="lastLogin">마지막 로그인</option>
                                 <option value="usage">사용량</option>
+                                <option value="totalCost">총 비용</option>
                             </select>
-                            <button className="sort-order-btn" id="sort-order">
-                                <span id="sort-icon">↓</span>
+                            <button className="sort-order-btn" onClick={handleSortOrderToggle}>
+                                <span id="sort-icon">{sortOrder === 'asc' ? '↑' : '↓'}</span>
                             </button>
                         </div>
 

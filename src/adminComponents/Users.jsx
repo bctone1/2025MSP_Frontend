@@ -89,50 +89,44 @@ export default function Users({ onMenuClick }) {
     });
 
 
-    const filteredUsers = users
-        .filter(user => {
-            const matchesSearch =
-                !filters.search ||
-                user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-                user.email.toLowerCase().includes(filters.search.toLowerCase());
+    const filteredUsers = users.filter(user => {
+        const matchesSearch =
+            !filters.search ||
+            user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+            user.email.toLowerCase().includes(filters.search.toLowerCase());
 
-            const matchesStatus = filters.status === 'all' || user.status === filters.status;
-            const matchesPlan = filters.plan === 'all' || user.plan === filters.plan;
-            const matchesRole = filters.role === 'all' || user.role === filters.role;
+        const matchesStatus = filters.status === 'all' || user.status === filters.status;
+        const matchesPlan = filters.plan === 'all' || user.plan === filters.plan;
+        const matchesRole = filters.role === 'all' || user.role === filters.role;
 
-            return matchesSearch && matchesStatus && matchesPlan && matchesRole;
-        })
-        .sort((a, b) => {
-            let valA = a[sortBy];
-            let valB = b[sortBy];
+        return matchesSearch && matchesStatus && matchesPlan && matchesRole;
+    }).sort((a, b) => {
+        let valA = a[sortBy];
+        let valB = b[sortBy];
 
-            // 날짜 필드 처리
-            if (sortBy === 'created' || sortBy === 'lastLogin') {
-                valA = new Date(valA);
-                valB = new Date(valB);
-            }
+        // 날짜 필드 처리
+        if (sortBy === 'created' || sortBy === 'lastLogin') {
+            valA = new Date(valA);
+            valB = new Date(valB);
+        }
 
-            // 문자열 비교 처리
-            if (typeof valA === 'string') valA = valA.toLowerCase();
-            if (typeof valB === 'string') valB = valB.toLowerCase();
+        // 문자열 비교 처리
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
 
-            // 숫자나 Date는 그대로 비교
-            if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
-            if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
-            return 0;
-        });
+        // 숫자나 Date는 그대로 비교
+        if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+        if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+    });
 
-    // sort-by 변경 핸들러
-    const handleSortByChange = (e) => {
-        setsortBy(e.target.value);
-    };
 
     // sort-order 변경 핸들러
     const handleSortOrderToggle = () => {
         setsortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     };
 
-    
+
 
 
     const startIndex = (currentPage - 1) * pageSize;
@@ -205,7 +199,14 @@ export default function Users({ onMenuClick }) {
                 <div className="users-toolbar">
                     <div className="toolbar-left">
                         <div className="search-box">
-                            <input type="text" id="user-search" placeholder="사용자 검색..." className="search-input" />
+                            <input type="text" id="user-search" placeholder="사용자 검색..." className="search-input" value={filters.search}
+                                onChange={(e) =>
+                                    setfilters((prev) => ({
+                                        ...prev,
+                                        search: e.target.value
+                                    }))
+                                }
+                            />
                             <div className="search-icon">🔍</div>
                         </div>
 
@@ -261,7 +262,7 @@ export default function Users({ onMenuClick }) {
                                 id="sort-by"
                                 className="sort-select"
                                 value={sortBy}
-                                onChange={handleSortByChange}
+                                onChange={(e) => setsortBy(e.target.value)}
                             >
                                 <option value="created">가입일</option>
                                 <option value="name">이름</option>
@@ -338,7 +339,7 @@ export default function Users({ onMenuClick }) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 }

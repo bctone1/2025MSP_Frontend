@@ -5,7 +5,7 @@ import "@/adminStyle/common.css";
 
 import { useState } from 'react';
 
-export default function Providers({ onMenuClick }) {
+export default function Providers() {
     const providers = [
         {
             id: 'openai',
@@ -191,7 +191,6 @@ export default function Providers({ onMenuClick }) {
     const totalCalls = providers.reduce((sum, p) => sum + p.todayCalls, 0);
     const totalCost = providers.reduce((sum, p) => sum + p.monthCost, 0);
 
-
     const [filters, setfilters] = useState({
         search: '',
         status: 'all',
@@ -199,6 +198,9 @@ export default function Providers({ onMenuClick }) {
         region: 'all'
     });
 
+    const [sortBy, setsortBy] = useState('name');
+    const [sortOrder, setsortOrder] = useState('asc');
+    const [viewMode, setviewMode] = useState('grid');
 
     const filteredProviders = providers.filter(provider => {
         const matchesSearch = !filters.search ||
@@ -210,8 +212,26 @@ export default function Providers({ onMenuClick }) {
         const matchesRegion = filters.region === 'all' || provider.region === filters.region;
 
         return matchesSearch && matchesStatus && matchesType && matchesRegion;
+    }).sort((a, b) => {
+        let valA = a[sortBy];
+        let valB = b[sortBy];
+
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
+
+
+        if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+        if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
     });
+
+
+
     // console.log(filteredProviders);
+    const handleSortOrderToggle = () => {
+        setsortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    };
+
 
 
 
@@ -280,7 +300,14 @@ export default function Providers({ onMenuClick }) {
                 <div className="providers-toolbar">
                     <div className="toolbar-left">
                         <div className="search-box">
-                            <input type="text" id="provider-search" placeholder="프로바이더 검색..." className="search-input" />
+                            <input type="text" id="provider-search" placeholder="프로바이더 검색..." className="search-input" value={filters.search}
+                                onChange={(e) =>
+                                    setfilters((prev) => ({
+                                        ...prev,
+                                        search: e.target.value
+                                    }))
+                                }
+                            />
                             <div className="search-icon">🔍</div>
                         </div>
 
@@ -333,15 +360,17 @@ export default function Providers({ onMenuClick }) {
 
                     <div className="toolbar-right">
                         <div className="sort-controls">
-                            <select id="sort-by" className="sort-select">
+                            <select id="sort-by" className="sort-select" value={sortBy}
+                                onChange={(e) => setsortBy(e.target.value)}
+                            >
                                 <option value="name">이름</option>
                                 <option value="status">상태</option>
                                 <option value="cost">비용</option>
                                 <option value="calls">호출 수</option>
                                 <option value="latency">응답시간</option>
                             </select>
-                            <button className="sort-order-btn" id="sort-order">
-                                <span id="sort-icon">↓</span>
+                            <button className="sort-order-btn" onClick={handleSortOrderToggle}>
+                                <span id="sort-icon">{sortOrder === 'asc' ? '↑' : '↓'}</span>
                             </button>
                         </div>
 

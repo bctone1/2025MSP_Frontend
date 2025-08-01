@@ -11,13 +11,15 @@ import { useState } from 'react';
 // import "@/adminStyle/logs.css";
 // import "@/adminStyle/mcp.css";
 // import "@/adminStyle/providers.css";
-// import "@/adminStyle/settings.css";
+import "@/adminStyle/settings.css";
 // import "@/adminStyle/users.css";
 
 import Sidebar from '@/adminComponents/Sidebar';
 import Dashboard from '@/adminComponents/Dashboard';
 import Users from '@/adminComponents/Users';
 import Providers from '@/adminComponents/Providers';
+import Agents from '@/adminComponents/Agent';
+import Mcp from '@/adminComponents/Mcp';
 
 export default function AdminPage() {
     const [view, setView] = useState('dashboard');
@@ -39,6 +41,10 @@ export default function AdminPage() {
                 return <Users />;
             case 'providers':
                 return <Providers />;
+            case 'agents':
+                return <Agents />;
+            case 'mcp':
+                return <Mcp />;
             // case 'agents':
             //     return <AgentsPage />;
             // case 'workflow':

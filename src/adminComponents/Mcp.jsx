@@ -299,6 +299,14 @@ export default function Agents() {
     });
 
 
+    const totalServers = servers.length;
+    const connectedServers = servers.filter(s => s.status === 'connected').length;
+    const totalTools = tools.length;
+    const totalRequests = servers.reduce((sum, s) => sum + s.metrics.requests, 0);
+    const avgLatency = Math.round(servers.reduce((sum, s) => sum + s.metrics.avgLatency, 0) / servers.length);
+    const errorRate = (servers.reduce((sum, s) => sum + s.metrics.errors, 0) / totalRequests * 100).toFixed(1);
+
+
 
     return (
         <>
@@ -329,7 +337,7 @@ export default function Agents() {
                     <div className="stat-card">
                         <div className="stat-icon servers-total">🖥️</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="total-servers">24</div>
+                            <div className="stat-value" id="total-servers">{totalServers}</div>
                             <div className="stat-label">총 MCP 서버</div>
                             <div className="stat-change positive">+3개 이번 주</div>
                         </div>
@@ -338,7 +346,7 @@ export default function Agents() {
                     <div className="stat-card">
                         <div className="stat-icon servers-connected">✅</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="connected-servers">18</div>
+                            <div className="stat-value" id="connected-servers">{connectedServers}</div>
                             <div className="stat-label">연결된 서버</div>
                             <div className="stat-change positive">75% 연결률</div>
                         </div>
@@ -347,7 +355,7 @@ export default function Agents() {
                     <div className="stat-card">
                         <div className="stat-icon servers-tools">🛠️</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="total-tools">156</div>
+                            <div className="stat-value" id="total-tools">{totalTools}</div>
                             <div className="stat-label">사용 가능한 도구</div>
                             <div className="stat-change positive">평균 6.5개/서버</div>
                         </div>
@@ -356,7 +364,7 @@ export default function Agents() {
                     <div className="stat-card">
                         <div className="stat-icon servers-requests">📊</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="daily-requests">47.2K</div>
+                            <div className="stat-value" id="daily-requests">{formatNumber(totalRequests)}</div>
                             <div className="stat-label">오늘 요청 수</div>
                             <div className="stat-change positive">+18% 증가</div>
                         </div>
@@ -365,7 +373,7 @@ export default function Agents() {
                     <div className="stat-card">
                         <div className="stat-icon servers-latency">⚡</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="avg-latency">127ms</div>
+                            <div className="stat-value" id="avg-latency">{avgLatency}ms</div>
                             <div className="stat-label">평균 응답시간</div>
                             <div className="stat-change positive">-12ms 개선</div>
                         </div>
@@ -374,7 +382,7 @@ export default function Agents() {
                     <div className="stat-card">
                         <div className="stat-icon servers-errors">⚠️</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="error-rate">0.3%</div>
+                            <div className="stat-value" id="error-rate">{errorRate}%</div>
                             <div className="stat-label">오류율</div>
                             <div className="stat-change positive">-0.1% 감소</div>
                         </div>

@@ -20,6 +20,8 @@ import Users from '@/adminComponents/Users';
 import Providers from '@/adminComponents/Providers';
 import Agents from '@/adminComponents/Agent';
 import Mcp from '@/adminComponents/Mcp';
+import History from '@/adminComponents/History';
+import Billing from '@/adminComponents/Billing';
 
 export default function AdminPage() {
     const [view, setView] = useState('dashboard');
@@ -45,6 +47,10 @@ export default function AdminPage() {
                 return <Agents />;
             case 'mcp':
                 return <Mcp />;
+            case 'history':
+                return <History />;
+            case 'billing':
+                return <Billing />;
             // case 'agents':
             //     return <AgentsPage />;
             // case 'workflow':

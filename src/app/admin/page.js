@@ -22,6 +22,7 @@ import Agents from '@/adminComponents/Agent';
 import Mcp from '@/adminComponents/Mcp';
 import History from '@/adminComponents/History';
 import Billing from '@/adminComponents/Billing';
+import Analytics from '@/adminComponents/Analytics';
 
 export default function AdminPage() {
     const [view, setView] = useState('dashboard');
@@ -51,21 +52,8 @@ export default function AdminPage() {
                 return <History />;
             case 'billing':
                 return <Billing />;
-            // case 'agents':
-            //     return <AgentsPage />;
-            // case 'workflow':
-            //     return <WorkflowPage />;
-            // case 'mcp':
-            //     return <McpPage />;
-            // case 'api-keys':
-            //     return <ApikeysPage />;
-            // case 'assistant':
-            //     return <AssistantPage />;
-            // case 'knowledge':
-            //     return <KnowledgePage />;
-            // case 'history':
-            //     return <HistoryPage onMenuClick={handleMenuClick} />;
-
+            case 'analytics':
+                return <Analytics />;
             default:
                 return <div>준비 중입니다: {view}</div>;
         }

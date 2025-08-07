@@ -2,7 +2,8 @@
 
 import "@/adminStyle/analytics.css";
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { Chart } from 'chart.js/auto';
 
 export default function Analytics() {
 
@@ -226,7 +227,7 @@ export default function Analytics() {
                             </div>
                         </div>
                         <div className="chart-content">
-                            <canvas id="usage-trend-chart"></canvas>
+                            {<RenderUsageChart currentChart="calls" />}
                         </div>
                     </div>
 
@@ -245,6 +246,7 @@ export default function Analytics() {
                         </div>
                         <div className="chart-content">
                             <canvas id="provider-breakdown-chart"></canvas>
+                            {<RenderProviderChart />}
                         </div>
                     </div>
 
@@ -448,6 +450,131 @@ export default function Analytics() {
         </>
     );
 }
+
+
+function RenderUsageChart({ currentChart = 'calls' }) {
+    const [data, setData] = useState(null);
+    const canvasRef = useRef(null);
+    const chartInstance = useRef(null);
+
+    // 가상의 데이터 생성 함수
+    const generateUsageData = () => {
+        const days = 7;
+        const data = [];
+
+        for (let i = days - 1; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+
+            data.push({
+                date: date.toISOString().split('T')[0],
+                calls: Math.floor(Math.random() * 50000) + 300000,
+                tokens: Math.floor(Math.random() * 20000000) + 100000000,
+                cost: Math.floor(Math.random() * 2000) + 1500,
+                previousCalls: Math.floor(Math.random() * 45000) + 280000,
+                previousTokens: Math.floor(Math.random() * 18000000) + 90000000,
+                previousCost: Math.floor(Math.random() * 1800) + 1300
+            });
+        }
+
+        return data;
+    };
+
+    useEffect(() => {
+        setData(generateUsageData());
+    }, []);
+
+    useEffect(() => {
+        if (!data || !canvasRef.current) return;
+
+        const ctx = canvasRef.current.getContext('2d');
+
+        if (chartInstance.current) {
+            chartInstance.current.destroy();
+        }
+
+        chartInstance.current = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d =>
+                    new Date(d.date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
+                ),
+                datasets: [
+                    {
+                        label: '현재 기간',
+                        data: data.map(d => {
+                            switch (currentChart) {
+                                case 'tokens': return d.tokens;
+                                case 'cost': return d.cost;
+                                default: return d.calls;
+                            }
+                        }),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: '이전 기간',
+                        data: data.map(d => {
+                            switch (currentChart) {
+                                case 'tokens': return d.previousTokens;
+                                case 'cost': return d.previousCost;
+                                default: return d.previousCalls;
+                            }
+                        }),
+                        borderColor: '#94a3b8',
+                        backgroundColor: 'rgba(148, 163, 184, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        borderDash: [5, 5]
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(229, 231, 235, 0.5)'
+                        }
+                    }
+                }
+            }
+        });
+
+        return () => {
+            if (chartInstance.current) {
+                chartInstance.current.destroy();
+            }
+        };
+    }, [data, currentChart]);
+
+    if (!data) {
+        return <div>차트를 로딩 중입니다...</div>;
+    }
+
+    return (
+
+        <canvas ref={canvasRef} />
+
+    );
+}
+
+
 
 function RenderErrorAnalysisTable({ errorAnalysis }) {
     return (

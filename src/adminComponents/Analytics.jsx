@@ -246,7 +246,7 @@ export default function Analytics() {
                         </div>
                         <div className="chart-content">
                             <canvas id="provider-breakdown-chart"></canvas>
-                            {<RenderProviderChart />}
+                            {/* {<RenderProviderChart />} */}
                         </div>
                     </div>
 

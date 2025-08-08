@@ -23,6 +23,7 @@ import Mcp from '@/adminComponents/Mcp';
 import History from '@/adminComponents/History';
 import Billing from '@/adminComponents/Billing';
 import Analytics from '@/adminComponents/Analytics';
+import Logs from '@/adminComponents/Logs';
 
 export default function AdminPage() {
     const [view, setView] = useState('dashboard');
@@ -54,6 +55,8 @@ export default function AdminPage() {
                 return <Billing />;
             case 'analytics':
                 return <Analytics />;
+            case 'logs':
+                return <Logs />;
             default:
                 return <div>준비 중입니다: {view}</div>;
         }
@@ -66,7 +69,6 @@ export default function AdminPage() {
             </div>
 
             {loading && (
-
                 <div className={`loading-overlay${loading ? ' active' : ''}`}>
                     <div className="loading-spinner text-center text-white">
                         <div className="spinner"></div>
@@ -74,7 +76,6 @@ export default function AdminPage() {
                     </div>
                 </div>
             )}
-
 
             <div className="main-content">
                 {renderView()}

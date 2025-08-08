@@ -131,6 +131,28 @@ export default function Analytics() {
         }
     ];
 
+    const stats = {
+        totalApiCalls: 2400000,
+        totalTokens: 847000000,
+        totalCost: 12847.50,
+        activeUsers: 1247,
+        avgResponseTime: 1.24,
+        errorRate: 0.8,
+        changes: {
+            apiCalls: 18.5,
+            tokens: 22.3,
+            cost: 15.2,
+            users: 24,
+            responseTime: -12.1,
+            errorRate: -37.5
+        }
+    };
+
+    const [grafStatus, setgrafStatus] = useState({
+        currentChart: "calls",
+        providerMetric: "calls"
+    });
+
     return (
         <>
             <div className="page-container">
@@ -159,7 +181,7 @@ export default function Analytics() {
                     <div className="stat-card api-calls">
                         <div className="stat-icon">⚡</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="total-api-calls">2.4M</div>
+                            <div className="stat-value" id="total-api-calls">{formatNumber(stats.totalApiCalls)}</div>
                             <div className="stat-label">총 API 호출</div>
                             <div className="stat-change positive" id="api-calls-change">+18.5% vs 지난주</div>
                         </div>
@@ -168,7 +190,7 @@ export default function Analytics() {
                     <div className="stat-card tokens">
                         <div className="stat-icon">🔤</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="total-tokens">847M</div>
+                            <div className="stat-value" id="total-tokens">{formatNumber(stats.totalTokens)}</div>
                             <div className="stat-label">토큰 사용량</div>
                             <div className="stat-change positive" id="tokens-change">+22.3% vs 지난주</div>
                         </div>
@@ -177,7 +199,7 @@ export default function Analytics() {
                     <div className="stat-card cost">
                         <div className="stat-icon">💰</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="total-cost">$12,847</div>
+                            <div className="stat-value" id="total-cost">${formatNumber(stats.totalCost)}</div>
                             <div className="stat-label">총 사용 비용</div>
                             <div className="stat-change positive" id="cost-change">+15.2% vs 지난주</div>
                         </div>
@@ -186,7 +208,7 @@ export default function Analytics() {
                     <div className="stat-card users">
                         <div className="stat-icon">👥</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="active-users">1,247</div>
+                            <div className="stat-value" id="active-users">{formatNumber(stats.activeUsers)}</div>
                             <div className="stat-label">활성 사용자</div>
                             <div className="stat-change positive" id="users-change">+24 vs 지난주</div>
                         </div>
@@ -195,7 +217,7 @@ export default function Analytics() {
                     <div className="stat-card response-time">
                         <div className="stat-icon">⏱️</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="avg-response-time">1.24s</div>
+                            <div className="stat-value" id="avg-response-time">{stats.avgResponseTime}s</div>
                             <div className="stat-label">평균 응답시간</div>
                             <div className="stat-change negative" id="response-time-change">-12.1% vs 지난주</div>
                         </div>
@@ -204,7 +226,7 @@ export default function Analytics() {
                     <div className="stat-card error-rate">
                         <div className="stat-icon">⚠️</div>
                         <div className="stat-content">
-                            <div className="stat-value" id="error-rate">0.8%</div>
+                            <div className="stat-value" id="error-rate">{stats.errorRate}%</div>
                             <div className="stat-label">오류율</div>
                             <div className="stat-change negative" id="error-rate-change">-37.5% vs 지난주</div>
                         </div>
@@ -221,13 +243,42 @@ export default function Analytics() {
                                 API 사용량 트렌드
                             </h3>
                             <div className="chart-tabs">
-                                <button className="chart-tab active" data-chart="calls">호출</button>
-                                <button className="chart-tab" data-chart="tokens">토큰</button>
-                                <button className="chart-tab" data-chart="cost">비용</button>
+                                <button
+                                    className={`chart-tab ${grafStatus.currentChart === "calls" ? "active" : ""}`}
+                                    onClick={(e) => setgrafStatus(prev => ({
+                                        ...prev,
+                                        currentChart: e.target.dataset.chart
+                                    }))}
+                                    data-chart="calls"
+                                >
+                                    호출
+                                </button>
+
+                                <button
+                                    className={`chart-tab ${grafStatus.currentChart === "tokens" ? "active" : ""}`}
+                                    onClick={(e) => setgrafStatus(prev => ({
+                                        ...prev,
+                                        currentChart: e.target.dataset.chart
+                                    }))}
+                                    data-chart="tokens"
+                                >
+                                    토큰
+                                </button>
+
+                                <button
+                                    className={`chart-tab ${grafStatus.currentChart === "cost" ? "active" : ""}`}
+                                    onClick={(e) => setgrafStatus(prev => ({
+                                        ...prev,
+                                        currentChart: e.target.dataset.chart
+                                    }))}
+                                    data-chart="cost"
+                                >
+                                    비용
+                                </button>
                             </div>
                         </div>
                         <div className="chart-content">
-                            {<RenderUsageChart currentChart="calls" />}
+                            {<RenderUsageChart currentChart={grafStatus.currentChart} />}
                         </div>
                     </div>
 
@@ -238,15 +289,19 @@ export default function Analytics() {
                                 <span className="chart-icon">🔗</span>
                                 프로바이더별 사용량
                             </h3>
-                            <select id="provider-metric" className="filter-select">
+                            <select id="provider-metric" className="filter-select" value={grafStatus.providerMetric}
+                                onChange={(e) => setgrafStatus(prev => ({
+                                    ...prev,
+                                    providerMetric: e.target.value
+                                }))}
+                            >
                                 <option value="calls">API 호출 수</option>
                                 <option value="tokens">토큰 사용량</option>
                                 <option value="cost">비용</option>
                             </select>
                         </div>
                         <div className="chart-content">
-                            <canvas id="provider-breakdown-chart"></canvas>
-                            {/* {<RenderProviderChart />} */}
+                            {<RenderProviderChart providerMetric={grafStatus.providerMetric} />}
                         </div>
                     </div>
 
@@ -264,7 +319,8 @@ export default function Analytics() {
                             </div>
                         </div>
                         <div className="chart-content">
-                            <canvas id="user-activity-chart"></canvas>
+                            {/* <canvas id="user-activity-chart"></canvas> */}
+                            {<RenderUserActivityChart />}
                         </div>
                     </div>
 
@@ -291,7 +347,8 @@ export default function Analytics() {
                             </div>
                         </div>
                         <div className="chart-content">
-                            <canvas id="performance-chart"></canvas>
+                            {/* <canvas id="performance-chart"></canvas> */}
+                            {<RenderPerformanceChart />}
                         </div>
                     </div>
                 </div>
@@ -451,6 +508,222 @@ export default function Analytics() {
     );
 }
 
+function RenderPerformanceChart() {
+    const [data, setData] = useState(null);
+    const canvasRef = useRef(null);
+    const chartInstance = useRef(null);
+    const generatePerformanceData = () => {
+        const data = [];
+        for (let i = 0; i < 24; i++) {
+            data.push({
+                hour: i,
+                latency: 0.8 + Math.random() * 1.0,
+                throughput: 800 + Math.random() * 400,
+                errors: Math.random() * 2
+            });
+        }
+        return data;
+    }
+
+    useEffect(() => {
+        setData(generatePerformanceData());
+    }, []);
+
+    useEffect(() => {
+        if (!data || !canvasRef.current) return;
+        const ctx = canvasRef.current.getContext('2d');
+        if (chartInstance.current) {
+            chartInstance.current.destroy();
+        }
+        chartInstance.current = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d => `${d.hour}:00`),
+                datasets: [{
+                    label: '응답시간 (초)',
+                    data: data.map(d => d.latency),
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(229, 231, 235, 0.5)'
+                        }
+                    }
+                }
+            }
+        });
+    }, [data]);
+    return (<canvas ref={canvasRef} id="performance-chart"></canvas>);
+}
+
+function RenderUserActivityChart() {
+    const canvasRef = useRef(null);
+    const chartInstance = useRef(null);
+    const hours = Array.from({ length: 24 }, (_, i) => i);
+    const activityData = hours.map(hour => {
+        let baseActivity = 50;
+        if (hour >= 9 && hour <= 18) {
+            baseActivity = 80;
+        }
+        if (hour >= 0 && hour <= 6) {
+            baseActivity = 20;
+        }
+        return baseActivity + Math.random() * 30 - 15;
+    });
+
+    useEffect(() => {
+        if (!activityData || !canvasRef.current) return;
+        const ctx = canvasRef.current.getContext('2d');
+        if (chartInstance.current) {
+            chartInstance.current.destroy();
+        }
+        chartInstance.current = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: hours.map(h => `${h}:00`),
+                datasets: [{
+                    label: '사용자 활동',
+                    data: activityData,
+                    backgroundColor: (context) => {
+                        const value = context.parsed.y;
+                        if (value > 80) return 'rgba(59, 130, 246, 0.8)';
+                        if (value > 60) return 'rgba(59, 130, 246, 0.6)';
+                        if (value > 40) return 'rgba(59, 130, 246, 0.4)';
+                        return 'rgba(59, 130, 246, 0.2)';
+                    },
+                    borderColor: '#3b82f6',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(229, 231, 235, 0.5)'
+                        }
+                    }
+                }
+            }
+        });
+
+    }, [activityData]);
+
+
+
+
+    return (<canvas ref={canvasRef} id="user-activity-chart"></canvas>);
+}
+
+function RenderProviderChart({ providerMetric = 'calls' }) {
+    const [data, setData] = useState(null);
+    const canvasRef = useRef(null);
+    const chartInstance = useRef(null);
+
+    const generateProviderData = () => {
+        return [
+            { name: 'OpenAI', calls: 1200000, tokens: 450000000, cost: 6500, color: '#000000' },
+            { name: 'Anthropic', calls: 680000, tokens: 235000000, cost: 3200, color: '#2d5a87' },
+            { name: 'Google', calls: 420000, tokens: 120000000, cost: 1800, color: '#4285f4' },
+            { name: 'Cohere', calls: 100000, tokens: 42000000, cost: 900, color: '#39d353' }
+        ];
+    }
+    useEffect(() => {
+        setData(generateProviderData());
+    }, []);
+
+    useEffect(() => {
+        if (!data || !canvasRef.current) return;
+        const ctx = canvasRef.current.getContext('2d');
+        if (chartInstance.current) {
+            chartInstance.current.destroy();
+        }
+        chartInstance.current = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: data.map(d => d.name),
+                datasets: [{
+                    data: data.map(d => {
+                        switch (providerMetric) {
+                            case 'tokens': return d.tokens;
+                            case 'cost': return d.cost;
+                            default: return d.calls;
+                        }
+                    }),
+                    backgroundColor: [
+                        '#3b82f6',
+                        '#10b981',
+                        '#f59e0b',
+                        '#ef4444',
+                        '#8b5cf6'
+                    ],
+                    borderWidth: 0,
+                    hoverBorderWidth: 3,
+                    hoverBorderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            },
+                            color: '#374151'
+                        }
+                    }
+                }
+            }
+        });
+
+    }, [data, providerMetric]);
+
+
+
+    return (
+        <canvas ref={canvasRef} id="provider-breakdown-chart" />
+    );
+}
+
 
 function RenderUsageChart({ currentChart = 'calls' }) {
     const [data, setData] = useState(null);
@@ -476,7 +749,6 @@ function RenderUsageChart({ currentChart = 'calls' }) {
                 previousCost: Math.floor(Math.random() * 1800) + 1300
             });
         }
-
         return data;
     };
 
@@ -569,7 +841,7 @@ function RenderUsageChart({ currentChart = 'calls' }) {
 
     return (
 
-        <canvas ref={canvasRef} />
+        <canvas ref={canvasRef} id="usage-trend-chart" />
 
     );
 }

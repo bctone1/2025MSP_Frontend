@@ -3,9 +3,133 @@
 import "@/adminStyle/logs.css";
 
 import { useState, useEffect, useRef } from 'react';
-import { Chart } from 'chart.js/auto';
 
 export default function Logs() {
+    const [logs, setlogs] = useState([
+        {
+            id: 'log_001',
+            timestamp: '2024-08-11T10:30:25.123Z',
+            level: 'error',
+            service: 'api',
+            message: 'Database connection timeout: Unable to connect to PostgreSQL server',
+            details: {
+                error: 'ETIMEDOUT',
+                host: 'db-primary.internal',
+                port: 5432,
+                duration: '5000ms',
+                stack: 'Error: Connection timeout\n    at Connection.connect (/app/db/connection.js:45:12)'
+            },
+            userId: 'user_12345',
+            ip: '192.168.1.100',
+            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            requestId: 'req_abc123',
+            sessionId: 'sess_xyz789'
+        },
+        {
+            id: 'log_002',
+            timestamp: '2024-08-11T10:29:45.876Z',
+            level: 'warning',
+            service: 'auth',
+            message: 'Rate limit exceeded for IP 203.0.113.45',
+            details: {
+                ip: '203.0.113.45',
+                endpoint: '/api/auth/login',
+                requestCount: 105,
+                timeWindow: '1 minute',
+                action: 'blocked'
+            },
+            userId: null,
+            ip: '203.0.113.45',
+            userAgent: 'curl/7.68.0',
+            requestId: 'req_def456',
+            sessionId: null
+        },
+        {
+            id: 'log_003',
+            timestamp: '2024-08-11T10:29:15.234Z',
+            level: 'info',
+            service: 'ai',
+            message: 'AI model inference completed successfully',
+            details: {
+                model: 'claude-3-opus',
+                tokens: 1250,
+                processingTime: '2.3s',
+                userId: 'user_67890',
+                cost: 0.025
+            },
+            userId: 'user_67890',
+            ip: '10.0.1.55',
+            userAgent: 'MetaLLM-Client/1.0',
+            requestId: 'req_ghi789',
+            sessionId: 'sess_abc123'
+        },
+        {
+            id: 'log_004',
+            timestamp: '2024-08-11T10:28:50.567Z',
+            level: 'debug',
+            service: 'cache',
+            message: 'Cache hit for key: user_profiles:12345',
+            details: {
+                key: 'user_profiles:12345',
+                ttl: 3600,
+                size: '2.4KB',
+                hitRate: 0.87
+            },
+            userId: 'user_12345',
+            ip: '10.0.1.33',
+            userAgent: 'MetaLLM-Client/1.0',
+            requestId: 'req_jkl012',
+            sessionId: 'sess_def456'
+        },
+        {
+            id: 'log_005',
+            timestamp: '2024-08-11T10:28:30.890Z',
+            level: 'error',
+            service: 'cdn',
+            message: 'Failed to deliver static asset: file not found',
+            details: {
+                path: '/assets/images/logo-v2.png',
+                statusCode: 404,
+                referer: 'https://app.metallm.ai/dashboard',
+                userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
+            },
+            userId: 'user_54321',
+            ip: '172.16.0.25',
+            userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+            requestId: 'req_mno345',
+            sessionId: 'sess_ghi789'
+        }
+    ]);
+
+    const [filters, setfilters] = useState({
+        level: 'all',
+        service: 'all',
+        timerange: '24h',
+        search: '',
+        startDate: '',
+        endDate: ''
+    });
+
+    const [currentPage, setcurrentPage] = useState(1);
+    const [settings, setsettings] = useState({
+        autoRefresh: false,
+        followLogs: false,
+        paused: false,
+        logsPerPage: 100,
+        refreshInterval: 5000
+    });
+
+    // const [totalLogs, settotalLogs] = useState(0);
+    const [filteredLogs, setFilteredLogs] = useState([]);
+
+    useEffect(() => {
+        const result = getFilteredLogs({ filters, logs, currentPage, settings });
+        setFilteredLogs(result);
+        // settotalLogs(result.length);
+    }, [filters, logs, currentPage, settings]);
+    // console.log(filteredLogs);
+    // console.log(filteredLogs.length);
+
     return (
         <>
             <div className="page-container">
@@ -105,7 +229,14 @@ export default function Logs() {
                         </div>
 
                         <div className="filter-group">
-                            <select id="level-filter" className="filter-select">
+                            <select id="level-filter" className="filter-select" value={filters.level}
+                                onChange={(e) =>
+                                    setfilters((prev) => ({
+                                        ...prev,
+                                        level: e.target.value
+                                    }))
+                                }
+                            >
                                 <option value="all">모든 레벨</option>
                                 <option value="error">오류</option>
                                 <option value="warning">경고</option>
@@ -113,7 +244,14 @@ export default function Logs() {
                                 <option value="debug">디버그</option>
                             </select>
 
-                            <select id="service-filter" className="filter-select">
+                            <select id="service-filter" className="filter-select" value={filters.service}
+                                onChange={(e) =>
+                                    setfilters((prev) => ({
+                                        ...prev,
+                                        service: e.target.value
+                                    }))
+                                }
+                            >
                                 <option value="all">모든 서비스</option>
                                 <option value="api">API 서버</option>
                                 <option value="auth">인증 서비스</option>
@@ -124,7 +262,14 @@ export default function Logs() {
                                 <option value="monitoring">모니터링</option>
                             </select>
 
-                            <select id="timerange-filter" className="filter-select">
+                            <select id="timerange-filter" className="filter-select" value={filters.timerange}
+                                onChange={(e) =>
+                                    setfilters((prev) => ({
+                                        ...prev,
+                                        timerange: e.target.value
+                                    }))
+                                }
+                            >
                                 <option value="1h">최근 1시간</option>
                                 <option value="6h">최근 6시간</option>
                                 <option value="24h">최근 24시간</option>
@@ -136,10 +281,28 @@ export default function Logs() {
                     </div>
 
                     <div className="toolbar-right">
-                        <div className="date-picker" id="custom-date-picker" style={{ display: "none" }}>
-                            <input type="datetime-local" id="start-datetime" className="datetime-input" />
+                        <div
+                            className="date-picker"
+                            id="custom-date-picker"
+                            style={{ display: filters.timerange === "custom" ? "block" : "none" }}
+                        >
+                            <input type="datetime-local" id="start-datetime" className="datetime-input" value={filters.startDate}
+                                onChange={(e) =>
+                                    setfilters((prev) => ({
+                                        ...prev,
+                                        startDate: e.target.value
+                                    }))
+                                }
+                            />
                             <span>~</span>
-                            <input type="datetime-local" id="end-datetime" className="datetime-input" />
+                            <input type="datetime-local" id="end-datetime" className="datetime-input" value={filters.endDate}
+                                onChange={(e) =>
+                                    setfilters((prev) => ({
+                                        ...prev,
+                                        endDate: e.target.value
+                                    }))
+                                }
+                            />
                         </div>
 
                         <div className="log-controls">
@@ -182,6 +345,7 @@ export default function Logs() {
                     {/* 로그 목록 */}
                     <div className="logs-list" id="logs-list">
                         {/* 로그 항목들이 여기에 동적으로 추가됩니다 */}
+                        {<RenderLogs filteredLogs={filteredLogs} />}
                     </div>
 
                     {/* 로그 로딩 */}
@@ -196,7 +360,7 @@ export default function Logs() {
                             더 많은 로그 보기
                         </button>
                         <div className="pagination-info">
-                            <span id="logs-count">100개 로그 표시 중</span>
+                            <span id="logs-count">{filteredLogs.length}개 로그 표시 중</span>
                         </div>
                     </div>
                 </div>
@@ -548,4 +712,162 @@ export default function Logs() {
 
         </>
     );
+}
+
+function getFilteredLogs({ filters, logs, currentPage, settings }) {
+    let filtered = [...logs];
+
+    // 레벨 필터
+    if (filters.level !== 'all') {
+        filtered = filtered.filter(log => log.level === filters.level);
+    }
+
+    // 서비스 필터
+    if (filters.service !== 'all') {
+        filtered = filtered.filter(log => log.service === filters.service);
+    }
+
+    // 검색 필터
+    if (filters.search) {
+        const searchTerm = filters.search.toLowerCase();
+        filtered = filtered.filter(log =>
+            log.message.toLowerCase().includes(searchTerm) ||
+            log.service.toLowerCase().includes(searchTerm) ||
+            (log.userId && log.userId.toLowerCase().includes(searchTerm)) ||
+            (log.ip && log.ip.includes(searchTerm))
+        );
+    }
+
+    // 시간 필터
+    if (filters.timerange !== 'custom') {
+        const now = new Date();
+        let startTime;
+
+        switch (filters.timerange) {
+            case '1h':
+                startTime = new Date(now.getTime() - 60 * 60 * 1000);
+                break;
+            case '6h':
+                startTime = new Date(now.getTime() - 6 * 60 * 60 * 1000);
+                break;
+            case '24h':
+                startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                break;
+            case '7d':
+                startTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                break;
+            case '30d':
+                startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                break;
+        }
+
+        if (startTime) {
+            filtered = filtered.filter(log => new Date(log.timestamp) >= startTime);
+        }
+    } else if (filters.startDate && filters.endDate) {
+        const startTime = new Date(filters.startDate);
+        const endTime = new Date(filters.endDate);
+
+        filtered = filtered.filter(log => {
+            const logTime = new Date(log.timestamp);
+            return logTime >= startTime && logTime <= endTime;
+        });
+    }
+
+    // 정렬 (최신순)
+    filtered.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    // 페이지네이션
+    const startIndex = (currentPage - 1) * settings.logsPerPage;
+    const endIndex = startIndex + settings.logsPerPage;
+
+    // settotalLogs(filtered.length);
+    // totalLogs = filtered.length;
+    return filtered.slice(startIndex, endIndex);
+}
+
+function RenderLogs({ filteredLogs }) {
+    return (
+        <>
+            {filteredLogs.length === 0 && (
+                RenderEmptyLogs()
+            )}
+            {filteredLogs.map((log) => (
+                renderLogEntry(log)
+            ))}
+        </>
+    );
+}
+
+function RenderEmptyLogs() {
+    return (
+        <div className="empty-logs">
+            <div className="empty-icon">📭</div>
+            <h3>로그가 없습니다</h3>
+            <p>선택한 조건에 맞는 로그가 없습니다.<br />필터를 조정하거나 다른 시간 범위를 선택해보세요.</p>
+        </div>
+    );
+}
+
+function renderLogEntry(log) {
+    const timestamp = formatTimestamp(log.timestamp);
+    const timeAgo = getTimeAgo(log.timestamp);
+    return (
+        <div className={`log-entry level-${log.level}`} key={log.id}>
+            <div className="log-timestamp" title={timestamp}>{timeAgo}</div>
+            <div className={`log-level ${log.level}`}>{log.level}</div>
+            <div className="log-service">{log.service}</div>
+            <div className="log-message">{log.message}</div>
+            <div className="log-actions">
+                <button className="log-action-btn view"
+                // onclick="LogManager.viewLogDetail('${log.id}')"
+                >
+                    👁️
+                </button>
+                <button className="log-action-btn copy"
+                // onclick="LogManager.copyLogMessage('${log.id}')"
+                >
+                    📋
+                </button>
+            </div>
+        </div>
+    );
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        fractionalSecondDigits: 3
+    });
+}
+
+function getTimeAgo(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffSeconds = Math.floor(diffMs / 1000);
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    const diffHours = Math.floor(diffMinutes / 60);
+
+    if (diffSeconds < 60) {
+        return `${diffSeconds}초 전`;
+    } else if (diffMinutes < 60) {
+        return `${diffMinutes}분 전`;
+    } else if (diffHours < 24) {
+        return `${diffHours}시간 전`;
+    } else {
+        return date.toLocaleDateString('ko-KR');
+    }
 }

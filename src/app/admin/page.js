@@ -11,7 +11,7 @@ import { useState } from 'react';
 // import "@/adminStyle/logs.css";
 // import "@/adminStyle/mcp.css";
 // import "@/adminStyle/providers.css";
-import "@/adminStyle/settings.css";
+// import "@/adminStyle/settings.css";
 // import "@/adminStyle/users.css";
 
 import Sidebar from '@/adminComponents/Sidebar';
@@ -24,6 +24,7 @@ import History from '@/adminComponents/History';
 import Billing from '@/adminComponents/Billing';
 import Analytics from '@/adminComponents/Analytics';
 import Logs from '@/adminComponents/Logs';
+import Settings from '@/adminComponents/Settings';
 
 export default function AdminPage() {
     const [view, setView] = useState('dashboard');
@@ -57,6 +58,8 @@ export default function AdminPage() {
                 return <Analytics />;
             case 'logs':
                 return <Logs />;
+            case 'settings':
+                return <Settings />;
             default:
                 return <div>준비 중입니다: {view}</div>;
         }

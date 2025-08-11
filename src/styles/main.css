@@ -144,7 +144,7 @@ body {
     margin: 2px 0 0 0;
 }
 
-.nav-menu {
+/* .nav-menu {
     flex: 1;
     padding: var(--spacing-5);
 }
@@ -196,7 +196,7 @@ body {
 .nav-desc {
     font-size: var(--text-xs);
     opacity: 0.8;
-}
+} */
 
 /* ===========================================
    메인 컨테이너

@@ -11,15 +11,18 @@ import ApikeysPage from '@/components/api-keys-page';
 import AssistantPage from '@/components/assistant-page';
 import KnowledgePage from '@/components/knowledge-page';
 import HistoryPage from '@/components/history-page';
+import Monitoring from '@/components/monitoring';
+import Newproject from '@/components/newproject';
 import "@/styles/components.css"
 import "@/styles/main.css"
 import "@/styles/pages.css"
+import "@/styles/home.css"
 
 
 // 필요한 다른 페이지 컴포넌트들도 import
 
 export default function HomePage() {
-  const [view, setView] = useState('dashboard');
+  const [view, setView] = useState('assistant');
   const [loading, setLoading] = useState(false);
 
   const handleMenuClick = (newView) => {
@@ -31,13 +34,13 @@ export default function HomePage() {
     }, 500);
   };
 
+
   const renderView = () => {
     switch (view) {
       case 'dashboard':
         return <Dashboard onMenuClick={handleMenuClick} />;
       case 'projects':
-        return <ProjectsPage />;
-      // 나머지 view도 아래에 추가
+        return <ProjectsPage onMenuClick={handleMenuClick} />;
       case 'agents':
         return <AgentsPage />;
       case 'workflow':
@@ -53,6 +56,12 @@ export default function HomePage() {
       case 'history':
         return <HistoryPage onMenuClick={handleMenuClick} />;
 
+
+      case 'monitoring':
+        return <Monitoring onMenuClick={handleMenuClick} />;
+      case 'newproject':
+        return <Newproject onMenuClick={handleMenuClick} />;
+
       default:
         return <div>준비 중입니다: {view}</div>;
     }
@@ -60,7 +69,10 @@ export default function HomePage() {
 
   return (
     <div className="flex">
-      <Sidebar onMenuClick={handleMenuClick} currentPage={view} />
+      {view !== "monitoring" && view !== "newproject" && (
+        <Sidebar onMenuClick={handleMenuClick} currentPage={view} />
+      )}
+
       <div className="flex-1 relative">
         {loading && (
           <div className={`loading-overlay${loading ? ' active' : ''}`}>
@@ -70,7 +82,7 @@ export default function HomePage() {
             </div>
           </div>
         )}
-       
+
         <div className="p-4">
 
           {renderView()}

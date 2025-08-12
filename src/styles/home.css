@@ -483,3 +483,10 @@ body {
         margin-left: 0;
     }
 }
+
+.dashboard_content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}

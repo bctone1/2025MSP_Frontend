@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import "@/styles/home.css"
 
 export default function Sidebar({ onMenuClick, currentPage }) {
   const handleClick = (e) => {
@@ -65,34 +64,64 @@ export default function Sidebar({ onMenuClick, currentPage }) {
           <div className="nav-section-label">관리</div>
 
           <div className="nav-item settings-dropdown">
+
+
+
             <div className="nav-icon">⚙️</div>
-            <div className="nav-text">
+            <div className="nav-text"
+              data-page={'settings'}
+              onClick={handleClick}
+            >
               <div className="nav-title">설정 및 관리</div>
               <div className="nav-desc">모든 관리 메뉴</div>
             </div>
 
             <div className="dropdown-content">
-              <div className="dropdown-item">
+              <div className="dropdown-item"
+                data-page={'agents'}
+                onClick={handleClick}
+              >
                 <span className="icon">🤖</span>
                 <span className="text">AI Agent 관리</span>
               </div>
-              <div className="dropdown-item">
+
+              <div className="dropdown-item"
+                data-page={'knowledge'}
+                onClick={handleClick}
+              >
                 <span className="icon">📚</span>
                 <span className="text">지식베이스 관리</span>
               </div>
-              <div className="dropdown-item">
+
+              <div className="dropdown-item"
+                data-page={'api-keys'}
+                onClick={handleClick}
+              >
                 <span className="icon">🔗</span>
                 <span className="text">API 키 관리</span>
               </div>
-              <div className="dropdown-item">
+
+              <div className="dropdown-item"
+                data-page={'mcp'}
+                onClick={handleClick}
+              >
                 <span className="icon">🔌</span>
                 <span className="text">MCP 관리</span>
               </div>
-              <div className="dropdown-item">
+
+              <div className="dropdown-item"
+                data-page={'profile'}
+                onClick={handleClick}
+              >
                 <span clss="icon">👤</span>
                 <span className="text">프로필</span>
               </div>
+
+
             </div>
+
+
+
           </div>
         </div>
       </nav>

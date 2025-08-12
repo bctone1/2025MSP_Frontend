@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { formatNumber } from '@/utill/utill';
 
+
 export default function Dashboard({ onMenuClick }) {
 
   const metrics = {
@@ -109,7 +110,7 @@ export default function Dashboard({ onMenuClick }) {
       title: "최근 프로젝트",
       icon: "📁",
       gradient: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
-      actionText: "전체 보기 →",
+      actionText: "전체 보기",
       actionPage: "projects",
       items: [
         {
@@ -139,7 +140,7 @@ export default function Dashboard({ onMenuClick }) {
       title: "활성 AI 에이전트",
       icon: "🤖",
       gradient: "linear-gradient(135deg, #10b981, #059669)",
-      actionText: "관리 →",
+      actionText: "관리",
       actionPage: "agents",
       items: [
         {
@@ -165,58 +166,103 @@ export default function Dashboard({ onMenuClick }) {
         },
       ],
     },
+    // {
+    //   title: "워크플로우 현황",
+    //   icon: "🔀",
+    //   gradient: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
+    //   actionText: "디자이너 →",
+    //   actionPage: "workflow",
+    //   items: [
+    //     {
+    //       title: "📊 데이터 분석 플로우",
+    //       subtitle: "수집 → 분석 → 시각화 (3단계)",
+    //       status: "실행중",
+    //       statusClass: "status-active-pill",
+    //       dot: "dot-green",
+    //     },
+    //     {
+    //       title: "📝 콘텐츠 생성 플로우",
+    //       subtitle: "리서치 → 작성 → 검토 (3단계)",
+    //       status: "실행중",
+    //       statusClass: "status-active-pill",
+    //       dot: "dot-green",
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: "MCP 연결 현황",
+    //   icon: "🔌",
+    //   gradient: "linear-gradient(135deg, #f59e0b, #d97706)",
+    //   actionText: "관리 →",
+    //   actionPage: "mcp",
+    //   items: [
+    //     {
+    //       title: "📁 파일시스템 서버",
+    //       subtitle: "로컬 파일 접근 및 관리",
+    //       status: "연결됨",
+    //       statusClass: "status-connected",
+    //       dot: "dot-green",
+    //     },
+    //     {
+    //       title: "🗄️ 데이터베이스 서버",
+    //       subtitle: "PostgreSQL 연결",
+    //       status: "연결됨",
+    //       statusClass: "status-connected",
+    //       dot: "dot-green",
+    //     },
+    //     {
+    //       title: "🌐 웹 검색 서버",
+    //       subtitle: "외부 검색 API",
+    //       status: "연결 중",
+    //       statusClass: "status-reconnecting",
+    //       dot: "dot-yellow",
+    //     },
+    //   ],
+    // },
+  ]
+
+  const activities = [
     {
-      title: "워크플로우 현황",
-      icon: "🔀",
-      gradient: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
-      actionText: "디자이너 →",
-      actionPage: "workflow",
-      items: [
-        {
-          title: "📊 데이터 분석 플로우",
-          subtitle: "수집 → 분석 → 시각화 (3단계)",
-          status: "실행중",
-          statusClass: "status-active-pill",
-          dot: "dot-green",
-        },
-        {
-          title: "📝 콘텐츠 생성 플로우",
-          subtitle: "리서치 → 작성 → 검토 (3단계)",
-          status: "실행중",
-          statusClass: "status-active-pill",
-          dot: "dot-green",
-        },
-      ],
+      icon: "✅",
+      bg: "var(--success-light)",
+      color: "var(--success-green)",
+      title: "React 컴포넌트 생성 완료",
+      desc: "💻 코딩 에이전트 • 2분 전",
     },
     {
-      title: "MCP 연결 현황",
-      icon: "🔌",
-      gradient: "linear-gradient(135deg, #f59e0b, #d97706)",
-      actionText: "관리 →",
-      actionPage: "mcp",
-      items: [
-        {
-          title: "📁 파일시스템 서버",
-          subtitle: "로컬 파일 접근 및 관리",
-          status: "연결됨",
-          statusClass: "status-connected",
-          dot: "dot-green",
-        },
-        {
-          title: "🗄️ 데이터베이스 서버",
-          subtitle: "PostgreSQL 연결",
-          status: "연결됨",
-          statusClass: "status-connected",
-          dot: "dot-green",
-        },
-        {
-          title: "🌐 웹 검색 서버",
-          subtitle: "외부 검색 API",
-          status: "연결 중",
-          statusClass: "status-reconnecting",
-          dot: "dot-yellow",
-        },
-      ],
+      icon: "ℹ️",
+      bg: "rgba(59, 130, 246, 0.1)",
+      color: "var(--secondary-blue)",
+      title: "LLM 훈련 Step 15,000 완료",
+      desc: "🚀 트레이너 에이전트 • 5분 전",
+    },
+    {
+      icon: "📤",
+      bg: "var(--warning-light)",
+      color: "var(--warning-orange)",
+      title: "신규 지식파일 업로드",
+      desc: "📚 지식베이스 • 10분 전",
+    },
+    {
+      icon: "📊",
+      bg: "rgba(139, 92, 246, 0.1)",
+      color: "var(--secondary-purple)",
+      title: "데이터 분석 보고서 생성",
+      desc: "📊 분석 에이전트 • 15분 전",
+    },
+    {
+      icon: "✨",
+      bg: "var(--success-light)",
+      color: "var(--success-green)",
+      title: "API 응답 시간 최적화 완료",
+      desc: "⚙️ 시스템 • 20분 전",
+    },
+    {
+      icon: "🔄",
+      bg: "rgba(59, 130, 246, 0.1)",
+      color: "var(--secondary-blue)",
+      title: "자동 백업 실행됨",
+      desc: "💾 백업 시스템 • 1시간 전",
     },
   ]
 
@@ -230,16 +276,22 @@ export default function Dashboard({ onMenuClick }) {
           <div className="header-title">
             <div>
               <h1 className="page-title">대시보드</h1>
-              <p className="page-subtitle">전체 현황을 한눈에 확인하세요</p>
+              <p className="page-subtitle">전체 시스템 현황을 확인하세요</p>
             </div>
 
-            <div className="header-controls">
+            <div className="status-badge" style={{ marginBottom: "0", cursor: "pointer" }}>
+              <span>🔑</span>
+              API 키 3개 등록됨
+            </div>
+
+            {/* <div className="header-controls">
               <div className="status-badge status-active">
                 <span>⚡</span>
                 <span>2개 API 활성</span>
               </div>
               <div className="status-badge status-pro">✨ PRO</div>
-            </div>
+            </div> */}
+
           </div>
         </div>
 
@@ -263,7 +315,7 @@ export default function Dashboard({ onMenuClick }) {
         </div>
 
 
-        <div className="content-grid">
+        <div className="dashboard_content-grid">
           {sectionCards.map((card, index) => (
             <SectionCard
               key={index}
@@ -277,6 +329,95 @@ export default function Dashboard({ onMenuClick }) {
             />
           ))}
         </div>
+
+
+        <div className="section-card">
+          {/* 헤더 */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "1.25rem",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "var(--text-xl)",
+                fontWeight: 700,
+                color: "var(--gray-800)",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.75rem",
+              }}
+            >
+              <div
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white",
+                  fontSize: "16px",
+                  background: "linear-gradient(135deg, var(--warning-orange), #D97706)",
+                }}
+              >
+                📈
+              </div>
+              최근 활동
+            </div>
+            <div className="section-action"
+              onClick={() => onMenuClick("monitoring")}
+            >전체 보기</div>
+          </div>
+
+          {/* 활동 리스트 */}
+          <div className="activity-list">
+            {activities.map((item, idx) => (
+              <div className="activity-item" key={idx}>
+                <div
+                  style={{
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "16px",
+                    flexShrink: 0,
+                    background: item.bg,
+                    color: item.color,
+                  }}
+                >
+                  {item.icon}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontWeight: 600,
+                      color: "var(--gray-800)",
+                      marginBottom: "2px",
+                      fontSize: "var(--text-sm)",
+                    }}
+                  >
+                    {item.title}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "var(--text-xs)",
+                      color: "var(--gray-500)",
+                    }}
+                  >
+                    {item.desc}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
 
 
       </div>

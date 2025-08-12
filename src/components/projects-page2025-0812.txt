@@ -1,13 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { formatDate, modalheader } from '@/utill/utill';
-import "@/styles/projects.css"
 
 
 
-export default function ProjectsPage({ onMenuClick }) {
+export default function ProjectsPage() {
 
-
+  const [viewMode, setviewMode] = useState('list');
 
   const [projects, setProjects] = useState([
     {
@@ -132,56 +131,130 @@ export default function ProjectsPage({ onMenuClick }) {
           <div className="header-title">
             <div>
               <h1 className="page-title">프로젝트 관리</h1>
-              <p className="page-subtitle">AI 프로젝트를 생성하고 대화 히스토리를 관리하세요</p>
+              <p className="page-subtitle">AI 프로젝트를 생성하고 관리하세요</p>
             </div>
             <div className="header-controls">
-              <button className="primary-btn"
-                // onClick={() => setNewProject(true)}
-                onClick={() => onMenuClick('newproject')}
+              <button className="primary-btn" id="create-project-btn"
+                onClick={() => setNewProject(true)}
               >
                 <span>+</span>
                 <span>새 프로젝트</span>
               </button>
-              <button className="quick-chat-btn" onClick={() => setNewProject(true)}>
-                <span>💬</span>
-                <span>빠른 대화</span>
-              </button>
-            </div>
-          </div>
-
-          {/* 검색 및 필터 섹션  */}
-          <div className="search-filter-section">
-            <div className="search-controls">
-              <div className="projects-search-box">
-                <span className="search-icon">🔍</span>
-                <input type="text" className="projects-search-input" placeholder="프로젝트 이름, 설명으로 검색..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <div className="filter-buttons">
-                <button className={`filter-btn ${statusFilter === "all" ? "active" : ""}`} onClick={() => setStatusFilter("all")}>전체</button>
-                <button className={`filter-btn ${statusFilter === "active" ? "active" : ""}`} onClick={() => setStatusFilter("active")}>진행중</button>
-                <button className={`filter-btn ${statusFilter === "planning" ? "active" : ""}`} onClick={() => setStatusFilter("planning")}>계획중</button>
-              </div>
             </div>
           </div>
         </div>
-
 
         <div className={`modal-overlay ${newProject ? 'active' : ''}`}>
           <NewProjectform setNewProject={setNewProject} />
         </div>
+        {/* {newProject && (<NewProjectform setNewProject={setNewProject} />)} */}
+
+
+        <div className="projects-toolbar">
+          <div className="toolbar-left">
+            <div className="search-container">
+              <div className="search-input-wrapper">
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="프로젝트 검색..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <div className="search-icon">🔍</div>
+              </div>
+            </div>
+
+            <div className="filter-group">
+              <select
+                className="filter-select"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="all">모든 상태</option>
+                <option value="active">진행중</option>
+                <option value="planning">계획중</option>
+                <option value="completed">완료</option>
+                <option value="paused">일시정지</option>
+              </select>
+
+
+              <select
+                className="filter-select"
+                value={modelFilter}
+                onChange={(e) => setModelFilter(e.target.value)}
+              >
+                <option value="all">모든 모델</option>
+                <option value="claude-3-opus">Claude 3 Opus</option>
+                <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                <option value="claude-3-haiku">Claude 3 Haiku</option>
+                <option value="gpt-4">GPT-4</option>
+                <option value="gpt-4-vision">GPT-4 Vision</option>
+              </select>
+
+            </div>
+          </div>
+
+          <div className="toolbar-right">
+            <div className="sort-controls">
+              <select className="sort-select" id="sort-by">
+                <option value="created">생성일</option>
+                <option value="updated">수정일</option>
+                <option value="name">이름</option>
+                <option value="progress">진행률</option>
+                <option value="cost">비용</option>
+              </select>
+              <button className="sort-order-btn" id="sort-order">
+                <span id="sort-icon">↓</span>
+              </button>
+            </div>
+
+            <div className="view-toggle">
+              <button className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                data-view="list" title="리스트 보기"
+                onClick={() => setviewMode('list')}
+              >☰</button>
+              <button className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                data-view="grid" title="그리드 보기"
+                onClick={() => setviewMode('grid')}
+              >⊞</button>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div className="projects-stats">
+          <div className="stat-item">
+            <span className="stat-label">전체</span>
+            <span className="stat-value">{projects.length}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">진행중</span>
+            <span className="stat-value">{projects.filter(p => p.status === 'active').length}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">완료</span>
+            <span className="stat-value">{projects.filter(p => p.status === 'completed').length}</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-label">총 비용</span>
+            <span className="stat-value">${projects.reduce((sum, p) => sum + p.actualCost, 0).toFixed(2)}</span>
+          </div>
+        </div>
 
         <div className="projects-container" id="projects-container">
-          <div className="projects-grid">
+          <div className={viewMode === 'list' ? 'projects-list' : 'projects-grid'}>
             {filteredProjects.map((p) => (
               <ProjectRow
                 key={p.id}
+                viewMode={viewMode}
                 project={p}
               />
             ))}
+
           </div>
+
         </div>
 
       </div>
@@ -273,56 +346,193 @@ const getStatusInfo = (status) => {
 
 
 
-function ProjectRow({ project }) {
+function ProjectRow({ viewMode, project }) {
   const statusInfo = getStatusInfo(project.status);
   const [onview, setonView] = useState(false);
   const [onEdit, setonEdit] = useState(false);
   const [onDuplicate, setonDuplicate] = useState(false);
   const [onDelete, setonDelete] = useState(false);
 
+  if (viewMode === 'list') {
+    return (
+      <>
+
+        <div className="project-row" data-project-id={project.id}>
+          <div className="row-main">
+            <div className="row-left">
+              <div className="project-info">
+                <div className="project-name">
+                  <h3>{project.name}</h3>
+                  <div className={`status-pill status-${project.status}`}>
+                    {statusInfo.label}
+                  </div>
+                </div>
+                <div className="project-description">{project.description}</div>
+                <div className="project-meta-inline">
+                  <span className="meta-item">📊 {project.model}</span>
+                  <span className="meta-item">👥 {project.agents.length}개 에이전트</span>
+                  <span className="meta-item">💰 ${project.actualCost}</span>
+                  <span className="meta-item">🕒 {formatDate(project.updated, 'MM/DD HH:mm')}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="row-center">
+              <div className="progress-section">
+                <div className="progress-info">
+                  <span className="progress-percentage">{project.progress}%</span>
+                  <span className="progress-tasks">
+                    {project.tasks.completed}/{project.tasks.total}
+                  </span>
+                </div>
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${project.progress}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="row-right">
+              <div className="project-tags">
+                {project.tags.map((tag, i) => (
+                  <span key={i} className="tag">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <div className="project-actions">
+                <button
+                  className="action-btn"
+                  onClick={() => setonView(true)}
+                  // onClick={() => viewProject()}
+                  title="보기"
+                >
+                  👁️
+                </button>
+
+                <button
+                  className="action-btn"
+                  onClick={() => setonEdit(true)}
+                  title="편집"
+                >
+                  ✏️
+                </button>
+                <button
+                  className="action-btn"
+                  onClick={() => setonDuplicate(true)}
+                  title="복제"
+                >
+                  📋
+                </button>
+                <button
+                  className="action-btn"
+                  onClick={() => setonDelete(true)}
+                  title="삭제"
+                >
+                  🗑️
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div className={`modal-overlay ${onview ? 'active' : ''}`}>
+          <ViewProject setonEdit={setonEdit} setonView={setonView} project={project} />
+        </div>
+
+        <div className={`modal-overlay ${onEdit ? 'active' : ''}`}>
+          <ViewEdit setonEdit={setonEdit} project={project} />
+        </div>
+      </>
+    )
+  }
+
   return (
     <>
-      <div className="project-card" data-project-id={project.id}
-        onClick={() => setonView(true)}
-      >
+
+      <div className="project-card" data-project-id={project.id}>
         <div className="project-header">
-          <div className="msp-project-title">
+          <div className="project-title">
             <h3>{project.name}</h3>
-            <div className={`status-pill status-${project.status}`}>{project.status}</div>
+            <div className={`status-pill status-${project.status}`}>{statusInfo.label}</div>
           </div>
           <div className="project-actions">
             <button
               className="action-btn"
-              onClick={(e) => {
-                e.stopPropagation();  // 이벤트 버블링 막기
-                setonEdit(true);
-              }}
-              title="편집"
-            >✏️</button>
+              onClick={() => setonView(true)}
+              // onClick={() => viewProject()}
+              title="보기"
+            >
+              👁️
+            </button>
 
             <button
               className="action-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                setonDelete(true);
-              }}
+              onClick={() => setonEdit(true)}
+              title="편집"
+            >
+              ✏️
+            </button>
+            <button
+              className="action-btn"
+              onClick={() => setonDuplicate(true)}
+              title="복제"
+            >
+              📋
+            </button>
+            <button
+              className="action-btn"
+              onClick={() => setonDelete(true)}
               title="삭제"
-            >🗑️</button>
+            >
+              🗑️
+            </button>
           </div>
         </div>
 
-        <div className="project-description">
-          {project.description}
+        <div className="project-description">{project.description}</div>
+
+        <div className="project-progress">
+          <div className="progress-header">
+            <span>진행률</span>
+            <span>{project.progress}%</span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: `${project.progress}%` }}></div>
+          </div>
+          <div className="progress-tasks">
+            {project.tasks.completed}/{project.tasks.total} 작업 완료
+          </div>
         </div>
 
-        <div className="msp-project-meta">
-          <div className="msp-meta-item">
-            <span className="meta-label">대화 세션</span>
-            <span className="meta-value">{project.progress}</span>
+        <div className="project-meta">
+          <div className="meta-item">
+            <span className="meta-label">모델</span>
+            <span className="meta-value">{project.model}</span>
           </div>
-          <div className="msp-meta-item">
-            <span className="meta-label">총 비용</span>
+          <div className="meta-item">
+            <span className="meta-label">비용</span>
             <span className="meta-value">${project.actualCost}</span>
+          </div>
+        </div>
+
+        <div className="project-agents">
+          {project.agents.map((agent, i) => (
+            <span className="agent-tag" key={i}>{agent}</span>
+          ))}
+        </div>
+
+        <div className="project-footer">
+          <div className="project-tags">
+            {project.tags.map((tag, i) => (
+              <span className="tag" key={i}>{tag}</span>
+            ))}
+          </div>
+          <div className="project-date">
+            {formatDate(project.updated, 'MM/DD HH:mm')}
           </div>
         </div>
       </div>
@@ -336,7 +546,10 @@ function ProjectRow({ project }) {
         <ViewEdit setonEdit={setonEdit} project={project} />
       </div>
     </>
+
   );
+
+
 }
 
 

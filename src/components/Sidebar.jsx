@@ -69,7 +69,7 @@ export default function Sidebar({ onMenuClick, currentPage }) {
 
             <div className="nav-icon">⚙️</div>
             <div className="nav-text"
-              data-page={'settings'}
+              data-page={'agents'}
               onClick={handleClick}
             >
               <div className="nav-title">설정 및 관리</div>

@@ -23,7 +23,7 @@ import "@/styles/home.css"
 // 필요한 다른 페이지 컴포넌트들도 import
 
 export default function HomePage() {
-  const [view, setView] = useState('profile');
+  const [view, setView] = useState('dashboard');
   const [loading, setLoading] = useState(false);
 
   const handleMenuClick = (newView) => {

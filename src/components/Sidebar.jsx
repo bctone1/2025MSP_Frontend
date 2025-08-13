@@ -63,7 +63,12 @@ export default function Sidebar({ onMenuClick, currentPage }) {
         <div className="nav-section">
           <div className="nav-section-label">관리</div>
 
-          <div className={`nav-item settings-dropdown ${currentPage === "profile" ? "active" : ""}`}>
+          <div
+            className={`nav-item settings-dropdown ${currentPage === "profile" || currentPage === "agents" || currentPage === "knowledge" || currentPage === "api-keys" || currentPage === "mcp"
+              ? "active"
+              : ""
+              }`}
+          >
             <div className="nav-icon">⚙️</div>
             <div className="nav-text"
               data-page={'agents'}

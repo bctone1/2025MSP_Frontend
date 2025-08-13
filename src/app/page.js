@@ -296,7 +296,7 @@ export default function LoginPage({ className }) {
                                         transition: "all 0.3s ease",
                                     }}
                                     className="tab-user"
-                                // onClick={() => switchUserType("user")}
+                                    onClick={() => window.location.href = "/user"}
                                 >
                                     <span style={{ fontSize: "18px" }}>👤</span>
                                     <span>사용자</span>
@@ -321,7 +321,7 @@ export default function LoginPage({ className }) {
                                         transition: "all 0.3s ease",
                                     }}
                                     className="tab-admin"
-                                // onClick={() => switchUserType("admin")}
+                                    onClick={() => window.location.href = "/admin"}
                                 >
                                     <span style={{ fontSize: "18px" }}>⚙️</span>
                                     <span>관리자</span>
@@ -346,7 +346,7 @@ export default function LoginPage({ className }) {
                                         <label className="checkbox-label" htmlFor="rememberMe">로그인 상태 유지</label>
                                     </div>
                                     <a href="#" className="forgot-link"
-                                    // onClick="forgotPassword()"
+                                        onClick={() => window.location.href = "/resetpassword"}
                                     >비밀번호 찾기</a>
                                 </div>
 

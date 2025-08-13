@@ -147,8 +147,13 @@ body {
 
 .nav-item.active {
     background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
-    color: white;
+    /* color: white; */
     box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.nav-item.active .nav-title,
+.nav-item.active .nav-desc {
+    color: white;
 }
 
 .nav-item:hover:not(.active) {

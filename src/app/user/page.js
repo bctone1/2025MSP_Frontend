@@ -13,6 +13,7 @@ import KnowledgePage from '@/components/knowledge-page';
 import HistoryPage from '@/components/history-page';
 import Monitoring from '@/components/monitoring';
 import Newproject from '@/components/newproject';
+import Profile from '@/components/profile';
 import "@/styles/components.css"
 import "@/styles/main.css"
 import "@/styles/pages.css"
@@ -22,7 +23,7 @@ import "@/styles/home.css"
 // 필요한 다른 페이지 컴포넌트들도 import
 
 export default function HomePage() {
-  const [view, setView] = useState('history');
+  const [view, setView] = useState('profile');
   const [loading, setLoading] = useState(false);
 
   const handleMenuClick = (newView) => {
@@ -55,6 +56,9 @@ export default function HomePage() {
         return <KnowledgePage />;
       case 'history':
         return <HistoryPage onMenuClick={handleMenuClick} />;
+      case 'profile':
+        return <Profile />;
+
 
 
       case 'monitoring':

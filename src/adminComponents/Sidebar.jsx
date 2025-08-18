@@ -33,8 +33,8 @@ export default function Sidebar({ onMenuClick, currentPage }) {
             { page: 'knowledge', icon: '📚', title: '지식베이스 관리' },
             { page: 'agents', icon: '🤖', title: '에이전트 관리' },
             { page: 'mcp', icon: '🔀', title: 'MCP 관리' },
-            { page: 'history', icon: '📋', title: '히스토리 관리' },
-            { page: 'billing', icon: '💰', title: '과금 관리' },
+            // { page: 'history', icon: '📋', title: '히스토리 관리' },
+            // { page: 'billing', icon: '💰', title: '과금 관리' },
             { page: 'analytics', icon: '📈', title: '사용량 분석' },
           ].map(({ page, icon, title }) => (
             <div

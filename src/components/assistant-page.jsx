@@ -220,7 +220,7 @@ export default function AssistantPage() {
                             <p className="page-subtitle" id="page-subtitle">멀티 에이전트와 함께 협업하세요</p>
                         </div>
                         <div className="header-controls">
-                            <div className="chat-mode-toggle">
+                            {/* <div className="chat-mode-toggle">
                                 <button className={`mode-btn ${chatMode === 'single' ? 'active' : ''}`}
                                     data-mode="single"
                                     onClick={() => setChatMode("single")}
@@ -233,7 +233,7 @@ export default function AssistantPage() {
                                 >
                                     멀티 에이전트
                                 </button>
-                            </div>
+                            </div> */}
                             <button className="primary-btn" id="new-conversation-btn">
                                 <span>+</span>
                                 <span>새 대화</span>

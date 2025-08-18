@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-// import "@/styles/newproject.css"
+import "@/styles/newproject.css"
 
 export default function Newproject({ onMenuClick }) {
     const llmList = [
@@ -51,48 +51,128 @@ export default function Newproject({ onMenuClick }) {
 
     const [selectedAgent, setselectedAgent] = useState('analyst');
 
+
+
+
+    const [viewStatus, setViewStatus] = useState("section1");
+
+    const handleNext = async () => {
+        switch (viewStatus) {
+            case "section1":
+                alert("프로젝트 생성 백엔드로 요청");
+                onMenuClick('dashboard');
+
+                // setViewStatus("section2");
+                break;
+            case "section2":
+                setViewStatus("section3");
+                break;
+            case "section3":
+                setViewStatus("section4");
+                break;
+            case "section4":
+                onMenuClick('dashboard');
+                // try {
+                //     const response = await axios.post("/api/create-project", {
+                //         projectName: "새 프로젝트 이름",
+                //         // 필요한 데이터 추가
+                //     });
+                //     console.log("서버 응답:", response.data);
+                //     alert("프로젝트가 생성되었습니다! 🚀");
+                // } catch (error) {
+                //     console.error(error);
+                //     alert("프로젝트 생성 중 오류가 발생했습니다.");
+                // }
+                break;
+            default:
+                break;
+        }
+    };
+
+    const handlePrev = () => {
+        switch (viewStatus) {
+            case "section2":
+                setViewStatus("section1");
+                break;
+            case "section3":
+                setViewStatus("section2");
+                break;
+            case "section4":
+                setViewStatus("section3");
+                break;
+            default:
+                break;
+        }
+    };
+
+    const renderNextButtonContent = () => {
+        if (viewStatus === "section1") {
+            return (
+                <>
+                    <span>🚀</span>
+                    <span>프로젝트 생성</span>
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <span>다음</span>
+                    <span>→</span>
+                </>
+            );
+        }
+    };
+
+    // const sectionOrder = ["section1", "section2", "section3", "section4"];
+    const sectionOrder = ["section1"];
+    const currentIndex = sectionOrder.indexOf(viewStatus);
+    const progressPercent = ((currentIndex + 1) / sectionOrder.length) * 100;
+    // const stepLabels = ["기본 정보", "AI 설정", "팀 구성", "지식베이스"];
+    const stepLabels = ["기본 정보"];
+
+
+
     return (
         <>
             <div className="modal-overlay active">
                 <div className="modal-container">
                     {/* 모달 헤더 */}
-                    <div className="modal-header">
+                    <div className="new-modal-header">
                         <h1 className="modal-title">새 프로젝트 생성</h1>
                         <p className="modal-subtitle">AI 프로젝트를 설정하고 시작하세요</p>
                         <button className="close-btn"
-                        // onClick="closeModal()"
+                            onClick={() => onMenuClick('dashboard')}
                         >×</button>
                     </div>
 
                     {/* 진행률 표시 */}
                     <div className="progress-bar">
-                        <div className="progress-fill" id="progressFill" style={{ width: "25%" }}></div>
+                        <div
+                            className="progress-fill"
+                            style={{ width: `${progressPercent}%` }}
+                        ></div>
                     </div>
 
                     {/* 단계 표시기 */}
                     <div className="step-indicator">
-                        <div className="step active" id="step1">
-                            <div className="step-number">1</div>
-                            <span>기본 정보</span>
-                        </div>
-                        <div className="step inactive" id="step2">
-                            <div className="step-number">2</div>
-                            <span>AI 설정</span>
-                        </div>
-                        <div className="step inactive" id="step3">
-                            <div className="step-number">3</div>
-                            <span>팀 구성</span>
-                        </div>
-                        <div className="step inactive" id="step4">
-                            <div className="step-number">4</div>
-                            <span>지식베이스</span>
-                        </div>
+                        {sectionOrder.map((section, index) => {
+                            let stepClass = "inactive";
+                            if (index < currentIndex) stepClass = "completed";
+                            else if (index === currentIndex) stepClass = "active";
+
+                            return (
+                                <div className={`step ${stepClass}`} key={section}>
+                                    <div className="step-number">{index + 1}</div>
+                                    <span>{stepLabels[index]}</span>
+                                </div>
+                            );
+                        })}
                     </div>
 
                     {/* 모달 바디 */}
                     <div className="modal-body">
                         {/* 1단계: 기본 정보 */}
-                        <div className="form-section active" id="section1">
+                        <div className={`form-section ${viewStatus === 'section1' ? "active" : ""}`} id="section1">
                             <h2 className="section-title">
                                 <span>📝</span>
                                 <span>기본 정보</span>
@@ -126,7 +206,7 @@ export default function Newproject({ onMenuClick }) {
                         </div>
 
                         {/* 2단계: AI 설정 */}
-                        <div className="form-section" id="section2">
+                        <div className={`form-section ${viewStatus === 'section2' ? "active" : ""}`} id="section2">
                             <h2 className="section-title">
                                 <span>🤖</span>
                                 <span>AI 모델 설정</span>
@@ -162,7 +242,7 @@ export default function Newproject({ onMenuClick }) {
                         </div>
 
                         {/* 3단계: 에이전트 팀 구성 */}
-                        <div className="form-section" id="section3">
+                        <div className={`form-section ${viewStatus === 'section3' ? "active" : ""}`} id="section3">
                             <h2 className="section-title">
                                 <span>👥</span>
                                 <span>에이전트 팀 구성</span>
@@ -195,7 +275,7 @@ export default function Newproject({ onMenuClick }) {
                         </div>
 
                         {/* 4단계: 지식베이스 설정 */}
-                        <div className="form-section" id="section4">
+                        <div className={`form-section ${viewStatus === 'section4' ? "active" : ""}`} id="section4">
                             <h2 className="section-title">
                                 <span>📚</span>
                                 <span>지식베이스 연결</span>
@@ -403,30 +483,28 @@ export default function Newproject({ onMenuClick }) {
                     <div className="modal-footer">
                         <button
                             className="btn-secondary"
-                            // onClick={previousStep}
+                            onClick={handlePrev}
                             id="prevBtn"
-                            style={{ visibility: 'hidden' }}
+                            style={{ visibility: viewStatus === "section1" ? "hidden" : "visible" }}
                         >
                             <span>←</span>
                             <span>이전</span>
                         </button>
 
-                        <div style={{ display: 'flex', gap: '1rem' }}>
-                            <button className="btn-secondary"
-                            // onClick={saveAsDraft}
-                            >
+                        <div style={{ display: "flex", gap: "1rem" }}>
+                            <button className="btn-secondary">
                                 <span>💾</span>
                                 <span>임시저장</span>
                             </button>
-                            <button className="btn-primary"
-                                // onClick={nextStep}
-                                id="nextBtn"
-                            >
-                                <span>다음</span>
-                                <span>→</span>
+
+                            <button className="btn-primary" onClick={handleNext} id="nextBtn">
+                                {renderNextButtonContent()}
                             </button>
                         </div>
                     </div>
+
+
+
                 </div>
             </div>
 

@@ -1,4 +1,4 @@
-:root {
+/* :root {
     --primary-blue: #3b82f6;
     --primary-purple: #8b5cf6;
     --secondary-blue: #2563eb;
@@ -56,7 +56,7 @@ body {
     align-items: center;
     justify-content: center;
     padding: var(--spacing-4);
-}
+} */
 
 /* 모달 오버레이 */
 .modal-overlay {
@@ -89,7 +89,7 @@ body {
 }
 
 /* 모달 헤더 */
-.modal-header {
+.new-modal-header {
     padding: var(--spacing-8);
     border-bottom: 1px solid rgba(59, 130, 246, 0.1);
     position: relative;

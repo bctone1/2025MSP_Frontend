@@ -1,7 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { formatDate, storage, formatFileSize } from '@/utill/utill';
-import "@/styles/knowledge.css"
+import "@/styles/knowledge.css";
+import History from "@/components/history-component";
+
 
 export default function Knowledge() {
 
@@ -113,6 +115,8 @@ export default function Knowledge() {
 
 
 
+
+
     return (
         <>
             <div className="knowledge_container">
@@ -208,7 +212,7 @@ export default function Knowledge() {
                         </div>
 
                         {/* 외부 연동 상태 */}
-                        <div className="sidebar-section">
+                        {/* <div className="sidebar-section">
                             <h3 className="section-title">
                                 <span>🔗</span>
                                 <span>외부 연동 상태</span>
@@ -231,7 +235,7 @@ export default function Knowledge() {
                                     <span className="knowledge_stat-value" style={{ color: "var(--success-green)" }}>연결됨</span>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* 메인 콘텐츠 */}
@@ -251,7 +255,7 @@ export default function Knowledge() {
                             <div className="header-actions">
                                 <button className="btn btn-chat" >💬 AI 어시스턴트</button>
                                 <button className="btn btn-primary" >📤 파일 업로드</button>
-                                <button className="btn btn-secondary" >🔗 외부 연동</button>
+                                {/* <button className="btn btn-secondary" >🔗 외부 연동</button> */}
                                 <button className="btn btn-secondary" >📁 새 폴더</button>
                             </div>
                         </div>
@@ -271,7 +275,21 @@ export default function Knowledge() {
                                     📋 목록
                                 </button>
 
+                                <button className={`knowledge_tab-btn ${viewMode === 'history' ? 'active' : ''}`}
+                                    onClick={() => setViewMode('history')}
+                                >
+                                    📈 히스토리
+                                </button>
+
                             </div>
+
+                            {/* 히스토리 임포트 */}
+                            <div style={{ display: `${viewMode === "history" ? "" : "none"}` }}>
+                                {<History />}
+                            </div>
+
+
+
 
                             {/* 그리드 뷰 */}
                             <div className="files-grid" id="grid-view" style={{ display: `${viewMode === "grid" ? "grid" : "none"}` }}>

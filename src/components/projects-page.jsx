@@ -6,106 +6,100 @@ import "@/styles/projects.css"
 
 
 export default function ProjectsPage({ onMenuClick }) {
-
-
-
   const [projects, setProjects] = useState([
     {
-      id: 'proj_001',
-      name: '파일분석하기',
-      description: 'PDF와 Excel 파일을 분석하여 인사이트 추출',
-      status: 'active',
-      progress: 75,
-      tasks: {
-        total: 12,
-        completed: 9,
-        remaining: 3
-      },
-      model: 'claude-3-haiku',
-      created: '2024-06-20T09:00:00Z',
-      updated: '2024-06-24T14:30:00Z',
-      agents: ['🔍 리서치 에이전트', '📊 분석 에이전트'],
-      tags: ['데이터분석', '자동화'],
-      estimatedCost: 15.50,
-      actualCost: 12.75
+      id: "proj1",
+      name: "파일분석하기",
+      description: "PDF와 Excel 파일을 분석하여 인사이트 추출하는 AI 시스템",
+      status: "진행중",
+      sessions: 8,
+      cost: "$12.75",
+      conversations: [
+        {
+          id: "conv1",
+          title: "Q4 매출 데이터 심화 분석",
+          status: "active",
+          date: "2시간 전",
+          preview: "Q4 매출 데이터를 업로드하여 트렌드 분석과 예측 모델링을 진행하고 있습니다. 특히 지역별 성과 차이가 흥미롭네요...",
+          messages: 24
+        },
+        {
+          id: "conv2",
+          title: "경쟁사 비교 분석 요청",
+          status: "completed",
+          date: "어제",
+          preview: "업계 주요 경쟁사 3곳의 재무제표를 비교 분석하여 우리 회사의 포지셔닝을 확인했습니다.",
+          messages: 18
+        },
+        {
+          id: "conv3",
+          title: "초기 데이터 업로드 및 분석",
+          status: "completed",
+          date: "3일 전",
+          preview: "첫 번째 Excel 파일을 업로드하고 기본적인 데이터 구조 분석을 수행했습니다.",
+          messages: 12
+        }
+      ],
+      knowledge: [
+        { id: "kb1", name: "Q4_Sales_Report.xlsx", type: "Excel", size: "2.4MB", uploaded: "2일 전" },
+        { id: "kb2", name: "Market_Analysis.pdf", type: "PDF", size: "1.8MB", uploaded: "1주 전" },
+        { id: "kb3", name: "Competitor_Data.csv", type: "CSV", size: "856KB", uploaded: "3일 전" }
+      ]
     },
     {
-      id: 'proj_002',
-      name: '파일업로드 test',
-      description: '다양한 파일 형식 업로드 및 처리 테스트',
-      status: 'active',
-      progress: 50,
-      tasks: {
-        total: 8,
-        completed: 4,
-        remaining: 4
-      },
-      model: 'claude-3-sonnet',
-      created: '2024-06-22T10:15:00Z',
-      updated: '2024-06-24T11:45:00Z',
-      agents: ['💻 코딩 에이전트'],
-      tags: ['테스트', '파일처리'],
-      estimatedCost: 8.00,
-      actualCost: 4.25
+      id: "proj2",
+      name: "파일업로드 test",
+      description: "다양한 파일 형식 업로드 및 처리 테스트",
+      status: "진행중",
+      sessions: 3,
+      cost: "$4.25",
+      conversations: [
+        {
+          id: "conv1",
+          title: "이미지 파일 업로드 테스트",
+          status: "active",
+          date: "30분 전",
+          preview: "PNG, JPG, SVG 파일들의 업로드 테스트를 진행하고 있습니다. 파일 크기 제한과 변환 옵션을 확인 중...",
+          messages: 8
+        },
+        {
+          id: "conv2",
+          title: "대용량 파일 처리 개선",
+          status: "completed",
+          date: "2일 전",
+          preview: "100MB 이상의 대용량 파일 처리 성능을 개선하기 위한 청크 업로드 방식을 구현했습니다.",
+          messages: 15
+        }
+      ],
+      knowledge: [
+        { id: "kb1", name: "test_image.png", type: "Image", size: "3.2MB", uploaded: "1시간 전" },
+        { id: "kb2", name: "large_dataset.zip", type: "Archive", size: "45MB", uploaded: "2일 전" }
+      ]
     },
     {
-      id: 'proj_003',
-      name: '사업계획서 작성',
-      description: 'AI 기반 사업계획서 자동 생성 시스템',
-      status: 'planning',
-      progress: 20,
-      tasks: {
-        total: 15,
-        completed: 3,
-        remaining: 12
-      },
-      model: 'gpt-4',
-      created: '2024-06-24T08:00:00Z',
-      updated: '2024-06-24T16:20:00Z',
-      agents: ['📝 작성 에이전트', '📊 분석 에이전트'],
-      tags: ['문서작성', '비즈니스'],
-      estimatedCost: 25.00,
-      actualCost: 5.50
-    },
-    {
-      id: 'proj_004',
-      name: '고객 상담 봇',
-      description: '24시간 고객 응대가 가능한 AI 챗봇 개발',
-      status: 'completed',
-      progress: 100,
-      tasks: {
-        total: 20,
-        completed: 20,
-        remaining: 0
-      },
-      model: 'claude-3-opus',
-      created: '2024-06-10T14:00:00Z',
-      updated: '2024-06-18T17:30:00Z',
-      agents: ['💬 대화 에이전트', '🧠 추론 에이전트'],
-      tags: ['고객서비스', '챗봇'],
-      estimatedCost: 45.00,
-      actualCost: 42.30
-    },
-    {
-      id: 'proj_005',
-      name: '이미지 분류 시스템',
-      description: '제품 이미지를 자동으로 분류하는 AI 시스템',
-      status: 'paused',
-      progress: 35,
-      tasks: {
-        total: 18,
-        completed: 6,
-        remaining: 12
-      },
-      model: 'gpt-4-vision',
-      created: '2024-06-15T16:30:00Z',
-      updated: '2024-06-20T10:15:00Z',
-      agents: ['👁️ 비전 에이전트', '🏷️ 분류 에이전트'],
-      tags: ['이미지분석', '분류'],
-      estimatedCost: 35.00,
-      actualCost: 18.75
+      id: "proj3",
+      name: "사업계획서 작성",
+      description: "AI 기반 사업계획서 자동 생성 시스템",
+      status: "계획중",
+      sessions: 1,
+      cost: "$5.50",
+      conversations: [
+        {
+          id: "conv1",
+          title: "사업계획서 초안 작성",
+          status: "completed",
+          date: "1시간 전",
+          preview: "AI 스타트업을 위한 사업계획서 초안을 작성했습니다. 시장 분석, 비즈니스 모델, 재무 계획이 포함되어 있습니다.",
+          messages: 22
+        }
+      ],
+      knowledge: [
+        { id: "kb1", name: "Business_Template.docx", type: "Document", size: "1.2MB", uploaded: "2시간 전" },
+        { id: "kb2", name: "Market_Research.pdf", type: "PDF", size: "4.1MB", uploaded: "1일 전" }
+      ]
     }
   ]);
+
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -114,40 +108,42 @@ export default function ProjectsPage({ onMenuClick }) {
   const filteredProjects = projects.filter((p) => {
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
-    const matchesModel = modelFilter === 'all' || p.model === modelFilter;
+    const matchesModel = modelFilter === 'all' || (p.model && p.model === modelFilter);
 
     return matchesSearch && matchesStatus && matchesModel;
   });
 
-  const [newProject, setNewProject] = useState(false);
+  const [viewStatus, setviewStatus] = useState("block");
+  const [currentPorject, setcurrentPorject] = useState('');
 
-
-
+  const selectedProject = projects.find(p => p.id === currentPorject);
 
   return (
     <div className="app-container">
       <div className="container">
 
-        <div className="header">
-          <div className="header-title">
-            <div>
-              <h1 className="page-title">프로젝트 관리</h1>
-              <p className="page-subtitle">AI 프로젝트를 생성하고 대화 히스토리를 관리하세요</p>
-            </div>
-            <div className="header-controls">
-              <button className="primary-btn"
-                // onClick={() => setNewProject(true)}
-                onClick={() => onMenuClick('newproject')}
-              >
-                <span>+</span>
-                <span>새 프로젝트</span>
-              </button>
-              <button className="quick-chat-btn" onClick={() => setNewProject(true)}>
-                <span>💬</span>
-                <span>빠른 대화</span>
-              </button>
+
+
+        <div className="projects-container" id="projects-container" style={{ display: viewStatus }}>
+          <div className="header">
+            <div className="header-title">
+              <div>
+                <h1 className="page-title">프로젝트 관리</h1>
+                <p className="page-subtitle">AI 프로젝트를 생성하고 대화 히스토리를 관리하세요</p>
+              </div>
+              <div className="header-controls">
+                <button className="primary-btn" onClick={() => onMenuClick('newproject')}>
+                  <span>+</span>
+                  <span>새 프로젝트</span>
+                </button>
+                <button className="quick-chat-btn">
+                  <span>💬</span>
+                  <span>빠른 대화</span>
+                </button>
+              </div>
             </div>
           </div>
+
 
           {/* 검색 및 필터 섹션  */}
           <div className="search-filter-section">
@@ -166,21 +162,117 @@ export default function ProjectsPage({ onMenuClick }) {
               </div>
             </div>
           </div>
-        </div>
 
-
-        <div className={`modal-overlay ${newProject ? 'active' : ''}`}>
-          <NewProjectform setNewProject={setNewProject} />
-        </div>
-
-        <div className="projects-container" id="projects-container">
           <div className="projects-grid">
             {filteredProjects.map((p) => (
               <ProjectRow
                 key={p.id}
                 project={p}
+                setviewStatus={setviewStatus}
+                setcurrentPorject={setcurrentPorject}
               />
             ))}
+          </div>
+        </div>
+
+
+
+
+        <div id="project-detail-view" className={`project-detail-view ${viewStatus === "block" ? "" : "active"}`}>
+          <button className="back-btn" onClick={() => setviewStatus("block")}>
+            <span>←</span>
+            <span>프로젝트 목록으로</span>
+          </button>
+
+          <div className="project-detail-header">
+            <div className="re-project-info">
+              <div className="project-details">
+                <h1 className="project-name" id="detail-project-name">{selectedProject ? selectedProject.name : "프로젝트 이름"}</h1>
+                <p className="project-desc" id="detail-project-desc">{selectedProject ? selectedProject.description : "프로젝트 설명"}</p>
+                <div className="project-stats">
+                  <div className="stat-item">
+                    <span className="stat-label">대화 세션</span>
+                    <span className="stat-value" id="detail-sessions">{selectedProject ? selectedProject.sessions : "프로젝트 세션"}회</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">총 비용</span>
+                    <span className="stat-value" id="detail-cost">{selectedProject ? selectedProject.cost : "프로젝트 비용"}</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">상태</span>
+                    <span className="stat-value" id="detail-status">{selectedProject ? selectedProject.status : "프로젝트 상태"}</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">지식베이스</span>
+                    <span className="stat-value" id="detail-knowledge">{selectedProject ? selectedProject.knowledge.length : "프로젝트 지식베이스"}개</span>
+                  </div>
+                </div>
+              </div>
+              <div className="project-actions-detail">
+                <button className="action-btn-detail primary"
+                //  onclick="startNewConversation()"
+                >
+                  <span>💬</span>
+                  <span>새 대화 시작</span>
+                </button>
+                <button className="action-btn-detail"
+                // onclick="editCurrentProject()"
+                >
+                  <span>✏️</span>
+                  <span>프로젝트 편집</span>
+                </button>
+                <button className="action-btn-detail"
+                // onclick="manageKnowledge()"
+                >
+                  <span>📚</span>
+                  <span>지식베이스 관리</span>
+                </button>
+                <button className="action-btn-detail"
+                // onclick="exportProject()"
+                >
+                  <span>📤</span>
+                  <span>프로젝트 내보내기</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="content-section">
+            <div className="main-content">
+              <h2 className="section-title">
+                <span>💬</span>
+                <span>대화 히스토리</span>
+              </h2>
+
+              <button className="new-conversation-btn" >
+                <span>💬</span>
+                <span>새 대화 시작</span>
+              </button>
+
+              <div className="conversations-list" id="conversations-list">
+                {/* 대화 목록이 여기에 동적으로 삽입됩니다 */}
+                {<RenderConversations conversations={selectedProject?.conversations || []} />}
+              </div>
+            </div>
+
+            <div className="sidebar-content">
+              <h3 className="section-title">
+                <span>📚</span>
+                <span>지식베이스</span>
+              </h3>
+
+              <div className="knowledge-base" id="knowledge-base">
+                {/* 지식베이스 항목들이 여기에 동적으로 삽입됩니다 */}
+                {<RenderKnowledgeBase knowledge={selectedProject?.knowledge || []} />}
+              </div>
+
+              <button className="add-knowledge-btn"
+              // onclick="addKnowledge()"
+              >
+                <span>+</span>
+                <span>지식베이스 추가</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -189,106 +281,85 @@ export default function ProjectsPage({ onMenuClick }) {
   );
 }
 
-function NewProjectform({ setNewProject }) {
+function RenderKnowledgeBase({ knowledge }) {
   return (
     <>
-      {/* <div className="modal-overlay active"> */}
-      <div className="modal">
-        {modalheader({ headerTitle: "새 프로젝트 생성", setModalClose: setNewProject })}
-
-        <div className="modal-body">
-          <form id="new-project-form" className="project-form">
-            <div className="form-group">
-              <label htmlFor="project-name">프로젝트 이름 *</label>
-              <input type="text" id="project-name" name="name" required placeholder="프로젝트 이름을 입력하세요" />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="project-description">설명</label>
-              <textarea id="project-description" name="description" placeholder="프로젝트 설명을 입력하세요" rows="3"></textarea>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="project-model">AI 모델 *</label>
-                <select id="project-model" name="model" required>
-                  <option value="">모델 선택</option>
-                  <option value="claude-3-opus">Claude 3 Opus</option>
-                  <option value="claude-3-sonnet">Claude 3 Sonnet</option>
-                  <option value="claude-3-haiku">Claude 3 Haiku</option>
-                  <option value="gpt-4">GPT-4</option>
-                  <option value="gpt-4-vision">GPT-4 Vision</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="project-budget">예상 예산 ($)</label>
-                <input type="number" id="project-budget" name="budget" placeholder="0.00" step="0.01" min="0" />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="project-tags">태그 (쉼표로 구분)</label>
-              <input type="text" id="project-tags" name="tags" placeholder="예: 데이터분석, 자동화, 테스트" />
-            </div>
-
-            <div className="form-group">
-              <label>
-                <input type="checkbox" id="auto-start" name="autoStart" />
-                프로젝트 생성 후 자동 시작
-              </label>
-            </div>
-          </form>
-
+      {!knowledge && (
+        <div className="empty-state">
+          <div className="empty-icon">📚</div>
+          <div className="empty-title">지식베이스가 비어있습니다</div>
+          <div className="empty-description">파일을 업로드하여 AI가 참조할 수 있도록 하세요.</div>
         </div>
+      )}
 
-
-        <div className="modal-footer">
-          <button type="button" className="secondary-btn" onClick={() => setNewProject(false)}>취소</button>
-          <button type="button" className="primary-btn"
-          //  onClick="ProjectManager.saveNewProject()"
-          >생성</button>
+      {knowledge.map((item, index) => (
+        <div className="knowledge-item" key={index}>
+          <div className="knowledge-header">
+            <div className="knowledge-icon">{getFileIcon(item.type)}</div>
+            <div className="knowledge-name">{item.name}</div>
+            <div className="knowledge-type">{item.type}</div>
+          </div>
+          <div className="knowledge-details">
+            <span>{item.size}</span>
+            <span>•</span>
+            <span>{item.uploaded}</span>
+          </div>
         </div>
+      ))}
 
-
-      </div>
-      {/* </div> */}
     </>
   );
 }
 
+function RenderConversations({ conversations }) {
+  return (
+    <>
+      {!conversations && (
+        <div className="empty-state">
+          <div className="empty-icon">💬</div>
+          <div className="empty-title">아직 대화가 없습니다</div>
+          <div className="empty-description">새 대화를 시작하여 AI와 프로젝트에 대해 이야기해보세요.</div>
+        </div>
+      )}
 
+      {conversations.map((conv, index) => (
+        <div className="conversation-item" key={index}>
+          <div className="conversation-header">
+            <div>
+              <div className="conversation-title">{conv.title}</div>
+              <div className="conversation-meta">
+                <span>{conv.messages}개 메시지</span>
+                <span>•</span>
+                <span>{conv.date}</span>
+              </div>
+            </div>
+            <div className={`conversation-status ${conv.status}`}>
+              {conv.status === 'active' ? '진행중' : '완료'}
+            </div>
+          </div>
+          <div className="conversation-preview">{conv.preview}</div>
+        </div >
+      ))
+      }
 
-const getStatusInfo = (status) => {
-  const statusMap = {
-    active: { label: '진행중', color: '#10b981' },
-    planning: { label: '계획중', color: '#f59e0b' },
-    completed: { label: '완료', color: '#6366f1' },
-    paused: { label: '일시정지', color: '#6b7280' }
-  };
-  return statusMap[status] || statusMap.planning;
+    </>
+  );
 }
 
-
-
-
-
-function ProjectRow({ project }) {
-  const statusInfo = getStatusInfo(project.status);
-  const [onview, setonView] = useState(false);
-  const [onEdit, setonEdit] = useState(false);
-  const [onDuplicate, setonDuplicate] = useState(false);
-  const [onDelete, setonDelete] = useState(false);
-
+function ProjectRow({ project, setviewStatus, setcurrentPorject }) {
+  const status = getStatusInfo(project.status);
   return (
     <>
       <div className="project-card" data-project-id={project.id}
-        onClick={() => setonView(true)}
+        onClick={() => {
+          setviewStatus("none");
+          setcurrentPorject(project.id);
+        }}
       >
         <div className="project-header">
           <div className="msp-project-title">
             <h3>{project.name}</h3>
-            <div className={`status-pill status-${project.status}`}>{project.status}</div>
+            <div className={`status-pill status-${status}`}>{project.status}</div>
           </div>
           <div className="project-actions">
             <button
@@ -318,22 +389,13 @@ function ProjectRow({ project }) {
         <div className="msp-project-meta">
           <div className="msp-meta-item">
             <span className="meta-label">대화 세션</span>
-            <span className="meta-value">{project.progress}</span>
+            <span className="meta-value">{project.sessions}</span>
           </div>
           <div className="msp-meta-item">
             <span className="meta-label">총 비용</span>
-            <span className="meta-value">${project.actualCost}</span>
+            <span className="meta-value">{project.cost}</span>
           </div>
         </div>
-      </div>
-
-
-      <div className={`modal-overlay ${onview ? 'active' : ''}`}>
-        <ViewProject setonEdit={setonEdit} setonView={setonView} project={project} />
-      </div>
-
-      <div className={`modal-overlay ${onEdit ? 'active' : ''}`}>
-        <ViewEdit setonEdit={setonEdit} project={project} />
       </div>
     </>
   );
@@ -341,187 +403,30 @@ function ProjectRow({ project }) {
 
 
 
-
-function ViewEdit({ setonEdit, project }) {
-  const [formData, setFormData] = useState(project);
-  return (
-    <>
-      {/* <div className="modal-overlay active"> */}
-      <div className="modal">
-        {modalheader({ headerTitle: "프로젝트 편집", setModalClose: setonEdit })}
-
-        <div className="modal-body">
-          <form id="edit-project-form" className="project-form">
-            <div className="form-group">
-              <label htmlFor="edit-project-name">프로젝트 이름 *</label>
-              <input type="text" id="edit-project-name" name="name" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="edit-project-description">설명</label>
-              <textarea
-                id="edit-project-description"
-                name="description"
-                rows="3"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              />
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="edit-project-model">AI 모델 *</label>
-                <select id="edit-project-model" name="model" required value={formData.model}
-                  onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                >
-                  <option value="claude-3-opus">Claude 3 Opus</option>
-                  <option value="claude-3-sonnet">Claude 3 Sonnet</option>
-                  <option value="claude-3-haiku">Claude 3 Haiku</option>
-                  <option value="gpt-4">GPT-4</option>
-                  <option value="gpt-4-vision">GPT-4 Vision</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="edit-project-status">상태</label>
-                <select id="edit-project-status" name="status" required value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                >
-                  <option value="planning">계획중</option>
-                  <option value="active">진행중</option>
-                  <option value="paused">일시정지</option>
-                  <option value="completed">완료</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="edit-project-budget">예상 예산 ($)</label>
-              <input type="number" id="edit-project-budget" name="budget" value={formData.estimatedCost} step="0.01" min="0"
-                onChange={(e) => setFormData({ ...formData, estimatedCost: e.target.value })}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="edit-project-tags">태그 (쉼표로 구분)</label>
-              <input type="text" id="edit-project-tags" name="tags" value={formData.tags}
-                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              />
-            </div>
-          </form>
-        </div>
+const getStatusInfo = (status) => {
+  const statusMap = {
+    active: 'active',
+    planning: 'planning',
+    completed: 'completed',
+    paused: 'paused',
+    진행중: 'active',
+    계획중: 'planning',
+    완료: 'completed',
+    일시정지: 'paused'
+  };
+  return statusMap[status] || 'planning';
+};
 
 
-        <div className="modal-footer">
-          <button type="button" className="secondary-btn" onClick={() => setonEdit(false)}>취소</button>
-          <button type="button" className="primary-btn"
-          // onClick="ProjectManager.saveEditedProject('${project.id}')"
-          >저장</button>
-        </div>
 
-
-      </div>
-      {/* </div> */}
-
-    </>
-  );
-}
-
-
-function ViewProject({ setonEdit, setonView, project }) {
-  return (
-    // <div className="modal-overlay active">
-    <div className="modal">
-
-      {modalheader({ headerTitle: "프로젝트 상세", setModalClose: setonView })}
-
-      <div className="modal-body">
-        <div className="project-detail">
-          <div className="project-detail-header">
-            <div className="project-title">
-              <h2>{project.name}</h2>
-              <div className={`status-pill status-${project.status}`}>{getStatusInfo(project.status).label}</div>
-            </div>
-            <div className="project-meta">
-              <span>생성: {formatDate(project.created, 'YYYY-MM-DD HH:mm')}</span>
-              <span>수정: {formatDate(project.updated, 'YYYY-MM-DD HH:mm')}</span>
-            </div>
-          </div>
-
-          <div className="project-description">
-            <h4>설명</h4>
-            <p>${project.description || '설명이 없습니다.'}</p>
-          </div>
-
-          <div className="project-progress-detail">
-            <h4>진행 상황</h4>
-            <div className="progress-bar large">
-              <div className="progress-fill" style={{ width: `${project.progress}%` }}></div>
-            </div>
-            <div className="progress-stats">
-              <div className="stat">
-                <span className="stat-label">전체 작업</span>
-                <span className="stat-value">{project.tasks.total}</span>
-              </div>
-              <div className="stat">
-                <span className="stat-label">완료</span>
-                <span className="stat-value">{project.tasks.completed}</span>
-              </div>
-              <div className="stat">
-                <span className="stat-label">남은 작업</span>
-                <span className="stat-value">{project.tasks.remaining}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="project-info-grid">
-            <div className="info-item">
-              <h4>AI 모델</h4>
-              <p>{project.model}</p>
-            </div>
-            <div className="info-item">
-              <h4>사용 에이전트</h4>
-              <div className="agents-list">
-                {project.agents.length > 0 ? (
-                  project.agents.map(agent => (
-                    <span className="agent-tag" key={agent}>{agent}</span>
-                  ))
-                ) : (
-                  <span className="no-data">설정된 에이전트가 없습니다</span>
-                )}
-              </div>
-
-            </div>
-            <div className="info-item">
-              <h4>예산 및 비용</h4>
-              <div className="cost-info">
-                <div>예상: ${project.estimatedCost}</div>
-                <div>실제: ${project.actualCost}</div>
-              </div>
-            </div>
-            <div className="info-item">
-              <h4>태그</h4>
-              <div className="tags-list">
-                {project.tags.length > 0 ?
-                  project.tags.map(tag => (<span className="tag" key={tag}>{tag}</span>)) : (<span className="no-data">태그가 없습니다</span>)}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="modal-footer">
-        <button type="button" className="secondary-btn"
-          onClick={() => setonEdit(true)}
-        >편집</button>
-        <button type="button" className="secondary-btn"
-          onClick={() => setonView(false)}
-        >닫기</button>
-        <button type="button" className="primary-btn"
-        // onClick="ProjectManager.manageProject('${project.id}')"
-        >관리</button>
-      </div>
-    </div>
-    // </div>
-  );
+function getFileIcon(type) {
+  const icons = {
+    'Excel': '📊',
+    'PDF': '📄',
+    'CSV': '📈',
+    'Image': '🖼️',
+    'Document': '📝',
+    'Archive': '🗜️'
+  };
+  return icons[type] || '📎';
 }

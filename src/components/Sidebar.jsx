@@ -39,7 +39,7 @@ export default function Sidebar({ onMenuClick, currentPage }) {
             { page: 'dashboard', icon: '🏠', title: '홈', desc: '대시보드 및 전체 현황' },
             { page: 'projects', icon: '📁', title: '프로젝트', desc: '프로젝트 생성 및 관리' },
             { page: 'assistant', icon: '💬', title: 'AI 어시스턴트', desc: '멀티에이전트 대화' },
-            { page: 'history', icon: '📈', title: '히스토리', desc: '대화 기록 및 분석' },
+            // { page: 'history', icon: '📈', title: '히스토리', desc: '대화 기록 및 분석' },
 
           ].map(({ page, icon, title, desc }) => (
             <div
@@ -71,7 +71,7 @@ export default function Sidebar({ onMenuClick, currentPage }) {
           >
             <div className="nav-icon">⚙️</div>
             <div className="nav-text"
-              data-page={'agents'}
+              data-page={'knowledge'}
               onClick={handleClick}
             >
               <div className="nav-title">설정 및 관리</div>
@@ -79,13 +79,13 @@ export default function Sidebar({ onMenuClick, currentPage }) {
             </div>
 
             <div className="dropdown-content">
-              <div className="dropdown-item"
+              {/* <div className="dropdown-item"
                 data-page={'agents'}
                 onClick={handleClick}
               >
                 <span className="icon">🤖</span>
                 <span className="text">AI Agent 관리</span>
-              </div>
+              </div> */}
 
               <div className="dropdown-item"
                 data-page={'knowledge'}

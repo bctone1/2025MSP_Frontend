@@ -226,6 +226,38 @@ export default function AssistantPage() {
 
     const [Agent, setAgent] = useState(false);
 
+    const [message, setMessage] = useState("");
+
+    const sendMessage = async () => {
+        if (!message.trim()) return;
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/RequestMessage2`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                messageInput: "가을 제철과일은 무엇이 있나요?",
+                project_id: 102,
+                user_email: "dudqls327@naver.com",
+                session: "newSession_2025-08-19",
+                selected_model: "gpt-4"
+            }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+            console.log(data);
+        }
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault(); // textarea 줄바꿈 방지
+            sendMessage();
+        }
+    };
+
+
     return (
         <>
             <div className={`modal-overlay ${Agent ? 'active' : ''}`}>
@@ -517,10 +549,18 @@ export default function AssistantPage() {
                                 <button className="attachment-btn"
                                     // onClick="openFileAttachment('multi')"
                                     title="파일 첨부">📎</button>
-                                <textarea className="chat-input"
+                                <textarea
+                                    className="chat-input"
                                     id="multi-chat-input"
                                     placeholder="메시지를 입력하세요... (Shift+Enter로 줄바꿈, Enter로 전송)"
-                                    rows="1"></textarea>
+                                    rows="1"
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                ></textarea>
+
+
+
                                 <button className="send-btn" id="multi-send-btn"
                                 >
                                     <span id="multi-send-icon">➤</span>

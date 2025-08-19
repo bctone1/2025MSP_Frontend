@@ -186,7 +186,7 @@ export default function Knowledge() {
                 </div>
 
                 {/* 업로드 진행률 패널 */}
-                <div className="upload-progress-panel" id="upload-progress-panel" style="display: none;">
+                <div className="upload-progress-panel" id="upload-progress-panel" style={{ display: "none" }}>
                     <div className="progress-header">
                         <h4>파일 업로드 진행 상황</h4>
                         <button className="close-panel-btn" id="close-progress-panel">✕</button>
@@ -197,7 +197,7 @@ export default function Knowledge() {
                 </div>
 
                 {/* 드래그 앤 드롭 오버레이 */}
-                <div className="drop-overlay" id="drop-overlay" style="display: none;">
+                <div className="drop-overlay" id="drop-overlay" style={{ display: "none" }}>
                     <div className="drop-content">
                         <div className="drop-icon">📁</div>
                         <h3>파일을 여기에 드롭하세요</h3>

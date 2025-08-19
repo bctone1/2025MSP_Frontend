@@ -597,16 +597,18 @@
     background: var(--success-green);
 }
 
-.message-content {
-    flex: 1;
-    min-width: 0;
-}
+
 
 .message-header {
-    display: flex;
+    /* display: flex; */
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-2);
+}
+
+.message-header.user {
+    /* justify-content: right; */
+    text-align: right;
 }
 
 .message-sender {
@@ -614,6 +616,7 @@
     font-size: var(--text-sm);
     color: var(--gray-800);
 }
+
 
 .message-time {
     font-size: var(--text-xs);
@@ -628,13 +631,11 @@
     line-height: 1.6;
     color: var(--gray-800);
     word-wrap: break-word;
+    display: inline-block;
+    max-width: 70%;
+
 }
 
-.user-message .message-text {
-    background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
-    color: white;
-    border-bottom-right-radius: 4px;
-}
 
 .agent-message .message-text {
     border-bottom-left-radius: 4px;

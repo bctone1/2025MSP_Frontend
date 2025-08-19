@@ -77,92 +77,92 @@ export default function AssistantPage() {
 
     const [messages, setMessages] = useState(
         [
-            {
-                id: 1,
-                type: "user",
-                avatar: "👤",
-                sender: "사용자",
-                time: "01:32",
-                text: (
-                    <>
-                        주인 시스템의 성능을 위해서는 데이터 분석이 핵심입니다.
-                        <br /><br />
-                        보유한 데이터:
-                        <br />• 사용자 행동 데이터 (클릭, 구매, 체류시간)
-                        <br />• 상품 정보 (카테고리, 가격, 설명)
-                        <br />• 사용자 프로필 (연령, 성별, 지역)
-                        <br />• 계절성 및 트렌드 데이터
-                        <br /><br />
-                        성과 지표(KPI):
-                        <br />• CTR (Click-Through Rate)
-                        <br />• CVR (Conversion Rate)
-                        <br />• 평균 주문 금액
-                        <br />• 사용자 만족도
-                    </>
-                )
-            },
-            {
-                id: 2,
-                type: "agent",
-                avatar: "🔍",
-                sender: "🔍 리서치 에이전트",
-                time: "01:33",
-                text: (
-                    <>
-                        네, 제공해주신 데이터와 KPI를 바탕으로 시장 조사를 진행했습니다.
-                        <br /><br />
-                        📚 참조 문서: 업로드된 지식베이스 파일을 기반으로 답변드리겠습니다.
-                        <br /><br />
-                        조사 결과:
-                        <br />1. 경쟁사 분석 및 시장 트렌드
-                        <br />2. 사용자 행동 패턴 연구
-                        <br />3. 업계 벤치마크 데이터 수집
-                        <br /><br />
-                        분석 전문가에게 데이터를 전달하겠습니다.
-                    </>
-                )
-            },
-            {
-                id: 3,
-                type: "agent",
-                avatar: "📊",
-                sender: "📊 분석 에이전트",
-                time: "01:34",
-                text: (
-                    <>
-                        리서치 에이전트가 수집한 데이터를 분석했습니다.
-                        <br /><br />
-                        분석 결과:
-                        <br />1. 사용자 세그멘테이션 분석
-                        <br />2. 구매 패턴 및 행동 분석
-                        <br />3. 성과 지표 상관관계 분석
-                        <br />4. 계절성 및 트렌드 영향 분석
-                        <br /><br />
-                        코딩 에이전트에게 구현 요청을 보내겠습니다.
-                    </>
-                )
-            },
-            {
-                id: 4,
-                type: "agent",
-                avatar: "💻",
-                sender: "💻 코딩 에이전트",
-                time: "01:35",
-                avatarBg: "#10b981",
-                text: (
-                    <>
-                        분석 결과를 바탕으로 추천 시스템 코드를 구현했습니다.
-                        <br /><br />
-                        구현 내용:
-                        <br />• Python 기반 데이터 전처리 스크립트
-                        <br />• 머신러닝 모델 구현 (collaborative filtering)
-                        <br />• 성과 지표 모니터링 대시보드
-                        <br />• API 엔드포인트 설계
-                        <br /><br />
-                        모든 에이전트가 협업하여 완성된 솔루션입니다.
-                    </>
-                )
-            }
+            // {
+            //     id: 1,
+            //     type: "user",
+            //     avatar: "👤",
+            //     sender: "사용자",
+            //     time: "01:32",
+            //     text: (
+            //         <>
+            //             주인 시스템의 성능을 위해서는 데이터 분석이 핵심입니다.
+            //             <br /><br />
+            //             보유한 데이터:
+            //             <br />• 사용자 행동 데이터 (클릭, 구매, 체류시간)
+            //             <br />• 상품 정보 (카테고리, 가격, 설명)
+            //             <br />• 사용자 프로필 (연령, 성별, 지역)
+            //             <br />• 계절성 및 트렌드 데이터
+            //             <br /><br />
+            //             성과 지표(KPI):
+            //             <br />• CTR (Click-Through Rate)
+            //             <br />• CVR (Conversion Rate)
+            //             <br />• 평균 주문 금액
+            //             <br />• 사용자 만족도
+            //         </>
+            //     )
+            // },
+            // {
+            //     id: 2,
+            //     type: "agent",
+            //     avatar: "🔍",
+            //     sender: "🔍 리서치 에이전트",
+            //     time: "01:33",
+            //     text: (
+            //         <>
+            //             네, 제공해주신 데이터와 KPI를 바탕으로 시장 조사를 진행했습니다.
+            //             <br /><br />
+            //             📚 참조 문서: 업로드된 지식베이스 파일을 기반으로 답변드리겠습니다.
+            //             <br /><br />
+            //             조사 결과:
+            //             <br />1. 경쟁사 분석 및 시장 트렌드
+            //             <br />2. 사용자 행동 패턴 연구
+            //             <br />3. 업계 벤치마크 데이터 수집
+            //             <br /><br />
+            //             분석 전문가에게 데이터를 전달하겠습니다.
+            //         </>
+            //     )
+            // },
+            // {
+            //     id: 3,
+            //     type: "agent",
+            //     avatar: "📊",
+            //     sender: "📊 분석 에이전트",
+            //     time: "01:34",
+            //     text: (
+            //         <>
+            //             리서치 에이전트가 수집한 데이터를 분석했습니다.
+            //             <br /><br />
+            //             분석 결과:
+            //             <br />1. 사용자 세그멘테이션 분석
+            //             <br />2. 구매 패턴 및 행동 분석
+            //             <br />3. 성과 지표 상관관계 분석
+            //             <br />4. 계절성 및 트렌드 영향 분석
+            //             <br /><br />
+            //             코딩 에이전트에게 구현 요청을 보내겠습니다.
+            //         </>
+            //     )
+            // },
+            // {
+            //     id: 4,
+            //     type: "agent",
+            //     avatar: "💻",
+            //     sender: "💻 코딩 에이전트",
+            //     time: "01:35",
+            //     avatarBg: "#10b981",
+            //     text: (
+            //         <>
+            //             분석 결과를 바탕으로 추천 시스템 코드를 구현했습니다.
+            //             <br /><br />
+            //             구현 내용:
+            //             <br />• Python 기반 데이터 전처리 스크립트
+            //             <br />• 머신러닝 모델 구현 (collaborative filtering)
+            //             <br />• 성과 지표 모니터링 대시보드
+            //             <br />• API 엔드포인트 설계
+            //             <br /><br />
+            //             모든 에이전트가 협업하여 완성된 솔루션입니다.
+            //         </>
+            //     )
+            // }
         ]
     );
 
@@ -448,7 +448,7 @@ export default function AssistantPage() {
                                         {msg.avatar}
                                     </div>
                                     <div className="message-content">
-                                        <div className="message-header">
+                                        <div className={`message-header ${msg.sender === "사용자" ? "user" : ""}`}>
                                             <div className="message-sender">{msg.sender}</div>
                                             <div className="message-time">{msg.time}</div>
                                         </div>

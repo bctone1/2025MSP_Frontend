@@ -3356,7 +3356,7 @@
 }
 
 .message-header {
-    display: flex;
+    /* display: flex; */
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-2);
@@ -3387,6 +3387,7 @@
     background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
     color: white;
     border-bottom-right-radius: 4px;
+    float: right;
 }
 
 .agent-message .message-text {
@@ -5621,7 +5622,8 @@
     padding: 0 1.5rem;
 }
 
-.metrics-overview h3 , .security-section h3{
+.metrics-overview h3,
+.security-section h3 {
     /* margin-bottom: 1.5rem;
     color: #1e293b; */
 

@@ -75,7 +75,7 @@ export default function AssistantPage() {
         ]
     );
 
-    const [messages, setmessages] = useState(
+    const [messages, setMessages] = useState(
         [
             {
                 id: 1,
@@ -194,6 +194,17 @@ export default function AssistantPage() {
     const [userInput, setuserInput] = useState("");
     const sendMessage = async () => {
         if (!userInput.trim()) return;
+
+        const userMessage = {
+            id: Date.now(), // 고유 ID
+            type: "user",
+            avatar: "👤",
+            sender: "사용자",
+            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            text: userInput
+        };
+        setMessages(prev => [...prev, userMessage]);
+
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/LLM/RequestMessage2`, {
             method: "POST",
             headers: {
@@ -209,12 +220,30 @@ export default function AssistantPage() {
         });
         const data = await response.json();
         if (response.ok) {
-            console.log(data);
+            console.log("API 응답:", data);
 
+            // 3. agent 메시지 추가
+            const agentMessage = {
+                id: Date.now() + 1,
+                type: "agent",
+                avatar: "🤖",
+                sender: "AI 에이전트",
+                time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                text: data.response // API가 주는 응답
+            };
 
+            setMessages(prev => [...prev, agentMessage]);
             setuserInput(""); // userinput 초기화
         }
     };
+
+    const chatEndRef = useRef(null);
+    useEffect(() => {
+        if (chatEndRef.current) {
+            chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [messages]);
+
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
@@ -427,6 +456,9 @@ export default function AssistantPage() {
                                     </div>
                                 </div>
                             ))}
+
+                            {/* 마지막 메시지 참조 */}
+                            <div ref={chatEndRef} />
                         </div>
 
                         <div className="chat-input-area">

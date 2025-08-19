@@ -278,6 +278,7 @@ export default function AssistantPage() {
                                 <option value="gpt-4">GPT-4</option>
                                 <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
                                 <option value="gemini-pro">Gemini Pro</option>
+                                <option value="exaone-3.5">Exaone-3.5</option>
                             </select>
                             <div className="llm-info" id="llm-info">
                                 <div className="llm-name">Claude 3 Sonnet</div>

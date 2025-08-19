@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { formatDate, storage, formatFileSize, modalheader } from '@/utill/utill';
 import "@/styles/assistant-page.css"
 
@@ -208,9 +208,32 @@ export default function AssistantPage() {
     const [AgentEdit, setAgentEdit] = useState(false);
     const [RagEdit, setRagEdit] = useState(false);
 
+    const fileInputRef = useRef(null);
+
+    // 버튼 클릭 시 파일 선택창 열기
+    const handleFileSelect = () => {
+        fileInputRef.current.click();
+    };
+
+    // 파일 선택 후 동작
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            console.log("선택된 파일:", file.name);
+            // 여기서 업로드 로직 추가 가능
+        }
+    };
+
+    const [Agent, setAgent] = useState(false);
 
     return (
         <>
+            <div className={`modal-overlay ${Agent ? 'active' : ''}`}>
+                <AgentHandler setAgent={setAgent} />
+            </div>
+
+
+
             <div className="assistant_container">
                 {/* 헤더 */}
                 <div className="header">
@@ -246,6 +269,27 @@ export default function AssistantPage() {
                 <div className={`assistant-layout multi-agent ${chatMode === "multi" ? "" : "hidden"}`} id="multi-agent-layout">
                     {/* 좌측 통합 사이드바 */}
                     <div className="chat-sidebar">
+
+
+                        <div className="sidebar-section">
+                            <h3 className="sidebar-title">
+                                <span>🧠</span>
+                                <span>AI 모델</span>
+                            </h3>
+                            <select className="llm-selector" id="llm-selector">
+                                <option value="claude-3-opus">Claude 3 Opus</option>
+                                <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                                <option value="claude-3-haiku">Claude 3 Haiku</option>
+                                <option value="gpt-4">GPT-4</option>
+                                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                                <option value="gemini-pro">Gemini Pro</option>
+                            </select>
+                            <div className="llm-info" id="llm-info">
+                                <div className="llm-name">Claude 3 Sonnet</div>
+                                <div className="llm-description">균형잡힌 성능과 속도로 대부분의 작업에 적합한 모델입니다.</div>
+                            </div>
+                        </div>
+
                         <div className="sidebar-section">
                             <h3 className="sidebar-title">
                                 <span>💬</span>
@@ -266,10 +310,17 @@ export default function AssistantPage() {
                         <div className="sidebar-section knowledge-section">
                             <h3 className="sidebar-title">
                                 <span>📚</span>
-                                <span>프로젝트 지식베이스</span>
+                                <span>지식베이스</span>
                                 <button className="manage-knowledge-btn"
-                                //  onClick="goToRAGPage()"
-                                >+ 첨부</button>
+                                    onClick={handleFileSelect}
+                                >첨부</button>
+
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    style={{ display: "none" }}
+                                    onChange={handleFileChange}
+                                />
                             </h3>
                             <p className="knowledge-count">📁 첨부된 파일 (0개)</p>
 
@@ -278,7 +329,7 @@ export default function AssistantPage() {
                                     <div className="empty-icon">📚</div>
                                     <p>이 대화에 지식베이스 파일을 첨부하여<br />더 정확한 답변을 받아보세요</p>
                                     <button className="select-knowledge-btn"
-                                    // onClick="goToRAGPage()"
+                                        onClick={handleFileSelect}
                                     >
                                         파일 첨부하기
                                     </button>
@@ -306,7 +357,7 @@ export default function AssistantPage() {
                                 <span>🤖</span>
                                 <span>활성 에이전트</span>
                                 <button className="manage-agents-btn"
-                                // onClick="openAgentManagement()"
+                                    onClick={() => setAgent(true)}
                                 >관리</button>
                             </h3>
                             <div className="active-agents-list" id="active-agents-list">
@@ -344,37 +395,6 @@ export default function AssistantPage() {
                                     <div className="agent-status">
                                         <div className="status-dot"></div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="sidebar-section">
-                            <h3 className="sidebar-title">
-                                <span>⚙️</span>
-                                <span>채팅 설정</span>
-                            </h3>
-                            <div className="chat-settings">
-                                <div className="setting-item">
-                                    <label htmlFor="max-tokens">최대 토큰</label>
-                                    <input type="range" id="max-tokens" min="1000" max="8000" value="4000" step="100" readOnly />
-                                    <span className="setting-value">4000</span>
-                                </div>
-                                <div className="setting-item">
-                                    <label htmlFor="temperature">창의성</label>
-                                    <input type="range" id="temperature" min="0" max="1" value="0.7" step="0.1" readOnly />
-                                    <span className="setting-value">0.7</span>
-                                </div>
-                                <div className="setting-item">
-                                    <label>
-                                        <input type="checkbox" id="auto-save" />
-                                        자동 저장
-                                    </label>
-                                </div>
-                                <div className="setting-item">
-                                    <label>
-                                        <input type="checkbox" id="show-typing" />
-                                        타이핑 표시
-                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -502,857 +522,171 @@ export default function AssistantPage() {
                                     placeholder="메시지를 입력하세요... (Shift+Enter로 줄바꿈, Enter로 전송)"
                                     rows="1"></textarea>
                                 <button className="send-btn" id="multi-send-btn"
-                                // onClick="sendMessage('multi')"
                                 >
                                     <span id="multi-send-icon">➤</span>
                                 </button>
                             </div>
-
-                            <div className="input-hints" id="multi-input-hints">
-                                <div className="hint-item"
-                                // onClick="insertHint('🔍 리서치 요청', 'multi')"
-                                >🔍 리서치 요청</div>
-                                <div className="hint-item"
-                                //  onClick="insertHint('💻 코드 구현', 'multi')"
-                                >💻 코드 구현</div>
-                                <div className="hint-item"
-                                //  onClick="insertHint('📊 데이터 분석', 'multi')"
-                                >📊 데이터 분석</div>
-                                <div className="hint-item"
-                                //  onClick="insertHint('🤝 에이전트 협업', 'multi')"
-                                >🤝 에이전트 협업</div>
-                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* 단일 대화 모드 콘텐츠 */}
-                <div className={`single-chat-layout single-chat ${chatMode === "single" ? "" : "hidden"}`} id="single-chat-layout">
-                    {/* 좌측 사이드바 */}
-                    <div className="single-chat-sidebar">
-                        {/* LLM 선택 섹션 */}
-                        <div className="sidebar-section llm-selection">
-                            <h3 className="sidebar-title">
-                                <span>🧠</span>
-                                <span>AI 모델</span>
-                            </h3>
-                            <select className="llm-selector" id="llm-selector">
-                                <option value="claude-3-opus">Claude 3 Opus</option>
-                                <option value="claude-3-sonnet">Claude 3 Sonnet</option>
-                                <option value="claude-3-haiku">Claude 3 Haiku</option>
-                                <option value="gpt-4">GPT-4</option>
-                                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                                <option value="gemini-pro">Gemini Pro</option>
-                            </select>
-                            <div className="llm-info" id="llm-info">
-                                <div className="llm-name">Claude 3 Sonnet</div>
-                                <div className="llm-description">균형잡힌 성능과 속도로 대부분의 작업에 적합한 모델입니다.</div>
-                            </div>
-                        </div>
-
-                        {/* AI 역량 안내 */}
-                        <div className="sidebar-section">
-                            <div className="ai-capabilities">
-                                <h4
-                                    style={{
-                                        fontSize: "var(--text-sm)",
-                                        fontWeight: 700,
-                                        color: "var(--gray-800)",
-                                        marginBottom: "var(--spacing-2)",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "var(--spacing-2)",
-                                    }}
-                                >
-                                    <span>💬</span>
-                                    <span>자연스러운 대화</span>
-                                </h4>
-                                <p
-                                    style={{
-                                        fontSize: "var(--text-xs)",
-                                        color: "var(--gray-600)",
-                                        marginBottom: "var(--spacing-3)",
-                                        lineHeight: 1.4,
-                                    }}
-                                >
-                                    선택한 AI 모델과 자유롭게 대화하세요. 어떤 질문이든 환영합니다!
-                                </p>
-                                <div className="capability-grid">
-                                    <div className="capability-item">
-                                        <span className="capability-icon">❓</span>
-                                        <span>질문 답변</span>
-                                    </div>
-                                    <div className="capability-item">
-                                        <span className="capability-icon">💻</span>
-                                        <span>코딩 도움</span>
-                                    </div>
-                                    <div className="capability-item">
-                                        <span className="capability-icon">📚</span>
-                                        <span>학습 지원</span>
-                                    </div>
-                                    <div className="capability-item">
-                                        <span className="capability-icon">📝</span>
-                                        <span>글쓰기 도움</span>
-                                    </div>
-                                    <div className="capability-item">
-                                        <span className="capability-icon">🔍</span>
-                                        <span>정보 검색</span>
-                                    </div>
-                                    <div className="capability-item">
-                                        <span className="capability-icon">💡</span>
-                                        <span>아이디어 제안</span>
-                                    </div>
-                                </div>
-                                <div
-                                    style={{
-                                        marginTop: "var(--spacing-3)",
-                                        padding: "var(--spacing-2)",
-                                        background: "rgba(59, 130, 246, 0.1)",
-                                        border: "1px solid rgba(59, 130, 246, 0.2)",
-                                        borderRadius: 8,
-                                    }}
-                                >
-                                    <p
-                                        style={{
-                                            fontSize: "var(--text-xs)",
-                                            color: "var(--secondary-blue)",
-                                            fontWeight: 600,
-                                            margin: 0,
-                                            textAlign: "center",
-                                        }}
-                                    >
-                                        🤝 대규모 프로젝트는 멀티 에이전트 모드를 활용하세요!
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* 지식베이스 섹션 */}
-                        <div className="sidebar-section knowledge-section">
-                            <h3 className="sidebar-title">
-                                <span>📚</span>
-                                <span>지식베이스</span>
-                                <button className="manage-knowledge-btn"
-                                //  onClick="attachKnowledgeFiles('single')"
-                                >+ 첨부</button>
-                            </h3>
-                            <p className="knowledge-count" id="single-knowledge-count">📁 첨부된 파일 (0개)</p>
-
-                            <div className="knowledge-files" id="single-knowledge-files">
-                                <div className="empty-knowledge">
-                                    <div className="empty-icon">📚</div>
-                                    <p>문서를 첨부하여 더 정확한<br />답변을 받아보세요</p>
-                                    <button className="select-knowledge-btn"
-                                    // onClick="attachKnowledgeFiles('single')"
-                                    >
-                                        파일 첨부하기
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="knowledge-help">
-                                <p
-                                    style={{
-                                        fontSize: "var(--text-xs)",
-                                        color: "var(--gray-500)",
-                                        marginTop: "var(--spacing-3)",
-                                        textAlign: "center",
-                                        lineHeight: 1.4,
-                                    }}
-                                >
-                                    💡 PDF, DOCX, TXT 등의 문서를 첨부하면<br />
-                                    AI가 해당 내용을 참조하여 답변합니다
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* 대화 목록 */}
-                        <div className="sidebar-section">
-                            <h3 className="sidebar-title">
-                                <span>💬</span>
-                                <span>최근 대화</span>
-                            </h3>
-                            <div className="conversations-list" id="single-conversations-list">
-                                <div className="conversation-item active">
-                                    <div className="conversation-header">
-                                        <div className="conversation-title">현재 대화</div>
-                                        <div className="conversation-time">진행중</div>
-                                    </div>
-                                    <div className="conversation-preview">새로운 대화를 시작해보세요...</div>
-                                </div>
-                                <div className="conversation-item">
-                                    <div className="conversation-header">
-                                        <div className="conversation-title">Python 데이터 분석</div>
-                                        <div className="conversation-time">14:32</div>
-                                    </div>
-                                    <div className="conversation-preview">pandas를 사용한 데이터 전처리 방법...</div>
-                                </div>
-                                <div className="conversation-item">
-                                    <div className="conversation-header">
-                                        <div className="conversation-title">웹 디자인 아이디어</div>
-                                        <div className="conversation-time">12:15</div>
-                                    </div>
-                                    <div className="conversation-preview">모던한 랜딩 페이지 디자인 요청...</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* 설정 */}
-                        <div className="sidebar-section">
-                            <h3 className="sidebar-title">
-                                <span>⚙️</span>
-                                <span>설정</span>
-                            </h3>
-                            <div className="chat-settings">
-                                <div className="setting-item">
-                                    <label htmlFor="single-max-tokens">최대 토큰</label>
-                                    <input type="range" id="single-max-tokens" min="1000" max="8000" value="4000" step="100" readOnly />
-                                    <span className="setting-value">4000</span>
-                                </div>
-                                <div className="setting-item">
-                                    <label htmlFor="single-temperature">창의성</label>
-                                    <input type="range" id="single-temperature" min="0" max="1" value="0.7" step="0.1" readOnly />
-                                    <span className="setting-value">0.7</span>
-                                </div>
-                                <div className="setting-item">
-                                    <label>
-                                        <input type="checkbox" id="single-stream" />
-                                        스트리밍 응답
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* 채팅 영역 */}
-                    <div className="chat-main">
-                        <div className="chat-header">
-                            <div className="chat-info">
-                                <div className="chat-title" id="single-chat-title">AI 어시스턴트</div>
-                                <div className="chat-model-badge" id="chat-model">
-                                    <span>🤖</span>
-                                    <span>Claude 3 Sonnet</span>
-                                </div>
-                            </div>
-                            <div className="chat-controls">
-                                <button className="control-btn" title="대화 지우기"
-                                // onClick="clearChat('single')"
-                                >🗑️</button>
-                                <button className="control-btn" title="설정">⚙️</button>
-                            </div>
-                        </div>
-
-                        <div className="chat-messages" id="single-chat-messages">
-                            {/* 시작 화면 */}
-                            <div className="welcome-screen" id="single-welcome-screen">
-                                <div className="welcome-icon">💬</div>
-                                <div className="welcome-title">무엇이든 물어보세요!</div>
-                                <div className="welcome-subtitle">
-                                    선택한 AI 모델과 자유롭게 대화할 수 있습니다.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="chat-input-area">
-                            <div className="attachment-preview" id="single-attachment-preview">
-                                {/* 첨부파일 미리보기가 여기에 동적으로 추가됩니다  */}
-                            </div>
-
-                            <div className="chat-input-wrapper">
-                                <button className="attachment-btn"
-                                    // onClick="openFileAttachment('single')"
-                                    title="파일 첨부">📎</button>
-                                <textarea className="chat-input"
-                                    id="single-chat-input"
-                                    placeholder="메시지를 입력하세요... (Shift+Enter로 줄바꿈, Enter로 전송)"
-                                    rows="1"></textarea>
-                                <button className="send-btn" id="single-send-btn"
-                                // onClick="sendMessage('single')"
-                                >
-                                    <span id="single-send-icon">➤</span>
-                                </button>
-                            </div>
-
-                            <div className="input-hints" id="single-input-hints">
-                                <div className="hint-item"
-                                // onClick="insertHint('설명해줘', 'single')"
-                                >❓ 설명 요청</div>
-                                <div className="hint-item"
-                                //  onClick="insertHint('코드 작성해줘', 'single')"
-                                >💻 코딩</div>
-                                <div className="hint-item"
-                                //  onClick="insertHint('도움말', 'single')"
-                                >💡 도움말</div>
-                                <div className="hint-item"
-                                // onClick="insertHint('추천해줘', 'single')"
-                                >⭐ 추천</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div >
-
-
         </>
     );
 }
-function ManageRags({ setRagEdit, selectedKnowledgeItems, knowledgeItems, categoryIcons, statusIcons }) {
-    const availableItems = knowledgeItems.filter(item =>
-        item.status === 'completed' || item.status === 'indexing'
-    );
+
+function AgentHandler({ setAgent }) {
     return (
         <>
-            {/* <div className="modal-overlay active"> */}
-            <div className="modal">
-                {modalheader({ headerTitle: "지식베이스 파일 선택", setModalClose: setRagEdit })}
 
+            {/* {modalheader({ headerTitle: "에이전트 관리", setModalClose: setAgent })} */}
+
+            <div className="modal agents-management">
+                <div className="modal-header">
+                    <h2 className="modal-title">에이전트 관리</h2>
+                    <button className="modal-close"
+                        onClick={() => setAgent(false)}>&times;</button>
+                </div>
                 <div className="modal-body">
-                    <div
+                    <p
                         style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            marginBottom: '1rem',
-                            padding: '1rem',
-                            background: 'rgba(99, 102, 241, 0.05)',
-                            borderRadius: '8px'
+                            color: "var(--gray-600)",
+                            marginBottom: "var(--spacing-6)",
+                            textAlign: "center",
                         }}
                     >
-                        <div>
-                            선택됨:{' '}
-                            <span
-                                id="modal-selected-count"
-                                style={{
-                                    fontWeight: 700,
-                                    color: '#6366f1'
-                                }}
-                            >
-                                {selectedKnowledgeItems.length}
-                            </span>
-                            개
-                        </div>
-                        <div>사용 가능: {availableItems.length}개</div>
-                    </div>
-
-
-                    <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: '12px', background: 'white' }}>
-                        {availableItems.length > 0 ? (
-                            availableItems.map(item => {
-                                const isSelected = selectedKnowledgeItems.includes(item.id);
-                                const icon = categoryIcons[item.category] || '📎';
-                                const statusIcon = statusIcons[item.status] || '⏳';
-
-                                return (
-                                    <div
-                                        key={item.id}
-                                        className={`selector-item ${isSelected ? 'selected' : ''}`}
-                                        data-item-id={item.id}
-                                        style={{
-                                            display: 'flex',
-                                            alignItems: 'flex-start',
-                                            gap: '1rem',
-                                            padding: '1rem',
-                                            borderBottom: '1px solid #f3f4f6',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.15s ease'
-                                        }}
-                                    >
-                                        <div style={{ flexShrink: 0, marginTop: '2px' }}>
-                                            <input
-                                                type="checkbox"
-                                                checked={isSelected}
-                                                onChange={() => handleSelectItem(item.id)} // 필요시 함수 정의
-                                                style={{
-                                                    width: '18px',
-                                                    height: '18px',
-                                                    accentColor: '#6366f1'
-                                                }}
-                                            />
-                                        </div>
-
-                                        <div style={{ flex: 1, minWidth: 0 }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                                                <div
-                                                    style={{
-                                                        width: '24px',
-                                                        height: '24px',
-                                                        borderRadius: '6px',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        backgroundColor: `${item.color}20`,
-                                                        color: item.color,
-                                                        fontSize: '12px',
-                                                        fontWeight: 700
-                                                    }}
-                                                >
-                                                    {icon}
-                                                </div>
-                                                <div style={{ flex: 1 }}>
-                                                    <div style={{ fontWeight: 600, color: '#1f2937', marginBottom: '2px', fontSize: '0.875rem' }}>
-                                                        {item.name}
-                                                    </div>
-                                                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                                                        <span
-                                                            style={{
-                                                                padding: '2px 6px',
-                                                                background: `${item.color}20`,
-                                                                color: item.color,
-                                                                borderRadius: '4px',
-                                                                fontSize: '10px',
-                                                                fontWeight: 600
-                                                            }}
-                                                        >
-                                                            {item.category}
-                                                        </span>
-                                                        <span
-                                                            style={{
-                                                                padding: '2px 6px',
-                                                                background: 'rgba(107, 114, 128, 0.1)',
-                                                                color: '#6b7280',
-                                                                borderRadius: '4px',
-                                                                fontSize: '10px',
-                                                                fontWeight: 600
-                                                            }}
-                                                        >
-                                                            {statusIcon} {item.status}
-                                                        </span>
-                                                        <span style={{ fontSize: '10px', color: '#9ca3af' }}>
-                                                            {formatFileSize(item.size)}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div style={{ fontSize: '0.875rem', color: '#6b7280', lineHeight: 1.5, marginBottom: '0.75rem' }}>
-                                                {item.description}
-                                            </div>
-
-                                            {item.status === 'completed' && (
-                                                <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem' }}>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', color: '#6b7280' }}>
-                                                        <span>🧩</span>
-                                                        <span>{item.chunks} 청크</span>
-                                                    </div>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', color: '#6b7280' }}>
-                                                        <span>🔍</span>
-                                                        <span>{item.queries} 쿼리</span>
-                                                    </div>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', color: '#6b7280' }}>
-                                                        <span>🎯</span>
-                                                        <span>{(item.tokens / 1000).toFixed(1)}K 토큰</span>
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
-                                                {item.tags.map((tag, index) => (
-                                                    <span
-                                                        key={index}
-                                                        style={{
-                                                            padding: '2px 6px',
-                                                            background: 'rgba(99, 102, 241, 0.1)',
-                                                            color: '#6366f1',
-                                                            borderRadius: '8px',
-                                                            fontSize: '10px',
-                                                            fontWeight: 600
-                                                        }}
-                                                    >
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })
-                        ) : (
-                            <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
-                                <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.5 }}>📚</div>
-                                <h4>사용 가능한 파일이 없습니다</h4>
-                                <p>먼저 지식베이스 페이지에서 파일을 업로드하고 처리를 완료해주세요.</p>
+                        활성화할 에이전트를 선택하세요. 선택된 에이전트들이 대화에 참여합니다.
+                    </p>
+                    <div className="agents-grid">
+                        <div className="agent-card active" data-agent="research">
+                            <div className="agent-card-header">
+                                <div className="agent-card-avatar" style={{ background: "#3b82f6" }}>🔍</div>
+                                <div className="agent-toggle">
+                                    <input type="checkbox" id="research-agent" />
+                                </div>
                             </div>
-                        )}
-                    </div>
+                            <div className="agent-card-info">
+                                <h5>리서치 에이전트</h5>
+                                <p>웹 검색, 자료 조사, 시장 분석 등 다양한 정보 수집과 연구 업무를 담당합니다.</p>
+                                <div className="agent-capabilities">
+                                    <span className="capability-tag">웹 검색</span>
+                                    <span className="capability-tag">데이터 수집</span>
+                                    <span className="capability-tag">시장 분석</span>
+                                    <span className="capability-tag">보고서 작성</span>
+                                </div>
+                                <div className="agent-model-info">모델: Claude-3 Haiku</div>
+                            </div>
+                        </div>
 
-                </div>
+                        <div className="agent-card active" data-agent="coding">
+                            <div className="agent-card-header">
+                                <div className="agent-card-avatar" style={{ background: "#10b981" }}>💻</div>
+                                <div className="agent-toggle">
+                                    <input type="checkbox" id="coding-agent" />
+                                </div>
+                            </div>
+                            <div className="agent-card-info">
+                                <h5>코딩 에이전트</h5>
+                                <p>프로그래밍, 코드 리뷰, 디버깅, 시스템 설계 등 모든 개발 관련 업무를 처리합니다.</p>
+                                <div className="agent-capabilities">
+                                    <span className="capability-tag">코드 작성</span>
+                                    <span className="capability-tag">디버깅</span>
+                                    <span className="capability-tag">리팩토링</span>
+                                    <span className="capability-tag">아키텍처</span>
+                                </div>
+                                <div className="agent-model-info">모델: Claude-3 Sonnet</div>
+                            </div>
+                        </div>
 
-                <div className="modal-footer">
-                    <button type="button" className="secondary-btn"
-                        onClick={() => setRagEdit(false)}
-                    >취소</button>
-                    <button type="button" className="primary-btn"
-                        onClick={() => alert("저장누름")}
-                    >저장</button>
-                </div>
+                        <div className="agent-card active" data-agent="analysis">
+                            <div className="agent-card-header">
+                                <div className="agent-card-avatar" style={{ background: "#8b5cf6" }}>📊</div>
+                                <div className="agent-toggle">
+                                    <input type="checkbox" id="analysis-agent" />
+                                </div>
+                            </div>
+                            <div className="agent-card-info">
+                                <h5>분석 에이전트</h5>
+                                <p>데이터 분석, 통계 처리, 인사이트 도출, 시각화 등 분석 업무를 전담합니다.</p>
+                                <div className="agent-capabilities">
+                                    <span className="capability-tag">데이터 분석</span>
+                                    <span className="capability-tag">통계 처리</span>
+                                    <span className="capability-tag">시각화</span>
+                                    <span className="capability-tag">예측 모델</span>
+                                </div>
+                                <div className="agent-model-info">모델: Claude-3 Sonnet</div>
+                            </div>
+                        </div>
 
-            </div>
-            {/* </div> */}
+                        <div className="agent-card" data-agent="writer">
+                            <div className="agent-card-header">
+                                <div className="agent-card-avatar" style={{ background: "#f59e0b" }}>✍️</div>
+                                <div className="agent-toggle">
+                                    <input type="checkbox" id="writer-agent" />
+                                </div>
+                            </div>
+                            <div className="agent-card-info">
+                                <h5>작성 에이전트</h5>
+                                <p>문서 작성, 콘텐츠 제작, 번역, 교정 등 텍스트 관련 업무를 처리합니다.</p>
+                                <div className="agent-capabilities">
+                                    <span className="capability-tag">문서 작성</span>
+                                    <span className="capability-tag">콘텐츠 제작</span>
+                                    <span className="capability-tag">번역</span>
+                                    <span className="capability-tag">교정</span>
+                                </div>
+                                <div className="agent-model-info">모델: Claude-3 Haiku</div>
+                            </div>
+                        </div>
 
-        </>
-    );
-}
+                        <div className="agent-card" data-agent="creative">
+                            <div className="agent-card-header">
+                                <div className="agent-card-avatar" style={{ background: "#ec4899" }}>🎨</div>
+                                <div className="agent-toggle">
+                                    <input type="checkbox" id="creative-agent" />
+                                </div>
+                            </div>
+                            <div className="agent-card-info">
+                                <h5>창작 에이전트</h5>
+                                <p>창의적 아이디어 발굴, 브레인스토밍, 디자인 기획 등 창작 업무를 담당합니다.</p>
+                                <div className="agent-capabilities">
+                                    <span className="capability-tag">아이디어 발굴</span>
+                                    <span className="capability-tag">브레인스토밍</span>
+                                    <span className="capability-tag">기획</span>
+                                    <span className="capability-tag">스토리텔링</span>
+                                </div>
+                                <div className="agent-model-info">모델: Claude-3 Opus</div>
+                            </div>
+                        </div>
 
-function ManageAgents({ conversations, availableAgents, activeAgents, setAgentEdit }) {
-
-    return (
-        <>
-            {/* <div className="modal-overlay active"> */}
-            <div className="modal">
-                {modalheader({ headerTitle: "에이전트 관리", setModalClose: setAgentEdit })}
-
-                <div className="modal-body">
-                    <div className="agents-management">
-                        <div className="available-agents">
-                            <h4>사용 가능한 에이전트</h4>
-                            <div className="agents-grid">
-                                {Object.entries(availableAgents).map(([agentId, agent]) => (
-                                    <div key={agentId} className={`agent-card ${activeAgents.includes(agentId) ? 'active' : ''}`} data-agent-id={agentId}>
-
-                                        <div className="agent-header">
-                                            <div className="agent-avatar" style={{ backgroundColor: `${agent.color}` }}>
-                                                {agent.name.split(' ')[0]}
-                                            </div>
-                                            <div className="agent-toggle">
-                                                <input
-                                                    type="checkbox"
-                                                    id={`agent-${agentId}`}
-                                                    checked={activeAgents.includes(agentId)}
-                                                    onChange={() => alert("버튼 누름")}
-                                                />
-                                                <label htmlFor={`agent-${agentId}`}></label>
-                                            </div>
-                                        </div>
-                                        <div className="agent-info">
-                                            <h5>{agent.name}</h5>
-                                            <p>{agent.description}</p>
-                                            <div className="agent-capabilities">
-                                                {agent.capabilities.map((cap, index) => (<span key={index} className="capability-tag">{cap}</span>))}
-                                            </div>
-                                            <div className="agent-model">모델: {agent.model}</div>
-                                        </div>
-                                    </div>
-                                ))}
+                        <div className="agent-card" data-agent="translator">
+                            <div className="agent-card-header">
+                                <div className="agent-card-avatar" style={{ background: "#06b6d4" }}>🌐</div>
+                                <div className="agent-toggle">
+                                    <input type="checkbox" id="translator-agent" />
+                                </div>
+                            </div>
+                            <div className="agent-card-info">
+                                <h5>번역 에이전트</h5>
+                                <p>다국어 번역, 현지화, 문화적 맥락 고려 등 언어 관련 업무를 전문으로 합니다.</p>
+                                <div className="agent-capabilities">
+                                    <span className="capability-tag">다국어 번역</span>
+                                    <span className="capability-tag">현지화</span>
+                                    <span className="capability-tag">문화 적응</span>
+                                    <span className="capability-tag">언어 교정</span>
+                                </div>
+                                <div className="agent-model-info">모델: Claude-3 Sonnet</div>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div className="modal-footer">
-                    <button type="button" className="secondary-btn"
-                        onClick={() => setAgentEdit(false)}
-                    >취소</button>
-                    <button type="button" className="primary-btn"
-                        onClick={() => alert("저장누름")}
-                    >저장</button>
+                    <button className="secondary-btn" >취소</button>
+                    <button className="primary-btn" >설정 저장</button>
                 </div>
-
             </div>
-            {/* </div> */}
+
+
+
         </>
     );
-}
-
-function renderConversationsList({ conversations, currentConversationId, availableAgents }) {
-    return (
-        conversations.length === 0 ? (
-            <div className="empty-conversations">
-                <div className="empty-icon">💬</div>
-                <p>아직 대화가 없습니다</p>
-                <button
-                    className="start-chat-btn"
-                // onClick={() => AssistantManager.createNewConversation()}
-                >
-                    첫 대화 시작하기
-                </button>
-            </div>
-        ) : conversations.map((conv, index) => {
-            const lastMessage = conv.messages[conv.messages.length - 1];
-            const preview = lastMessage
-                ? (lastMessage.type === 'user' ? '나: ' : '🤖: ') + lastMessage.content.substring(0, 50) + (lastMessage.content.length > 50 ? '...' : '')
-                : '대화를 시작해보세요';
-
-
-            return (
-                <div
-                    key={conv.id || index}
-                    className={`conversation-item ${conv.id === currentConversationId ? 'active' : ''}`}
-                    data-conversation-id={conv.id}
-                >
-                    <div className="conversation-header">
-                        <div className="conversation-title">{conv.title}</div>
-                        <div className="conversation-time">
-                            {formatDate(conv.updated, 'MM/DD HH:mm')}
-                        </div>
-                    </div>
-                    <div className="conversation-preview">{preview}</div>
-                    <div className="conversation-agents">
-                        {conv.agents.map(agentId => {
-                            const agent = availableAgents[agentId];
-                            return agent ? (
-                                <span
-                                    key={agentId}
-                                    className="agent-badge"
-                                    style={{
-                                        backgroundColor: `${agent.color}20`,
-                                        color: agent.color,
-                                    }}
-                                >
-                                    {agent.name.split(' ')[0]}
-                                </span>
-                            ) : null;
-                        })}
-                    </div>
-                    <div className="conversation-menu">
-                        <button
-                            className="menu-btn"
-                        // onClick={() => AssistantManager.showConversationMenu(conv.id)}
-                        >
-                            ⋮
-                        </button>
-                    </div>
-                </div>
-            );
-        })
-    );
-}
-
-
-function renderActiveAgents({ activeAgents, availableAgents }) {
-    return (
-        activeAgents.length === 0 ? (
-            <div className="empty-agents">
-                <div className="empty-icon">🤖</div>
-                <p>활성 에이전트가 없습니다</p>
-                <button className="add-agent-btn"
-                // onClick={() => AssistantManager.manageAgents()}
-                >
-                    에이전트 추가
-                </button>
-            </div>
-        ) : activeAgents.map(agentId => {
-            const agent = availableAgents[agentId];
-            if (!agent) return null;
-
-            return (
-                <div key={agentId} className="agent-item" data-agent-id={agentId}>
-                    <div
-                        className="agent-avatar"
-                        style={{ backgroundColor: agent.color }}
-                    >
-                        {agent.name.split(' ')[0]}
-                    </div>
-                    <div className="agent-info">
-                        <div className="agent-name">{agent.name}</div>
-                        <div className="agent-description">{agent.description}</div>
-                        <div className="agent-model">{agent.model}</div>
-                    </div>
-                    <div className="agent-status">
-                        <div className="status-dot active"></div>
-                    </div>
-                </div>
-            );
-        })
-    );
-}
-
-//현재대화 가져오기
-function getCurrentConversation({ conversations, currentConversationId }) {
-    return conversations.find(conv => conv.id === currentConversationId);
-}
-
-
-function chatagents({ conversations, availableAgents, currentConversationId }) {
-    const conversation = getCurrentConversation({ conversations, currentConversationId });
-    // console.log(conversation);
-    if (!conversation || !Array.isArray(conversation.agents)) {
-        return null;
-    }
-    return (
-        <>
-            {conversation.agents.map(agentId => {
-                const agent = availableAgents[agentId];
-                return agent ? (
-                    <span
-                        key={agentId}
-                        className="chat-agent-badge"
-                        style={{ backgroundColor: agent.color }}
-                    >
-                        {agent.name}
-                    </span>
-                ) : null;
-            })}
-        </>
-    );
-}
-
-function chatmessages({ conversations, currentConversationId, availableAgents }) {
-    const conversation = getCurrentConversation({ conversations, currentConversationId });
-    if (!conversation) {
-        return (
-            <div className="welcome-message">
-                <div className="welcome-icon">🤖</div>
-                <h3>AI 어시스턴트에 오신 것을 환영합니다!</h3>
-                <p>질문이나 요청사항을 입력해보세요. 전문 AI 에이전트들이 도와드리겠습니다.</p>
-                <div className="example-prompts">
-                    <div className="example-prompt"
-                    //  onClick="AssistantManager.insertHint('Python으로 데이터 분석 코드를 작성해주세요')"
-                    >
-                        💻 Python 데이터 분석 코드 작성
-                    </div>
-                    <div className="example-prompt"
-                    // onClick="AssistantManager.insertHint('마케팅 전략을 분석해주세요')"
-                    >
-                        📊 마케팅 전략 분석
-                    </div>
-                    <div className="example-prompt"
-                    // onClick="AssistantManager.insertHint('블로그 글을 작성해주세요')"
-                    >
-                        ✍️ 블로그 콘텐츠 작성
-                    </div>
-                    <div className="example-prompt"
-                    // onClick="AssistantManager.insertHint('영어 문서를 번역해주세요')"
-                    >
-                        🌐 문서 번역
-                    </div>
-                </div>
-            </div>
-        );
-    }
-    return (
-        <>
-            {conversation.messages.map((message) => renderMessage({ message, availableAgents }))}
-        </>
-    );
-}
-
-
-function renderMessage({ message, availableAgents }) {
-    // console.log(message);
-    // return"";
-    const timestamp = formatDate(message.timestamp, 'HH:mm');
-
-
-    if (message.type === 'user') {
-        return (
-            <div className="message user-message" data-message-id={message.id} key={message.id}>
-                <div className="message-avatar user-avatar">👤</div>
-                <div className="message-content">
-                    <div className="message-header">
-                        <span className="message-sender">나</span>
-                        <span className="message-time">{timestamp}</span>
-                    </div>
-                    <div
-                        className="message-text"
-                        dangerouslySetInnerHTML={{ __html: formatMessageText(message.content) }}
-                    ></div>
-                    {message.attachments && message.attachments.length > 0 ? renderAttachments(message.attachments) : ''}
-                </div>
-                <div className="message-actions">
-                    <button className="message-action"
-                        // onClick="AssistantManager.editMessage('${message.id}')" 
-                        title="편집">✏️</button>
-                    <button className="message-action"
-                        //  onClick="AssistantManager.deleteMessage('${message.id}')" 
-                        title="삭제">🗑️</button>
-                </div>
-            </div>
-        );
-    } else {
-        const agent = availableAgents[message.agentId];
-        const agentName = agent ? agent.name : '🤖 AI';
-        const agentColor = agent ? agent.color : '#6B7280';
-
-        return (
-            <div className="message agent-message" data-message-id={message.id} key={message.id}>
-                <div className="message-avatar agent-avatar"
-                    style={{ backgroundColor: agentColor }}
-                >
-                    {agentName.split(' ')[0]}
-                </div>
-                <div className="message-content">
-                    <div className="message-header">
-                        <span className="message-sender">{agentName}</span>
-                        <span className="message-time">{timestamp}</span>
-                    </div>
-                    <div
-                        className="message-text"
-                        dangerouslySetInnerHTML={{ __html: formatMessageText(message.content) }}
-                    ></div>
-
-                    {message.attachments && message.attachments.length > 0 ? renderAttachments(message.attachments) : ''}
-                </div>
-                <div className="message-actions">
-                    <button className="message-action"
-                        // onClick="AssistantManager.copyMessage('${message.id}')" 
-                        title="복사">📋</button>
-                    <button className="message-action"
-                        //  onClick="AssistantManager.regenerateMessage('${message.id}')" 
-                        title="재생성">🔄</button>
-                    <button className="message-action"
-                        //  onClick="AssistantManager.likeMessage('${message.id}')" 
-                        title="좋아요">👍</button>
-                </div>
-            </div>
-        );
-    }
-}
-
-
-function renderAttachments(attachments) {
-    return (
-        <div className="message-attachments">
-            {attachments.map(att => (
-                <div className="attachment-item">
-                    <div className="attachment-icon">{getFileIcon(att.type)}</div>
-                    <div className="attachment-info">
-                        <div className="attachment-name">{att.name}</div>
-                        <div className="attachment-size">{formatFileSize(att.size)}</div>
-                    </div>
-                    <button className="attachment-download"
-                    //  onClick="AssistantManager.downloadAttachment('${att.id}')"
-                    >⬇️</button>
-                </div>
-            ))}
-        </div>
-    );
-}
-
-
-function formatMessageText(text) {
-    // text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-    //     return <div className="code-block">
-    //         <div className="code-header">
-    //             <span className="code-lang">${lang || 'code'}</span>
-    //             <button className="copy-code-btn"
-    //             // onClick="AssistantManager.copyCode(this)"
-    //             >📋</button>
-    //         </div>
-    //         <pre><code>${escapeHtml(code.trim())}</code></pre>
-    //     </div>;
-    // });
-
-    // // 인라인 코드 처리
-    // text = text.replace(/`([^`]+)`/g, <code className="inline-code">$1</code>);
-
-    // // 링크 처리
-    // text = text.replace(/(https?:\/\/[^\s]+)/g, <a href="$1" target="_blank" className="message-link">$1</a>);
-
-    text = text.replace(/\n/g, '<br/>');
-
-    return text;
-}
-
-function getFileIcon(type) {
-    const icons = {
-        'image': '🖼️',
-        'document': '📄',
-        'spreadsheet': '📊',
-        'presentation': '📋',
-        'pdf': '📕',
-        'code': '💻',
-        'archive': '📦',
-        'default': '📎'
-    };
-    return icons[type] || icons.default;
 }

@@ -39,6 +39,7 @@ export default function Sidebar({ onMenuClick, currentPage }) {
             { page: 'dashboard', icon: '🏠', title: '홈', desc: '대시보드 및 전체 현황' },
             { page: 'projects', icon: '📁', title: '프로젝트', desc: '프로젝트 생성 및 관리' },
             { page: 'assistant', icon: '💬', title: 'AI 어시스턴트', desc: '멀티에이전트 대화' },
+            { page: 'knowledge', icon: '📚', title: '지식베이스', desc: '지식베이스 관리' },
             // { page: 'history', icon: '📈', title: '히스토리', desc: '대화 기록 및 분석' },
 
           ].map(({ page, icon, title, desc }) => (
@@ -63,12 +64,7 @@ export default function Sidebar({ onMenuClick, currentPage }) {
         <div className="nav-section">
           <div className="nav-section-label">관리</div>
 
-          <div
-            className={`nav-item settings-dropdown ${currentPage === "profile" || currentPage === "agents" || currentPage === "knowledge" || currentPage === "api-keys" || currentPage === "mcp"
-              ? "active"
-              : ""
-              }`}
-          >
+          <div className={`nav-item settings-dropdown ${currentPage === "profile" || currentPage === "agents" || currentPage === "api-keys" || currentPage === "mcp" ? "active" : ""}`}>
             <div className="nav-icon">⚙️</div>
             <div className="nav-text"
               data-page={'knowledge'}
@@ -87,13 +83,13 @@ export default function Sidebar({ onMenuClick, currentPage }) {
                 <span className="text">AI Agent 관리</span>
               </div> */}
 
-              <div className="dropdown-item"
+              {/* <div className="dropdown-item"
                 data-page={'knowledge'}
                 onClick={handleClick}
               >
                 <span className="icon">📚</span>
                 <span className="text">지식베이스 관리</span>
-              </div>
+              </div> */}
 
               <div className="dropdown-item"
                 data-page={'api-keys'}

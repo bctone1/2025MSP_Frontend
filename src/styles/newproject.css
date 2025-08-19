@@ -752,8 +752,8 @@ body {
 .modal-container {
     margin: 0;
     border-radius: 0;
-    height: 100vh;
-    max-height: none;
+    /* height: 100vh;
+    max-height: none; */
 }
 
 .template-grid,

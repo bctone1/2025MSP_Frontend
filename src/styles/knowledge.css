@@ -680,7 +680,7 @@ body {
 }
 
 .modal-header {
-    margin-bottom: var(--spacing-4);
+    /* margin-bottom: var(--spacing-4); */
     display: flex;
     justify-content: space-between;
     align-items: center;

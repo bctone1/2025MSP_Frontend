@@ -43,13 +43,13 @@ export default function Profile({ onMenuClick }) {
                                     <label className="form-label">소속 조직</label>
                                     <input type="text" className="form-input" id="profile-company" value="BCTONE" placeholder="소속 조직을 입력하세요" readOnly />
                                 </div>
-                                <div className="form-group">
+                                {/* <div className="form-group">
                                     <label className="form-label">권한</label>
                                     <select className="form-select" id="profile-role">
                                         <option value="관리자">관리자</option>
                                         <option value="사용자">사용자</option>
                                     </select>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

@@ -174,10 +174,9 @@ export default function Knowledge() {
                                 </select>
                             </div>
 
-                            <div className="knowledge_filter-group">
+                            {/* <div className="knowledge_filter-group">
                                 <label className="knowledge_filter-label">데이터 소스</label>
                                 <select className="knowledge_filter-select" id="source-filter"
-                                // onchange="applyFilters()"
                                 >
                                     <option value="">전체</option>
                                     <option value="upload">직접 업로드</option>
@@ -186,7 +185,7 @@ export default function Knowledge() {
                                     <option value="notion">Notion</option>
                                     <option value="dms">사내 DMS</option>
                                 </select>
-                            </div>
+                            </div> */}
 
                             <div className="knowledge_filter-group">
                                 <label className="knowledge_filter-label">파일 타입</label>

@@ -115,7 +115,7 @@
 
 .stat-change.positive {
     color: #059669;
-    background: rgba(16, 185, 129, 0.1);
+    /* background: rgba(16, 185, 129, 0.1); */
 }
 
 .stat-change.negative {

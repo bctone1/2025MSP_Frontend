@@ -259,7 +259,7 @@ export default function Providers() {
 
                 {/* 프로바이더 통계 */}
                 <div className="provider-stats">
-                    <div className="stat-card">
+                    <div className="provider-stat-card">
                         <div className="stat-icon providers-total">🔗</div>
                         <div className="stat-content">
                             <div className="stat-value" id="total-providers">{totalProviders}</div>
@@ -268,7 +268,7 @@ export default function Providers() {
                         </div>
                     </div>
 
-                    <div className="stat-card">
+                    <div className="provider-stat-card">
                         <div className="stat-icon providers-active">⚡</div>
                         <div className="stat-content">
                             <div className="stat-value" id="active-providers">{activeProviders}</div>
@@ -277,7 +277,7 @@ export default function Providers() {
                         </div>
                     </div>
 
-                    <div className="stat-card">
+                    <div className="provider-stat-card">
                         <div className="stat-icon api-calls">📊</div>
                         <div className="stat-content">
                             <div className="stat-value" id="total-api-calls">{formatNumber(totalCalls)}</div>
@@ -286,7 +286,7 @@ export default function Providers() {
                         </div>
                     </div>
 
-                    <div className="stat-card">
+                    <div className="provider-stat-card">
                         <div className="stat-icon api-cost">💰</div>
                         <div className="stat-content">
                             <div className="stat-value" id="total-cost">${totalCost.toFixed(2)}</div>
@@ -459,7 +459,7 @@ function RenderProvidersGrid({ filteredProviders }) {
                                 <div className="provider-name">{provider.name}</div>
                                 <div className="provider-type">{getTypeText(provider.type)}</div>
                                 <div className="provider-status">
-                                    <div className={`status-indicator ${provider.status}`}></div>
+                                    <div className={`porvider-status-indicator ${provider.status}`}></div>
                                     <span className={`status-text ${provider.status}`}>{getStatusText(provider.status)}</span>
                                 </div>
                             </div>

@@ -368,7 +368,7 @@ function UpdateProvidersStatus() {
     return (<>
 
         {providers.map(provider => (
-            <div key={provider.name} className={`provider-card ${provider.status}`}>
+            <div key={provider.name} className={`dashboard-provider-card`}>
                 <div className="provider-header">
                     <div className="provider-info">
                         <div className={`provider-logo ${provider.name.toLowerCase()}`}>{provider.logo}</div>
@@ -377,9 +377,9 @@ function UpdateProvidersStatus() {
                             <p>가동률: {provider.uptime}</p>
                         </div>
                     </div>
-                    <div className="provider-status">
+                    {/* <div className="provider-status">
                         <div className={`status-indicator ${provider.status}`}></div>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="provider-metrics">
                     <div className="provider-metric">

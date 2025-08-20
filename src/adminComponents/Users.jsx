@@ -158,7 +158,7 @@ export default function Users({ onMenuClick }) {
 
                 {/* 사용자 통계 */}
                 <div className="user-stats">
-                    <div className="stat-card">
+                    <div className="user-stat-card">
                         <div className="stat-icon users-total">👥</div>
                         <div className="stat-content">
                             <div className="stat-value" id="total-users">{totalUsers}</div>
@@ -167,7 +167,7 @@ export default function Users({ onMenuClick }) {
                         </div>
                     </div>
 
-                    <div className="stat-card">
+                    <div className="user-stat-card">
                         <div className="stat-icon users-active">⚡</div>
                         <div className="stat-content">
                             <div className="stat-value" id="active-users">{activeUsers}</div>
@@ -176,7 +176,7 @@ export default function Users({ onMenuClick }) {
                         </div>
                     </div>
 
-                    <div className="stat-card">
+                    <div className="user-stat-card">
                         <div className="stat-icon users-new">🆕</div>
                         <div className="stat-content">
                             <div className="stat-value" id="new-users">{newUsers}</div>
@@ -185,7 +185,7 @@ export default function Users({ onMenuClick }) {
                         </div>
                     </div>
 
-                    <div className="stat-card">
+                    <div className="user-stat-card">
                         <div className="stat-icon users-pro">⭐</div>
                         <div className="stat-content">
                             <div className="stat-value" id="pro-users">{proUsers}</div>

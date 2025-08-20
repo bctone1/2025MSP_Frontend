@@ -194,6 +194,7 @@ export default function AssistantPage() {
     const [userInput, setuserInput] = useState("");
     const sendMessage = async () => {
         if (!userInput.trim()) return;
+        setuserInput(""); // userinput 초기화
 
         const userMessage = {
             id: Date.now(), // 고유 ID
@@ -205,17 +206,18 @@ export default function AssistantPage() {
         };
         setMessages(prev => [...prev, userMessage]);
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/LLM/RequestMessage2`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/googletest`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
                 messageInput: userInput,
-                project_id: 102,
-                user_email: "dudqls327@naver.com",
-                session: "newSession_2025-08-19",
                 selected_model: AssistantSettings.LLM
+
+                // project_id: 102,
+                // user_email: "dudqls327@naver.com",
+                // session: "newSession_2025-08-19",
             }),
         });
         const data = await response.json();
@@ -233,7 +235,7 @@ export default function AssistantPage() {
             };
 
             setMessages(prev => [...prev, agentMessage]);
-            setuserInput(""); // userinput 초기화
+
         }
     };
 
@@ -304,10 +306,26 @@ export default function AssistantPage() {
                                 <option value="claude-3-opus">Claude 3 Opus</option>
                                 <option value="claude-3-sonnet">Claude 3 Sonnet</option>
                                 <option value="claude-3-haiku">Claude 3 Haiku</option>
+
                                 <option value="gpt-4">GPT-4</option>
                                 <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                                <option value="gemini-pro">Gemini Pro</option>
+
                                 <option value="exaone-3.5">Exaone-3.5</option>
+
+                                <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+                                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                                <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite</option>
+                                <option value="gemini-live-2.5-flash-preview">gemini-live-2.5-flash-preview</option>
+                                <option value="gemini-2.5-flash-preview-native-audio-dialog & gemini-2.5-flash-exp-native-audio-thinking-dialog">gemini-2.5-flash-preview-native-audio-dialog & gemini-2.5-flash-exp-native-audio-thinking-dialog</option>
+                                <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+                                <option value="gemini-2.0-flash-preview-image-generation">gemini-2.0-flash-preview-image-generation</option>
+                                <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite</option>
+                                <option value="gemini-2.0-flash-live-001">gemini-2.0-flash-live-001</option>
+                                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                                <option value="gemini-1.5-flash-8b">gemini-1.5-flash-8b	</option>
+                                <option value="gemini-1.5-pro">gemini-1.5-pro	</option>
+
+
                             </select>
                             <div className="llm-info" id="llm-info">
                                 <div className="llm-name">Claude 3 Sonnet</div>

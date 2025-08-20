@@ -222,7 +222,7 @@ export default function RegisterPage() {
                                 </div>
 
                                 {/* 휴대폰 인증 */}
-                                <div className="form-group">
+                                {/* <div className="form-group">
                                     <label className="form-label" htmlFor="phone">휴대폰 번호</label>
                                     <div style={{ display: "flex", gap: "10px" }}>
                                         <input type="tel" id="phone" className="form-input" placeholder="010-0000-0000" style={{ flex: "1" }} />
@@ -230,7 +230,7 @@ export default function RegisterPage() {
                                         // onClick="sendVerificationCode()"
                                         >인증번호 발송</button>
                                     </div>
-                                </div>
+                                </div> */}
 
                                 <div className="form-group" id="verificationGroup" style={{ display: "none" }}>
                                     <label className="form-label" htmlFor="verificationCode">인증번호</label>

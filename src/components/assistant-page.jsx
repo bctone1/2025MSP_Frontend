@@ -185,7 +185,7 @@ export default function AssistantPage() {
 
     // 어시스턴트 기본세팅 값
     const [AssistantSettings, setAssistantSettings] = useState({
-        LLM: "exaone-3.5",
+        LLM: "gemini-1.5-flash",
 
     });
 

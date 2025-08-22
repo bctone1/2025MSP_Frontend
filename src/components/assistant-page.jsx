@@ -206,7 +206,7 @@ export default function AssistantPage() {
         };
         setMessages(prev => [...prev, userMessage]);
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/searchQuery`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/googletest`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

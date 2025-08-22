@@ -206,16 +206,15 @@ export default function AssistantPage() {
         };
         setMessages(prev => [...prev, userMessage]);
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/LLM/RequestMessage2`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/searchQuery`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
                 messageInput: userInput,
-                selected_model: AssistantSettings.LLM
-
-                ,project_id: 102,
+                selected_model: AssistantSettings.LLM,
+                project_id: 102,
                 user_email: "dudqls327@naver.com",
                 session: "newSession_2025-08-19",
             }),
@@ -231,7 +230,8 @@ export default function AssistantPage() {
                 avatar: "🤖",
                 sender: "AI 에이전트",
                 time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-                text: data.response // API가 주는 응답
+                // text: data.response // API가 주는 응답
+                text: JSON.stringify(data.response)
             };
 
             setMessages(prev => [...prev, agentMessage]);
@@ -295,42 +295,66 @@ export default function AssistantPage() {
                                 <span>🧠</span>
                                 <span>AI 모델</span>
                             </h3>
-                            <select className="llm-selector" id="llm-selector" value={AssistantSettings.LLM}
+
+                            <select
+                                className="llm-selector"
+                                id="llm-selector"
+                                value={AssistantSettings.LLM}
                                 onChange={(e) =>
                                     setAssistantSettings({
                                         ...AssistantSettings,
-                                        LLM: e.target.value
+                                        LLM: e.target.value,
                                     })
                                 }
                             >
-                                <option value="claude-3-opus">Claude 3 Opus</option>
-                                <option value="claude-3-sonnet">Claude 3 Sonnet</option>
-                                <option value="claude-3-haiku">Claude 3 Haiku</option>
+                                <optgroup label="Anthropic (Claude)">
+                                    <option value="claude-3-opus">Claude 3 Opus</option>
+                                    <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                                    <option value="claude-3-haiku">Claude 3 Haiku</option>
+                                </optgroup>
 
-                                <option value="gpt-4">GPT-4</option>
-                                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                                <optgroup label="OpenAI">
+                                    <option value="gpt-4">GPT-4</option>
+                                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                                </optgroup>
 
-                                <option value="exaone-3.5">Exaone-3.5</option>
-                                <option value="K-intelligence/Midm-2.0-Base-Instruct">midm</option>
-                                <option value="meta-llama-3.1-8b-instruct">meta llama 8b</option>
-                                <option value="skt/A.X-3.1">skt a.x</option>
+                                <optgroup label="LG EXAONE">
+                                    <option value="exaone-3.5">Exaone-3.5</option>
+                                </optgroup>
 
+                                <optgroup label="K-Intelligence">
+                                    <option value="K-intelligence/Midm-2.0-Base-Instruct">Midm 2.0</option>
+                                </optgroup>
 
-                                <option value="gemini-2.5-pro">gemini-2.5-pro</option>
-                                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-                                <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite</option>
-                                <option value="gemini-live-2.5-flash-preview">gemini-live-2.5-flash-preview</option>
-                                <option value="gemini-2.5-flash-preview-native-audio-dialog & gemini-2.5-flash-exp-native-audio-thinking-dialog">gemini-2.5-flash-preview-native-audio-dialog & gemini-2.5-flash-exp-native-audio-thinking-dialog</option>
-                                <option value="gemini-2.0-flash">gemini-2.0-flash</option>
-                                <option value="gemini-2.0-flash-preview-image-generation">gemini-2.0-flash-preview-image-generation</option>
-                                <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite</option>
-                                <option value="gemini-2.0-flash-live-001">gemini-2.0-flash-live-001</option>
-                                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
-                                <option value="gemini-1.5-flash-8b">gemini-1.5-flash-8b	</option>
-                                <option value="gemini-1.5-pro">gemini-1.5-pro	</option>
+                                <optgroup label="Meta">
+                                    <option value="meta-llama-3.1-8b-instruct">LLaMA 3.1 8B Instruct</option>
+                                </optgroup>
 
+                                <optgroup label="SKT">
+                                    <option value="skt/A.X-3.1">A.X 3.1</option>
+                                </optgroup>
 
+                                <optgroup label="Google Gemini">
+                                    <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                                    <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+                                    <option value="gemini-live-2.5-flash-preview">Gemini Live 2.5 Flash Preview</option>
+                                    <option value="gemini-2.5-flash-preview-native-audio-dialog">
+                                        Gemini 2.5 Flash Preview Native Audio Dialog
+                                    </option>
+                                    <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                                    <option value="gemini-2.0-flash-preview-image-generation">
+                                        Gemini 2.0 Flash Preview (Image Generation)
+                                    </option>
+                                    <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</option>
+                                    <option value="gemini-2.0-flash-live-001">Gemini 2.0 Flash Live 001</option>
+                                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                                    <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</option>
+                                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                                </optgroup>
                             </select>
+
+
                             <div className="llm-info" id="llm-info">
                                 <div className="llm-name">Claude 3 Sonnet</div>
                                 <div className="llm-description">균형잡힌 성능과 속도로 대부분의 작업에 적합한 모델입니다.</div>

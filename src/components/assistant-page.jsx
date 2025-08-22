@@ -206,7 +206,7 @@ export default function AssistantPage() {
         };
         setMessages(prev => [...prev, userMessage]);
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/googletest`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/LLM/RequestMessage2`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -215,9 +215,9 @@ export default function AssistantPage() {
                 messageInput: userInput,
                 selected_model: AssistantSettings.LLM
 
-                // project_id: 102,
-                // user_email: "dudqls327@naver.com",
-                // session: "newSession_2025-08-19",
+                ,project_id: 102,
+                user_email: "dudqls327@naver.com",
+                session: "newSession_2025-08-19",
             }),
         });
         const data = await response.json();
@@ -311,6 +311,10 @@ export default function AssistantPage() {
                                 <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
 
                                 <option value="exaone-3.5">Exaone-3.5</option>
+                                <option value="K-intelligence/Midm-2.0-Base-Instruct">midm</option>
+                                <option value="meta-llama-3.1-8b-instruct">meta llama 8b</option>
+                                <option value="skt/A.X-3.1">skt a.x</option>
+
 
                                 <option value="gemini-2.5-pro">gemini-2.5-pro</option>
                                 <option value="gemini-2.5-flash">gemini-2.5-flash</option>

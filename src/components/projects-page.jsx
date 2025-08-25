@@ -147,7 +147,9 @@ export default function ProjectsPage({ onMenuClick }) {
                   <span>+</span>
                   <span>새 프로젝트</span>
                 </button>
-                <button className="quick-chat-btn">
+                <button className="quick-chat-btn"
+                  onClick={() => onMenuClick('assistant')}
+                >
                   <span>💬</span>
                   <span>빠른 대화</span>
                 </button>
@@ -168,8 +170,8 @@ export default function ProjectsPage({ onMenuClick }) {
               </div>
               <div className="filter-buttons">
                 <button className={`filter-btn ${statusFilter === "all" ? "active" : ""}`} onClick={() => setStatusFilter("all")}>전체</button>
-                <button className={`filter-btn ${statusFilter === "active" ? "active" : ""}`} onClick={() => setStatusFilter("active")}>진행중</button>
-                <button className={`filter-btn ${statusFilter === "planning" ? "active" : ""}`} onClick={() => setStatusFilter("planning")}>계획중</button>
+                <button className={`filter-btn ${statusFilter === "active" ? "active" : ""}`} onClick={() => setStatusFilter("진행중")}>진행중</button>
+                <button className={`filter-btn ${statusFilter === "planning" ? "active" : ""}`} onClick={() => setStatusFilter("계획중")}>계획중</button>
               </div>
             </div>
           </div>
@@ -221,7 +223,7 @@ export default function ProjectsPage({ onMenuClick }) {
               </div>
               <div className="project-actions-detail">
                 <button className="action-btn-detail primary"
-                //  onclick="startNewConversation()"
+                  onClick={() => onMenuClick('assistant')}
                 >
                   <span>💬</span>
                   <span>새 대화 시작</span>
@@ -255,7 +257,9 @@ export default function ProjectsPage({ onMenuClick }) {
                 <span>대화 히스토리</span>
               </h2>
 
-              <button className="new-conversation-btn" >
+              <button className="new-conversation-btn"
+                onClick={() => onMenuClick('assistant')}
+              >
                 <span>💬</span>
                 <span>새 대화 시작</span>
               </button>
@@ -373,10 +377,10 @@ function ProjectRow({ project, setviewStatus, setcurrentPorject }) {
             <div className={`status-pill status-${status}`}>{project.status}</div>
           </div>
           <div className="project-actions">
-            <button
+            {/* <button
               className="action-btn"
               onClick={(e) => {
-                e.stopPropagation();  // 이벤트 버블링 막기
+                e.stopPropagation();
                 setonEdit(true);
               }}
               title="편집"
@@ -389,7 +393,7 @@ function ProjectRow({ project, setviewStatus, setcurrentPorject }) {
                 setonDelete(true);
               }}
               title="삭제"
-            >🗑️</button>
+            >🗑️</button> */}
           </div>
         </div>
 
@@ -501,7 +505,7 @@ function NewProjectform({ setNewProject }) {
     switch (viewStatus) {
       case "section1":
         alert("프로젝트 생성 백엔드로 요청");
-        
+
         setNewProject(false);
 
         // setViewStatus("section2");

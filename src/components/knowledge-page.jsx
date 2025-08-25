@@ -1,8 +1,8 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { formatDate, storage, formatFileSize } from '@/utill/utill';
+import { useState, useEffect, useRef } from 'react';
+// import { formatDate, storage, formatFileSize } from '@/utill/utill';
 import "@/styles/knowledge.css";
-import History from "@/components/history-component";
+// import History from "@/components/history-component";
 
 
 export default function Knowledge() {
@@ -108,6 +108,31 @@ export default function Knowledge() {
         return matchesSearch;
     });
 
+    const fileInputRef = useRef(null);
+
+    const handleFileSelect = async (e) => {
+        alert("파일업로드 클릭됨");
+        console.log("이벤트 객체:", e);
+        console.log("파일 배열:", e.target.files);
+        const selectedFile = e.target.files[0];
+        console.log("선택된 파일:", selectedFile);
+
+        if (!selectedFile) return;
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        // formData.append("project_id", 102);
+        // formData.append("user_email", "dudqls327@naver.com");
+        // formData.append("session_id", 120157);
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/uploadRAG`, {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+    };
 
 
 
@@ -253,7 +278,17 @@ export default function Knowledge() {
                             </div>
                             <div className="header-actions">
                                 <button className="btn btn-chat" >💬 AI 어시스턴트</button>
-                                <button className="btn btn-primary" >📤 파일 업로드</button>
+                                <button className="btn btn-primary"
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    📤 파일 업로드
+                                </button>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    className="hidden"
+                                    onChange={handleFileSelect}
+                                />
                                 {/* <button className="btn btn-secondary" >🔗 외부 연동</button> */}
                                 <button className="btn btn-secondary" >📁 새 폴더</button>
                             </div>
@@ -274,18 +309,18 @@ export default function Knowledge() {
                                     📋 목록
                                 </button>
 
-                                <button className={`knowledge_tab-btn ${viewMode === 'history' ? 'active' : ''}`}
+                                {/* <button className={`knowledge_tab-btn ${viewMode === 'history' ? 'active' : ''}`}
                                     onClick={() => setViewMode('history')}
                                 >
                                     📈 히스토리
-                                </button>
+                                </button> */}
 
                             </div>
 
                             {/* 히스토리 임포트 */}
-                            <div style={{ display: `${viewMode === "history" ? "" : "none"}` }}>
+                            {/* <div style={{ display: `${viewMode === "history" ? "" : "none"}` }}>
                                 {<History />}
-                            </div>
+                            </div> */}
 
 
 

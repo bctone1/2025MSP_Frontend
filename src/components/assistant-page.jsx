@@ -3,7 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import { formatDate, storage, formatFileSize, modalheader } from '@/utill/utill';
 import "@/styles/assistant-page.css"
 
-export default function AssistantPage() {
+export default function AssistantPage({ onMenuClick }) {
+
     const [agents, setAgents] = useState(
         [
             {
@@ -269,20 +270,22 @@ export default function AssistantPage() {
 
             <div className="assistant_container">
                 {/* 헤더 */}
-                <div className="header">
+                {/* <div className="header">
                     <div className="header-title">
                         <div>
                             <h1 className="page-title">AI 어시스턴트</h1>
                             <p className="page-subtitle" id="page-subtitle">멀티 에이전트와 함께 협업하세요</p>
                         </div>
                         <div className="header-controls">
-                            <button className="primary-btn" id="new-conversation-btn">
+                            <button className="primary-btn" id="new-conversation-btn"
+                                onClick={() => alert("새대화 생성 요청")}
+                            >
                                 <span>+</span>
                                 <span>새 대화</span>
                             </button>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 {/* 멀티 에이전트 모드 콘텐츠 */}
                 <div className={`assistant-layout multi-agent`} id="multi-agent-layout">
@@ -294,6 +297,7 @@ export default function AssistantPage() {
                             <h3 className="sidebar-title">
                                 <span>🧠</span>
                                 <span>AI 모델</span>
+
                             </h3>
 
                             <select
@@ -355,16 +359,24 @@ export default function AssistantPage() {
                             </select>
 
 
-                            <div className="llm-info" id="llm-info">
+                            {/* <div className="llm-info" id="llm-info">
                                 <div className="llm-name">Claude 3 Sonnet</div>
                                 <div className="llm-description">균형잡힌 성능과 속도로 대부분의 작업에 적합한 모델입니다.</div>
-                            </div>
+                            </div> */}
                         </div>
 
                         <div className="sidebar-section">
                             <h3 className="sidebar-title">
                                 <span>💬</span>
+
                                 <span>대화 목록</span>
+                                <button className="primary-btn" id="new-conversation-btn"
+                                    onClick={() => alert("새대화 생성 요청")}
+                                    style={{ height: "20px" }}
+                                >
+                                    <span>+</span>
+                                    <span>새 대화</span>
+                                </button>
                             </h3>
                             <div className="conversations-list" id="multi-conversations-list">
                                 <div className="conversation-item">
@@ -372,7 +384,7 @@ export default function AssistantPage() {
                                         <div className="conversation-title">프로젝트 기획 논의</div>
                                         <div className="conversation-time">01:32</div>
                                     </div>
-                                    <div className="conversation-preview">주인 시스템의 성능을 위해서는 데이터 ...</div>
+                                    {/* <div className="conversation-preview">주인 시스템의 성능을 위해서는 데이터 ...</div> */}
                                 </div>
                             </div>
                         </div>
@@ -461,19 +473,29 @@ export default function AssistantPage() {
                                 )}
                             </div>
                         </div>
+
+
                     </div>
 
                     {/* 채팅 영역 */}
                     <div className="chat-main">
                         <div className="chat-header">
+
                             <div className="chat-info">
-                                <div className="chat-title" id="multi-chat-title">멀티 에이전트 협업</div>
+                                <div className="chat-title" id="multi-chat-title">여기 프로젝트 이름</div>
+
                                 <div className="chat-agents" id="chat-agents">
-                                    <div className="chat-agent-badge" style={{ background: "#3b82f6" }}>🔍 리서치 에이전트</div>
-                                    <div className="chat-agent-badge" style={{ background: "#10b981" }}>💻 코딩 에이전트</div>
-                                    <div className="chat-agent-badge" style={{ background: "#8b5cf6" }}>📊 분석 에이전트</div>
+                                    {agents
+                                        .filter(agent => agent.active)
+                                        .map(agent => (
+                                            <div key={agent.id} className="chat-agents" id="chat-agents">
+                                                <div className="chat-agent-badge" style={{ background: agent.avatarBg }}>🔍 {agent.name}</div>
+                                            </div>
+                                        ))
+                                    }
                                 </div>
                             </div>
+
                             <div className="chat-controls">
                                 <button className="control-btn" title="대화 지우기">🗑️</button>
                                 <button className="control-btn" title="설정">⚙️</button>

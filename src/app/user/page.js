@@ -51,7 +51,7 @@ export default function HomePage() {
       case 'api-keys':
         return <ApikeysPage />;
       case 'assistant':
-        return <AssistantPage />;
+        return <AssistantPage onMenuClick={handleMenuClick} />;
       case 'knowledge':
         return <KnowledgePage />;
       case 'history':

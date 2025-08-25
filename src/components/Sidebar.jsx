@@ -37,10 +37,11 @@ export default function Sidebar({ onMenuClick, currentPage }) {
 
 
             { page: 'dashboard', icon: '🏠', title: '홈', desc: '대시보드 및 전체 현황' },
-            { page: 'projects', icon: '📁', title: '프로젝트', desc: '프로젝트 생성 및 관리' },
             { page: 'assistant', icon: '💬', title: 'AI 어시스턴트', desc: '멀티에이전트 대화' },
+            { page: 'projects', icon: '📁', title: '프로젝트', desc: '프로젝트 생성 및 관리' },
+            
             { page: 'knowledge', icon: '📚', title: '지식베이스', desc: '지식베이스 관리' },
-            // { page: 'history', icon: '📈', title: '히스토리', desc: '대화 기록 및 분석' },
+            { page: 'history', icon: '📈', title: '히스토리', desc: '대화 기록 및 분석' },
 
           ].map(({ page, icon, title, desc }) => (
             <div
@@ -91,13 +92,13 @@ export default function Sidebar({ onMenuClick, currentPage }) {
                 <span className="text">지식베이스 관리</span>
               </div> */}
 
-              <div className="dropdown-item"
+              {/* <div className="dropdown-item"
                 data-page={'api-keys'}
                 onClick={handleClick}
               >
                 <span className="icon">🔗</span>
                 <span className="text">API 키 관리</span>
-              </div>
+              </div> */}
 
               <div className="dropdown-item"
                 data-page={'mcp'}

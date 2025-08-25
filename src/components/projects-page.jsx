@@ -6,7 +6,7 @@ import "@/styles/projects.css"
 
 
 
-export default function ProjectsPage({ onMenuClick }) {
+export default function ProjectsPage({ onMenuClick, setprojectName }) {
   const [projects, setProjects] = useState([
     {
       id: "proj1",
@@ -147,8 +147,9 @@ export default function ProjectsPage({ onMenuClick }) {
                   <span>+</span>
                   <span>새 프로젝트</span>
                 </button>
-                <button className="quick-chat-btn"
-                  onClick={() => onMenuClick('assistant')}
+                <button
+                  className="quick-chat-btn"
+                  onClick={() => { onMenuClick('assistant'), setprojectName("빠른대화") }}
                 >
                   <span>💬</span>
                   <span>빠른 대화</span>
@@ -223,7 +224,7 @@ export default function ProjectsPage({ onMenuClick }) {
               </div>
               <div className="project-actions-detail">
                 <button className="action-btn-detail primary"
-                  onClick={() => onMenuClick('assistant')}
+                  onClick={() => { onMenuClick('assistant'), setprojectName(selectedProject.name) }}
                 >
                   <span>💬</span>
                   <span>새 대화 시작</span>
@@ -258,7 +259,7 @@ export default function ProjectsPage({ onMenuClick }) {
               </h2>
 
               <button className="new-conversation-btn"
-                onClick={() => onMenuClick('assistant')}
+                onClick={() => { onMenuClick('assistant'), setprojectName(selectedProject.name) }}
               >
                 <span>💬</span>
                 <span>새 대화 시작</span>

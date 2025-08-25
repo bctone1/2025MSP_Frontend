@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { formatDate, storage, formatFileSize, modalheader } from '@/utill/utill';
 import "@/styles/assistant-page.css"
 
-export default function AssistantPage({ onMenuClick }) {
+export default function AssistantPage({ onMenuClick, projectName }) {
 
     const [agents, setAgents] = useState(
         [
@@ -482,7 +482,7 @@ export default function AssistantPage({ onMenuClick }) {
                         <div className="chat-header">
 
                             <div className="chat-info">
-                                <div className="chat-title" id="multi-chat-title">여기 프로젝트 이름</div>
+                                <div className="chat-title" id="multi-chat-title">{projectName}</div>
 
                                 <div className="chat-agents" id="chat-agents">
                                     {agents

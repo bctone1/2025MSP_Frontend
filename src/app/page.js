@@ -1,13 +1,7 @@
 "use client";
 import "@/styles/login.css"
-
 import axios from 'axios';
-
-
 import { cn } from "@/lib/utils";
-
-
-
 import { useState, useRef, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from 'next/navigation';
@@ -17,27 +11,26 @@ export default function LoginPage({ className }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
-
-
+    const [loginMethod, setloginMethod] = useState("user");
 
     const handleLogin = async () => {
         const result = await signIn("credentials", {
             redirect: false,
             email,
             password,
+            loginMethod
         });
-        // console.log(result);
+
         if (result?.error) {
             alert("회원정보가 없습니다.");
         } else {
-            // 로그인 성공 후 세션 정보 가져오기
             const res = await fetch("/api/auth/session");
             const session = await res.json();
-
+            console.log(session);
             if (session?.user?.role === "admin") {
-                router.push("/home/admin");
+                router.push("/admin");
             } else if (session?.user?.role === "user") {
-                router.push("/home/user");
+                router.push("/user");
             }
         }
     };
@@ -54,7 +47,6 @@ export default function LoginPage({ className }) {
         });
 
     };
-
 
     const leftPanelRef = useRef(null);
     const neuralNetworkRef = useRef(null);
@@ -173,6 +165,10 @@ export default function LoginPage({ className }) {
 
 
 
+
+
+
+
     return (
         <>
             <div className="background-container">
@@ -219,7 +215,12 @@ export default function LoginPage({ className }) {
                         <div className="login-container">
                             <div className="login-header">
                                 <h2 className="login-title">로그인</h2>
-                                <p className="login-subtitle">MSP 고도화 시스템에 접속하려면 로그인이 필요합니다.</p>
+                                {loginMethod === "user" ? (
+                                    <p className="login-subtitle">MSP 고도화 시스템에 접속하려면 로그인이 필요합니다.</p>
+                                ) : (
+                                    <p className="login-subtitle">META LLM MSP 관리자 시스템에 접속하려면관리자 계정으로 로그인이 필요합니다.</p>
+                                )}
+
                             </div>
 
                             <div className="social-login-section">
@@ -273,7 +274,7 @@ export default function LoginPage({ className }) {
                                         padding: "14px 20px",
                                         border: "none",
                                         borderRadius: "8px",
-                                        background: "white",
+                                        background: `${loginMethod === "user" ? "white" : "transparent"}`,
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
@@ -282,12 +283,12 @@ export default function LoginPage({ className }) {
                                         fontWeight: 600,
                                         cursor: "pointer",
                                         color: "#3b82f6",
-                                        boxShadow: "0 2px 8px rgba(59, 130, 246, 0.2)",
+                                        // boxShadow: "0 2px 8px rgba(59, 130, 246, 0.2)",
                                         fontFamily: "'Segoe UI', sans-serif",
                                         transition: "all 0.3s ease",
                                     }}
                                     className="tab-user"
-                                    onClick={() => window.location.href = "/user"}
+                                    onClick={() => setloginMethod("user")}
                                 >
                                     <span style={{ fontSize: "18px" }}>👤</span>
                                     <span>사용자</span>
@@ -299,7 +300,7 @@ export default function LoginPage({ className }) {
                                         padding: "14px 20px",
                                         border: "none",
                                         borderRadius: "8px",
-                                        background: "transparent",
+                                        background: `${loginMethod === "admin" ? "white" : "transparent"}`,
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
@@ -312,7 +313,7 @@ export default function LoginPage({ className }) {
                                         transition: "all 0.3s ease",
                                     }}
                                     className="tab-admin"
-                                    onClick={() => window.location.href = "/admin"}
+                                    onClick={() => setloginMethod("admin")}
                                 >
                                     <span style={{ fontSize: "18px" }}>⚙️</span>
                                     <span>관리자</span>
@@ -320,29 +321,51 @@ export default function LoginPage({ className }) {
                             </div>
 
 
-                            <form id="loginForm">
-                                <div className="form-group">
-                                    <label className="form-label" htmlFor="username">사용자 ID</label>
-                                    <input type="text" id="username" className="form-input" placeholder="사용자 ID를 입력하세요" required />
-                                </div>
 
-                                <div className="form-group">
-                                    <label className="form-label" htmlFor="password">비밀번호</label>
-                                    <input type="password" id="password" className="form-input" placeholder="비밀번호를 입력하세요" required />
-                                </div>
+                            <div className="form-group">
+                                <label className="form-label" htmlFor="username">사용자 ID</label>
+                                <input type="text" id="username" className="form-input" placeholder="사용자 ID를 입력하세요" required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleLogin();
+                                        }
+                                    }}
+                                />
+                            </div>
 
-                                <div className="form-row">
-                                    <div className="checkbox-wrapper">
-                                        <input type="checkbox" id="rememberMe" className="checkbox" />
-                                        <label className="checkbox-label" htmlFor="rememberMe">로그인 상태 유지</label>
-                                    </div>
-                                    <a href="#" className="forgot-link"
-                                        onClick={() => window.location.href = "/resetpassword"}
-                                    >비밀번호 찾기</a>
-                                </div>
+                            <div className="form-group">
+                                <label className="form-label" htmlFor="password">비밀번호</label>
+                                <input type="password" id="password" className="form-input" placeholder="비밀번호를 입력하세요" required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleLogin();
+                                        }
+                                    }}
+                                />
+                            </div>
 
-                                <button type="submit" className="login-button" id="loginBtn">로그인</button>
-                            </form>
+                            <div className="form-row">
+                                <div className="checkbox-wrapper">
+                                    <input type="checkbox" id="rememberMe" className="checkbox" />
+                                    <label className="checkbox-label" htmlFor="rememberMe">로그인 상태 유지</label>
+                                </div>
+                                <a href="#" className="forgot-link"
+                                    onClick={() => window.location.href = "/resetpassword"}
+                                >
+                                    비밀번호 찾기
+                                </a>
+                            </div>
+
+                            <button type="submit" className="login-button" id="loginBtn"
+                                onClick={handleLogin}
+                            >
+                                로그인
+                            </button>
+
 
                             <div className="register-section">
                                 계정이 없으신가요?

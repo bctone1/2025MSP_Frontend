@@ -23,8 +23,11 @@ import "@/styles/home.css"
 // 필요한 다른 페이지 컴포넌트들도 import
 
 export default function HomePage() {
-  const [view, setView] = useState('assistant');
+  const [view, setView] = useState('dashboard');
   const [loading, setLoading] = useState(false);
+  const [projectName, setprojectName] = useState("어시스턴트");
+
+
 
   const handleMenuClick = (newView) => {
     if (view === newView) return; // 동일한 뷰 클릭 시 무시
@@ -41,7 +44,7 @@ export default function HomePage() {
       case 'dashboard':
         return <Dashboard onMenuClick={handleMenuClick} />;
       case 'projects':
-        return <ProjectsPage onMenuClick={handleMenuClick} />;
+        return <ProjectsPage onMenuClick={handleMenuClick} setprojectName={setprojectName} />;
       case 'agents':
         return <AgentsPage />;
       case 'workflow':
@@ -51,7 +54,7 @@ export default function HomePage() {
       case 'api-keys':
         return <ApikeysPage />;
       case 'assistant':
-        return <AssistantPage onMenuClick={handleMenuClick} />;
+        return <AssistantPage onMenuClick={handleMenuClick} projectName={projectName} />;
       case 'knowledge':
         return <KnowledgePage />;
       case 'history':
@@ -71,10 +74,12 @@ export default function HomePage() {
     }
   };
 
+
+
   return (
     <div className="flex">
       {view !== "monitoring" && view !== "newproject" && (
-        <Sidebar onMenuClick={handleMenuClick} currentPage={view} />
+        <Sidebar onMenuClick={handleMenuClick} currentPage={view} setprojectName={setprojectName} />
       )}
 
       <div className="flex-1 relative">

@@ -1,12 +1,21 @@
 'use client';
 
 import React from 'react';
+import { useSession } from "next-auth/react";
 
-export default function Sidebar({ onMenuClick, currentPage }) {
+
+export default function Sidebar({ onMenuClick, currentPage, setprojectName }) {
+  const { data: session } = useSession();
+  // console.log(data);
+
+
+
   const handleClick = (e) => {
     const item = e.currentTarget;
     const page = item.getAttribute('data-page');
     onMenuClick(page);
+
+    setprojectName("어시스턴트")
   };
 
   return (
@@ -39,7 +48,6 @@ export default function Sidebar({ onMenuClick, currentPage }) {
             { page: 'dashboard', icon: '🏠', title: '홈', desc: '대시보드 및 전체 현황' },
             { page: 'assistant', icon: '💬', title: 'AI 어시스턴트', desc: '멀티에이전트 대화' },
             { page: 'projects', icon: '📁', title: '프로젝트', desc: '프로젝트 생성 및 관리' },
-            
             { page: 'knowledge', icon: '📚', title: '지식베이스', desc: '지식베이스 관리' },
             { page: 'history', icon: '📈', title: '히스토리', desc: '대화 기록 및 분석' },
 
@@ -126,8 +134,8 @@ export default function Sidebar({ onMenuClick, currentPage }) {
             <span>👤</span>
           </div>
           <div className="user-details">
-            <div className="user-name">김개발자</div>
-            <div className="user-email">developer@example.com</div>
+            <div className="user-name">{session?.user?.name}</div>
+            <div className="user-email">{session?.user?.email}</div>
           </div>
         </div>
         <button className="logout-btn" title="로그아웃">

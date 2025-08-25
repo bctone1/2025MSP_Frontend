@@ -117,6 +117,8 @@ export default function RegisterPage() {
         createParticles();
     }, []);
 
+    const [loginMethod, setloginMethod] = useState("user");
+
     return (
         <>
             <div className="background-container">
@@ -168,14 +170,14 @@ export default function RegisterPage() {
 
                             {/* 사용자/관리자 선택 탭 */}
                             <div className="user-type-tabs">
-                                <button className="tab-button active" id="userTab"
-                                // onClick="switchUserType('user')"
+                                <button className={`tab-button ${loginMethod === "user" ? "active" : ""}`} id="userTab"
+                                    onClick={() => setloginMethod("user")}
                                 >
                                     <span>👤</span>
                                     <span>사용자</span>
                                 </button>
-                                <button className="tab-button" id="adminTab"
-                                //  onClick="switchUserType('admin')"
+                                <button className={`tab-button ${loginMethod === "admin" ? "active" : ""}`} id="adminTab"
+                                    onClick={() => setloginMethod("admin")}
                                 >
                                     <span>⚙️</span>
                                     <span>관리자</span>
@@ -183,9 +185,12 @@ export default function RegisterPage() {
                             </div>
 
                             {/* 관리자 신청 안내 */}
-                            <div className="admin-notice" id="adminNotice">
-                                ⚠️ 관리자 계정은 승인이 필요합니다. 신청 후 기존 관리자의 승인을 받아야 계정이 활성화됩니다.
-                            </div>
+                            {loginMethod === "admin" && (
+                                <div className="admin-notice show" id="adminNotice">
+                                    ⚠️ 관리자 계정은 승인이 필요합니다. 신청 후 기존 관리자의 승인을 받아야 계정이 활성화됩니다.
+                                </div>
+                            )}
+
 
                             <form id="registerForm">
                                 {/* 기본 정보 */}
@@ -246,7 +251,7 @@ export default function RegisterPage() {
                                 </div>
 
                                 {/* 관리자 전용 필드 */}
-                                <div id="adminFields" style={{ display: "none" }}>
+                                <div id="adminFields" style={{ display: `${loginMethod === "admin" ? "block" : "none"}` }}>
                                     <div className="form-group">
                                         <label className="form-label" htmlFor="adminReason">관리자 신청 사유</label>
                                         <textarea id="adminReason" className="form-input" rows="3" placeholder="관리자 권한이 필요한 사유를 간단히 작성해주세요."></textarea>
@@ -279,8 +284,8 @@ export default function RegisterPage() {
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </div >
+            </div >
         </>
     );
 }

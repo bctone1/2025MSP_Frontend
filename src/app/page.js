@@ -161,13 +161,6 @@ export default function LoginPage({ className }) {
 
 
 
-
-
-
-
-
-
-
     return (
         <>
             <div className="background-container">
@@ -222,10 +215,10 @@ export default function LoginPage({ className }) {
 
                             </div>
 
-                            <div className="social-login-section">
+                            <div className="social-login-section" style={{ display: `${loginMethod === "admin" ? "none" : ""}` }}>
                                 <div className="social-buttons">
                                     <button className="social-button kakao"
-                                    // onClick="loginWithKakao()"
+                                        onClick={handleKakaoLogin}
                                     >
                                         <div className="social-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -235,7 +228,7 @@ export default function LoginPage({ className }) {
                                         Kakao
                                     </button>
                                     <button className="social-button google"
-                                    // onClick="loginWithGoogle()"
+                                        onClick={handleGoogleLogin}
                                     >
                                         <div className="social-icon">
                                             <svg width="18" height="18" viewBox="0 0 24 24">
@@ -250,7 +243,7 @@ export default function LoginPage({ className }) {
                                 </div>
                             </div>
 
-                            <div className="divider">
+                            <div className="divider" style={{ display: `${loginMethod === "admin" ? "none" : ""}` }}>
                                 <span>또는 계정으로 로그인</span>
                             </div>
 

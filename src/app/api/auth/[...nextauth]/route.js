@@ -8,16 +8,12 @@ import KakaoProvider from "next-auth/providers/kakao";
 
 import axios from "axios";
 
-console.log("⚙️ NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
+// console.log("⚙️ NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
 export const handler = NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-    NaverProvider({
-      clientId: process.env.NAVER_CLIENT_ID,
-      clientSecret: process.env.NAVER_CLIENT_SECRET,
     }),
     KakaoProvider({
       clientId: process.env.KAKAO_CLIENT_ID,
@@ -71,7 +67,7 @@ export const handler = NextAuth({
     async signIn({ user, account }) {
       if (account.provider === "google") {
         try {
-          const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/googlelogin`, {
+          const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPSocialLogin`, {
             email: user.email,
             name: user.name,
             image: user.image,
@@ -83,15 +79,14 @@ export const handler = NextAuth({
           }
         } catch (error) {
           console.error("Google 로그인 후 백엔드 전송 실패:", error);
-          return false; // 로그인 중단
+          return false;
         }
       }
 
       if (account.provider === "kakao") {
         console.log(JSON.stringify(user, null, 2));
         try {
-          const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/googlelogin`, {
-            // const res = await axios.post("http://127.0.0.1:5000/googlelogin", {
+          const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPSocialLogin`, {
             email: user.email,
             name: user.name,
             image: user.image,
@@ -121,7 +116,6 @@ export const handler = NextAuth({
       }
       return token;
     },
-
     async session({ session, token }) {
       session.user.id = token.id;
       session.user.email = token.email;

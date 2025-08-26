@@ -45,7 +45,6 @@ export default function LoginPage({ className }) {
         signIn("kakao", {
             callbackUrl: "/user",
         });
-
     };
 
     const leftPanelRef = useRef(null);

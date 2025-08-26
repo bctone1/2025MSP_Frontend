@@ -135,9 +135,53 @@ export default function Users({ onMenuClick }) {
     // console.log(pageUsers);
 
 
+    const pendingUsers = [
+        {
+            id: "user1",
+            name: "김관리",
+            email: "kim.admin@company.com",
+            avatar: "김",
+            requestTime: "2024.08.04 14:30 신청",
+            role: "관리자 권한 요청",
+            phone: "01011111111",
+            reason: "시스템 관리 업무를 담당하게 되어 관리자 권한이 필요합니다."
+        },
+        {
+            id: "user2",
+            name: "이개발",
+            email: "lee.dev@company.com",
+            avatar: "이",
+            requestTime: "2024.08.04 11:15 신청",
+            role: "관리자 권한 요청",
+            phone: "01022222222",
+            reason: "개발팀 리더로서 시스템 설정 및 사용자 관리가 필요합니다."
+        },
+        {
+            id: "user3",
+            name: "박매니저",
+            email: "park.manager@company.com",
+            avatar: "박",
+            requestTime: "2024.08.04 09:45 신청",
+            role: "관리자 권한 요청",
+            phone: "01033333333",
+            reason: "프로젝트 매니저로서 팀원들의 권한 관리가 필요합니다."
+        },
+    ];
+    const [showModal, setShowModal] = useState(false);
+    const [modalState, setmodalState] = useState("approval");
+    const [pendingUser, setpendingUser] = useState("");
+
+
+
     return (
         <>
             <div className="page-container">
+
+                <div className={`modal-overlay ${showModal ? 'active' : ''}`}>
+                    <ShowPending setShowModal={setShowModal} modalState={modalState} pendingUser={pendingUser} />
+                </div>
+
+
                 {/* 페이지 헤더 */}
                 <div className="page-header">
                     <div className="header-top">
@@ -155,6 +199,75 @@ export default function Users({ onMenuClick }) {
                         </div>
                     </div>
                 </div>
+
+                <div className="approval-pending-section">
+                    <div className="approval-section-header">
+                        <div className="approval-section-title">
+                            <div className="approval-icon">⏳</div>
+                            <div className="approval-title-text">
+                                <h3>관리자 승인 대기</h3>
+                                <p>관리자 권한을 요청한 사용자들을 검토하고 승인하세요</p>
+                            </div>
+                        </div>
+                        <div className="approval-badge">
+                            <span>🔔</span>
+                            <span id="pending-count">{pendingUsers.length}</span>명 대기
+                        </div>
+                    </div>
+
+                    <div className="approval-list" id="approval-list">
+                        {pendingUsers.map((user) => (
+                            <div key={user.id} className="approval-item" data-user-id={user.id}>
+                                <div className="approval-user-info">
+                                    <div className="user-avatar">{user.avatar}</div>
+                                    <div className="user-details">
+                                        <div className="user-name">{user.name}</div>
+                                        <div className="user-email">{user.email}</div>
+                                        <div className="user-meta">
+                                            <div className="request-time">
+                                                <span>🕐</span>
+                                                <span>{user.requestTime}</span>
+                                            </div>
+                                            <div className="admin-role-badge">
+                                                <span>👑</span>
+                                                <span>{user.role}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="approval-actions">
+                                    <button
+                                        className="btn btn-approve"
+                                        onClick={() => { setShowModal(true), setmodalState("approve"), setpendingUser(user) }}
+                                    >
+                                        ✅ 승인
+                                    </button>
+                                    <button
+                                        className="btn btn-reject"
+                                        onClick={() => { setShowModal(true), setmodalState("reject"), setpendingUser(user) }}
+                                    >
+                                        ❌ 반려
+                                    </button>
+                                    <button
+                                        className="btn btn-details"
+                                        onClick={() => { setShowModal(true), setmodalState("detail"), setpendingUser(user) }}
+                                    >
+                                        📋 상세
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* 승인 대기자가 없을 때 표시  */}
+                    {pendingUsers.length === 0 && (
+                        <div className="no-pending">
+                            <div className="no-pending-icon">✅</div>
+                            <div>승인 대기 중인 관리자가 없습니다.</div>
+                        </div>
+                    )}
+                </div>
+
 
                 {/* 사용자 통계 */}
                 <div className="user-stats">
@@ -340,6 +453,70 @@ export default function Users({ onMenuClick }) {
                     </div>
                 </div>
             </div >
+        </>
+    );
+}
+
+function ShowPending({ setShowModal, modalState, pendingUser }) {
+    return (
+        <>
+            <div className="user-modal-content">
+                <div className="modal-header">
+                    <div className="modal-title" id="modal-title">
+                        {/* <span id="modal-icon">{modalState === "approve" ? "✅" : "❌"}</span> */}
+                        <span id="modal-title-text">관리자 승인요청</span>
+                    </div>
+                    <button className="modal-close" onClick={() => setShowModal(false)}>&times;</button>
+                </div>
+
+                <div className="modal-body">
+                    <div className="user-info-section">
+                        <div className="info-grid">
+                            <div className="info-label">이름:</div>
+                            <div className="info-value" id="detail-name">{pendingUser.name}</div>
+
+                            <div className="info-label">이메일:</div>
+                            <div className="info-value" id="detail-email">{pendingUser.email}</div>
+
+                            <div className="info-label">사용자 ID:</div>
+                            <div className="info-value" id="detail-userid">{pendingUser.id}</div>
+
+                            <div className="info-label">휴대폰:</div>
+                            <div className="info-value" id="detail-phone">{pendingUser.phone}</div>
+
+                            <div className="info-label">신청일:</div>
+                            <div className="info-value" id="detail-date">{pendingUser.requestTime}</div>
+
+                            <div className="info-label">신청 사유:</div>
+                            <div className="info-value" id="detail-reason">{pendingUser.reason}</div>
+                        </div>
+                    </div>
+
+                    {modalState !== "detail" && (
+                        <div className="reason-section">
+                            <label className="reason-label" id="reason-label">승인 사유:</label>
+                            <textarea className="reason-input" id="reason-input"
+                                placeholder="승인/거부 사유를 입력하세요..."></textarea>
+                        </div>
+                    )}
+
+                </div>
+
+                <div className="modal-actions">
+                    <button className="btn-modal btn-modal-cancel" onClick={() => setShowModal(false)}>취소</button>
+                    <button className="btn-modal btn-modal-approve" id="confirm-approve" style={{ display: `${modalState === "approve" ? "" : "none"} ` }}
+                        onClick={() => alert("백엔드서버 승인 요청")}
+                    >
+                        ✅ 승인 확정
+                    </button>
+                    <button className="btn-modal btn-modal-reject" id="confirm-reject" style={{ display: `${modalState === "reject" ? "" : "none"} ` }}
+                        onClick={() => alert("백엔드서버 반려 요청")}
+                    >
+                        ❌ 반려 확정
+                    </button>
+                </div>
+            </div>
+
         </>
     );
 }

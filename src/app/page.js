@@ -170,7 +170,7 @@ export default function LoginPage({ className }) {
                 </div>
             </div>
 
-            <div className="main-content">
+            <div className="login-main-content">
                 <div className="login-wrapper">
                     <div className="left-panel" ref={leftPanelRef}>
                         <div className="company-branding">

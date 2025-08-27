@@ -119,6 +119,47 @@ export default function RegisterPage() {
 
     const [loginMethod, setloginMethod] = useState("user");
 
+
+    const [register, setRegister] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        termsAgreed: false,
+        marketingAgreed: false
+    });
+
+
+    const [isUsernameAvailable, setIsUsernameAvailable] = useState(false);
+
+    const handleCheckUserEmail = async () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // 이메일 형식 체크
+        if (!emailRegex.test(register.email)) {
+            alert("유효한 이메일 형식이 아닙니다.");
+            return; // 서버 호출 중단
+        }
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPCheckEmail`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: register.email,
+                secretCode : "0000"
+            }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+            console.log(data);
+            alert(data.response);
+            setIsUsernameAvailable(data.result)
+        }
+    }
+
     return (
         <>
             <div className="background-container">
@@ -192,96 +233,158 @@ export default function RegisterPage() {
                             )}
 
 
-                            <form id="registerForm">
-                                {/* 기본 정보 */}
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label className="form-label" htmlFor="firstName">성</label>
-                                        <input type="text" id="firstName" className="form-input" placeholder="성" />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-label" htmlFor="lastName">이름</label>
-                                        <input type="text" id="lastName" className="form-input" placeholder="이름" />
-                                    </div>
+
+                            {/* 기본 정보 */}
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label className="form-label" htmlFor="firstName">성</label>
+                                    <input type="text" id="firstName" className="form-input" placeholder="성" value={register.firstName}
+                                        onChange={(e) =>
+                                            setRegister((pre) => ({
+                                                ...pre,
+                                                firstName: e.target.value
+                                            }))
+                                        }
+                                    />
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="form-label" htmlFor="email">이메일</label>
-                                    <input type="email" id="email" className="form-input" placeholder="example@company.com" />
+                                    <label className="form-label" htmlFor="lastName">이름</label>
+                                    <input type="text" id="lastName" className="form-input" placeholder="이름" value={register.lastName}
+                                        onChange={(e) =>
+                                            setRegister((pre) => ({
+                                                ...pre,
+                                                lastName: e.target.value
+                                            }))
+                                        }
+                                    />
                                 </div>
+                            </div>
 
+                            <div className="form-group">
+                                <label className="form-label" htmlFor="email">이메일</label>
+                                <div style={{ display: "flex", gap: "10px" }}>
+                                    <input type="email" id="email" className="form-input" placeholder="example@company.com" value={register.email}
+                                        onChange={(e) =>
+                                            setRegister((pre) => ({
+                                                ...pre,
+                                                email: e.target.value
+                                            }))
+                                        }
+                                    />
+                                    <button type="button" id="verifyCodeBtn" className="verification-btn"
+                                        onClick={handleCheckUserEmail}
+                                    >중복 확인</button>
+                                </div>
+                            </div>
+
+                            <div className="form-group" id="verificationGroup"
+                                style={{ display: `${isUsernameAvailable === true ? "" : "none"}` }}
+                            >
+                                <label className="form-label" htmlFor="verificationCode">인증번호</label>
+                                <div style={{ display: "flex", gap: "10px" }}>
+                                    <input type="text" id="verificationCode" className="form-input" placeholder="6자리 인증번호 입력" maxLength="6" style={{ flex: "1" }} />
+                                    <button type="button" id="verifyCodeBtn" className="verification-btn">인증확인</button>
+                                </div>
+                                <div id="verificationTimer" className="verification-timer"
+                                //  style={{ display: "none" }}
+                                >
+                                    남은 시간: <span id="timerText">03:00</span>
+                                </div>
+                            </div>
+
+
+                            {/* <div className="form-group">
+                                <label className="form-label" htmlFor="username">사용자 ID</label>
+                                <input type="text" id="username" className="form-input" placeholder="사용자 ID (4자 이상)" value={register.id}
+                                    onChange={(e) =>
+                                        setRegister((pre) => ({
+                                            ...pre,
+                                            id: e.target.value
+                                        }))
+                                    }
+                                />
+                            </div> */}
+
+                            <div className="form-row">
                                 <div className="form-group">
-                                    <label className="form-label" htmlFor="username">사용자 ID</label>
-                                    <input type="text" id="username" className="form-input" placeholder="사용자 ID (4자 이상)" />
+                                    <label className="form-label" htmlFor="password">비밀번호</label>
+                                    <input type="password" id="password" className="form-input" placeholder="비밀번호 (8자 이상)" value={register.password}
+                                        onChange={(e) =>
+                                            setRegister((pre) => ({
+                                                ...pre,
+                                                password: e.target.value
+                                            }))
+                                        }
+                                    />
                                 </div>
-
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label className="form-label" htmlFor="password">비밀번호</label>
-                                        <input type="password" id="password" className="form-input" placeholder="비밀번호 (8자 이상)" />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-label" htmlFor="confirmPassword">비밀번호 확인</label>
-                                        <input type="password" id="confirmPassword" className="form-input" placeholder="비밀번호 확인" />
-                                    </div>
+                                <div className="form-group">
+                                    <label className="form-label" htmlFor="confirmPassword">비밀번호 확인</label>
+                                    <input type="password" id="confirmPassword" className="form-input" placeholder="비밀번호 확인" value={register.confirmPassword}
+                                        onChange={(e) =>
+                                            setRegister((pre) => ({
+                                                ...pre,
+                                                confirmPassword: e.target.value
+                                            }))
+                                        }
+                                    />
                                 </div>
+                            </div>
 
-                                {/* 휴대폰 인증 */}
-                                {/* <div className="form-group">
-                                    <label className="form-label" htmlFor="phone">휴대폰 번호</label>
-                                    <div style={{ display: "flex", gap: "10px" }}>
-                                        <input type="tel" id="phone" className="form-input" placeholder="010-0000-0000" style={{ flex: "1" }} />
-                                        <button type="button" id="sendVerificationBtn" className="verification-btn"
-                                        // onClick="sendVerificationCode()"
-                                        >인증번호 발송</button>
-                                    </div>
-                                </div> */}
 
-                                <div className="form-group" id="verificationGroup" style={{ display: "none" }}>
-                                    <label className="form-label" htmlFor="verificationCode">인증번호</label>
-                                    <div style={{ display: "flex", gap: "10px" }}>
-                                        <input type="text" id="verificationCode" className="form-input" placeholder="6자리 인증번호 입력" maxLength="6" style={{ flex: "1" }} />
-                                        <button type="button" id="verifyCodeBtn" className="verification-btn"
-                                        // onClick="verifyCode()"
-                                        >인증확인</button>
-                                    </div>
-                                    <div id="verificationTimer" className="verification-timer" style={{ display: "none" }}>
-                                        남은 시간: <span id="timerText">03:00</span>
-                                    </div>
+
+                            {/* 관리자 전용 필드 */}
+                            <div id="adminFields" style={{ display: `${loginMethod === "admin" ? "block" : "none"}` }}>
+                                <div className="form-group">
+                                    <label className="form-label" htmlFor="adminReason">관리자 신청 사유</label>
+                                    <textarea id="adminReason" className="form-input" rows="3" placeholder="관리자 권한이 필요한 사유를 간단히 작성해주세요."></textarea>
                                 </div>
+                            </div>
 
-                                {/* 관리자 전용 필드 */}
-                                <div id="adminFields" style={{ display: `${loginMethod === "admin" ? "block" : "none"}` }}>
-                                    <div className="form-group">
-                                        <label className="form-label" htmlFor="adminReason">관리자 신청 사유</label>
-                                        <textarea id="adminReason" className="form-input" rows="3" placeholder="관리자 권한이 필요한 사유를 간단히 작성해주세요."></textarea>
-                                    </div>
-                                </div>
+                            {/* 약관 동의 */}
+                            <div className="checkbox-wrapper">
+                                <input type="checkbox" id="termsAgree" className="checkbox"
+                                    checked={register.termsAgreed}
+                                    onChange={(e) =>
+                                        setRegister((pre) => ({
+                                            ...pre,
+                                            termsAgreed: e.target.checked
+                                        }))
+                                    }
+                                />
+                                <label className="checkbox-label" htmlFor="termsAgree">
+                                    <strong>이용약관</strong> 및 <strong>개인정보처리방침</strong>에 동의합니다. (필수)
+                                </label>
+                            </div>
 
-                                {/* 약관 동의 */}
-                                <div className="checkbox-wrapper">
-                                    <input type="checkbox" id="termsAgree" className="checkbox" />
-                                    <label className="checkbox-label" htmlFor="termsAgree">
-                                        <strong>이용약관</strong> 및 <strong>개인정보처리방침</strong>에 동의합니다. (필수)
-                                    </label>
-                                </div>
+                            <div className="checkbox-wrapper">
+                                <input type="checkbox" id="marketingAgree" className="checkbox"
+                                    checked={register.marketingAgreed}
+                                    onChange={(e) =>
+                                        setRegister((pre) => ({
+                                            ...pre,
+                                            marketingAgreed: e.target.checked
+                                        }))
+                                    }
+                                />
+                                <label className="checkbox-label" htmlFor="marketingAgree">
+                                    마케팅 정보 수신에 동의합니다. (선택)
+                                </label>
+                            </div>
 
-                                <div className="checkbox-wrapper">
-                                    <input type="checkbox" id="marketingAgree" className="checkbox" />
-                                    <label className="checkbox-label" htmlFor="marketingAgree">
-                                        마케팅 정보 수신에 동의합니다. (선택)
-                                    </label>
-                                </div>
+                            <button type="submit" className="register-button" id="registerBtn">회원가입</button>
 
-                                <button type="submit" className="register-button" id="registerBtn">회원가입</button>
-                            </form>
 
                             <div className="login-section">
                                 이미 계정이 있으신가요?
                                 <a href="#" className="login-link"
                                     onClick={() => window.location = "/"}
-                                >로그인</a>
+                                >
+                                    로그인
+                                </a>
                             </div>
+
+
                         </div>
                     </div>
                 </div >

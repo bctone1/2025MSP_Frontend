@@ -130,18 +130,21 @@ export default function RegisterPage() {
         marketingAgreed: false
     });
 
+    const [options, setOptions] = useState({
+        secretCode: "bctonePassword",
+        userWriteCode: "",
+    });
+
 
     const [isUsernameAvailable, setIsUsernameAvailable] = useState(false);
 
+    // 중복확인
     const handleCheckUserEmail = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        // 이메일 형식 체크
         if (!emailRegex.test(register.email)) {
             alert("유효한 이메일 형식이 아닙니다.");
-            return; // 서버 호출 중단
+            return
         }
-
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPCheckEmail`, {
             method: "POST",
             headers: {
@@ -149,16 +152,65 @@ export default function RegisterPage() {
             },
             body: JSON.stringify({
                 email: register.email,
-                secretCode : "0000"
+            }),
+        });
+        const data = await response.json();
+        alert(data.response);
+        setIsUsernameAvailable(data.result)
+    }
+
+    // 이메일 인증 요청
+    const handleSendEmail = async () => {
+        const code = Math.floor(100000 + Math.random() * 900000);
+        setOptions((pre) => ({
+            ...pre,
+            secretCode: code
+        }));
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPSendEmail`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: register.email,
+                secretCode: code
             }),
         });
         const data = await response.json();
         if (response.ok) {
             console.log(data);
             alert(data.response);
-            setIsUsernameAvailable(data.result)
         }
     }
+
+    // 회원가입 요청
+    const submitRegister = async () => {
+
+        if (!register.firstName.trim()) return alert("성을 입력해주세요.");
+        if (!register.lastName.trim()) return alert("이름을 입력해주세요.");
+        if (!register.email.trim()) return alert("이메일을 입력해주세요.");
+        if (!register.password.trim()) return alert("비밀번호를 입력해주세요.");
+        if (!register.confirmPassword.trim()) return alert("비밀번호 확인란을 입력해주세요.");
+        if (options.secretCode.toString() !== options.userWriteCode) return alert("인증번호를 확인해주세요.");
+        if (register.password !== register.confirmPassword) return alert("비밀번호가 일치하지 않습니다.");
+        if (!register.termsAgreed) return alert("이용약관에 동의해주세요.");
+
+        
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPRegister`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ register }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+            console.log(data);
+            alert(data.response);
+            data.result && (window.location.href = "/");
+        }
+
+    };
 
     return (
         <>
@@ -283,28 +335,21 @@ export default function RegisterPage() {
                             >
                                 <label className="form-label" htmlFor="verificationCode">인증번호</label>
                                 <div style={{ display: "flex", gap: "10px" }}>
-                                    <input type="text" id="verificationCode" className="form-input" placeholder="6자리 인증번호 입력" maxLength="6" style={{ flex: "1" }} />
-                                    <button type="button" id="verifyCodeBtn" className="verification-btn">인증확인</button>
-                                </div>
-                                <div id="verificationTimer" className="verification-timer"
-                                //  style={{ display: "none" }}
-                                >
-                                    남은 시간: <span id="timerText">03:00</span>
+                                    <input type="text" id="verificationCode" className="form-input" placeholder="6자리 인증번호 입력" maxLength="6" style={{ flex: "1" }}
+                                        value={options.userWriteCode}
+                                        onChange={(e) =>
+                                            setOptions((pre) => ({
+                                                ...pre,
+                                                userWriteCode: e.target.value
+                                            }))
+                                        }
+                                    />
+                                    <button type="button" id="verifyCodeBtn" className="verification-btn"
+                                        onClick={handleSendEmail}
+                                    >인증번호 보내기</button>
                                 </div>
                             </div>
 
-
-                            {/* <div className="form-group">
-                                <label className="form-label" htmlFor="username">사용자 ID</label>
-                                <input type="text" id="username" className="form-input" placeholder="사용자 ID (4자 이상)" value={register.id}
-                                    onChange={(e) =>
-                                        setRegister((pre) => ({
-                                            ...pre,
-                                            id: e.target.value
-                                        }))
-                                    }
-                                />
-                            </div> */}
 
                             <div className="form-row">
                                 <div className="form-group">
@@ -372,7 +417,11 @@ export default function RegisterPage() {
                                 </label>
                             </div>
 
-                            <button type="submit" className="register-button" id="registerBtn">회원가입</button>
+                            <button type="submit" className="register-button" id="registerBtn"
+                                onClick={submitRegister}
+                            >
+                                회원가입
+                            </button>
 
 
                             <div className="login-section">

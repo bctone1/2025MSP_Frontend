@@ -22,15 +22,15 @@ export default function LoginPage({ className }) {
         });
 
         if (result?.error) {
-            alert("회원정보가 없습니다.");
+            alert("로그인 과정에 오류가 있습니다.");
         } else {
             const res = await fetch("/api/auth/session");
             const session = await res.json();
             console.log(session);
-            if (session?.user?.role === "admin") {
-                router.push("/admin");
-            } else if (session?.user?.role === "user") {
-                router.push("/user");
+            if (session?.user?.status == false) {
+                alert(session?.user?.response);
+            } else {
+                session?.user?.role === "admin" ? router.push("/admin") : router.push("/user");
             }
         }
     };
@@ -315,8 +315,8 @@ export default function LoginPage({ className }) {
 
 
                             <div className="form-group">
-                                <label className="form-label" htmlFor="username">사용자 ID</label>
-                                <input type="text" id="username" className="form-input" placeholder="사용자 ID를 입력하세요" required
+                                <label className="form-label" htmlFor="username">아이디</label>
+                                <input type="text" id="username" className="form-input" placeholder="아이디를 입력하세요" required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     onKeyDown={(e) => {

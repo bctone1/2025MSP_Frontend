@@ -13,7 +13,6 @@ export default function ProjectsPage({ onMenuClick, setprojectName }) {
       name: "파일분석하기",
       description: "PDF와 Excel 파일을 분석하여 인사이트 추출하는 AI 시스템",
       status: "진행중",
-      sessions: 8,
       cost: "$12.75",
       conversations: [
         {
@@ -52,7 +51,6 @@ export default function ProjectsPage({ onMenuClick, setprojectName }) {
       name: "파일업로드 test",
       description: "다양한 파일 형식 업로드 및 처리 테스트",
       status: "진행중",
-      sessions: 3,
       cost: "$4.25",
       conversations: [
         {
@@ -82,7 +80,6 @@ export default function ProjectsPage({ onMenuClick, setprojectName }) {
       name: "사업계획서 작성",
       description: "AI 기반 사업계획서 자동 생성 시스템",
       status: "계획중",
-      sessions: 1,
       cost: "$5.50",
       conversations: [
         {
@@ -206,7 +203,7 @@ export default function ProjectsPage({ onMenuClick, setprojectName }) {
                 <div className="project-stats">
                   <div className="stat-item">
                     <span className="stat-label">대화 세션</span>
-                    <span className="stat-value" id="detail-sessions">{selectedProject ? selectedProject.sessions : "프로젝트 세션"}회</span>
+                    <span className="stat-value" id="detail-sessions">{selectedProject ? selectedProject.conversations.length : "프로젝트 세션"}회</span>
                   </div>
                   <div className="stat-item">
                     <span className="stat-label">총 비용</span>
@@ -405,7 +402,7 @@ function ProjectRow({ project, setviewStatus, setcurrentPorject }) {
         <div className="msp-project-meta">
           <div className="msp-meta-item">
             <span className="meta-label">대화 세션</span>
-            <span className="meta-value">{project.sessions}</span>
+            <span className="meta-value">{project.conversations.length}</span>
           </div>
           <div className="msp-meta-item">
             <span className="meta-label">총 비용</span>

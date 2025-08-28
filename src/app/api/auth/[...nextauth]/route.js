@@ -32,23 +32,17 @@ export const handler = NextAuth({
           const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPLogin`, {
             user_email: credentials.email,
             user_pw: credentials.password,
-            user_name: "BCTONE",
             loginMethod: credentials.loginMethod,
           });
-
-          if (res.status === 200) {
-            console.log(res.data);
-            return {
-              // id: res.data.id,
-              name: res.data.name,
-              email: res.data.email,
-              // message: res.data.message,
-              role: res.data.role,
-              response: res.data.response,
-              status: res.data.status
-            };
-          }
-          return null;
+          console.log(res.data);
+          return {
+            id: res.data.id,
+            name: res.data.name,
+            email: res.data.email,
+            role: res.data.role,
+            response: res.data.response,
+            status: res.data.status
+          };
         } catch (error) {
           console.error("에러 발생:", error);
           throw new Error("Invalid credentials");
@@ -72,11 +66,9 @@ export const handler = NextAuth({
             name: user.name,
             image: user.image,
           });
-          if (res.status === 200) {
-            user.id = res.data.id;
-            user.message = res.data.message;
-            user.role = res.data.role;
-          }
+          user.id = res.data.id;
+          user.message = res.data.message;
+          user.role = res.data.role;
         } catch (error) {
           console.error("Google 로그인 후 백엔드 전송 실패:", error);
           return false;
@@ -91,11 +83,11 @@ export const handler = NextAuth({
             name: user.name,
             image: user.image,
           });
-          if (res.status === 200) {
-            user.id = res.data.id;
-            user.message = res.data.message;
-            user.role = res.data.role;
-          }
+
+          user.id = res.data.id;
+          user.message = res.data.message;
+          user.role = res.data.role;
+
 
         } catch (error) {
           console.error("Kakao 로그인 후 백엔드 전송 실패:", error);

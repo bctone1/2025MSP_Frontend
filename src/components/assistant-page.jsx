@@ -4,637 +4,230 @@ import { formatDate, storage, formatFileSize, modalheader } from '@/utill/utill'
 import "@/styles/assistant-page.css"
 
 export default function AssistantPage({ onMenuClick, projectName }) {
-
-    const [agents, setAgents] = useState(
-        [
-            {
-                id: "research",
-                active: true,
-                avatar: "🔍",
-                avatarBg: "#3b82f6",
-                name: "리서치 에이전트",
-                desc: "웹 검색, 자료 조사, 시장 분석 등 다양한 정보 수집과 연구 업무를 담당합니다.",
-                capabilities: ["웹 검색", "데이터 수집", "시장 분석", "보고서 작성"],
-                model: "Claude-3 Haiku",
-                description: "웹 검색 및 데이터 수집 전문"
-            },
-            {
-                id: "coding",
-                active: true,
-                avatar: "💻",
-                avatarBg: "#10b981",
-                name: "코딩 에이전트",
-                desc: "프로그래밍, 코드 리뷰, 디버깅, 시스템 설계 등 모든 개발 관련 업무를 처리합니다.",
-                capabilities: ["코드 작성", "디버깅", "리팩토링", "아키텍처"],
-                model: "Claude-3 Sonnet",
-                description: "프로그래밍 및 코드 최적화"
-            },
-            {
-                id: "analysis",
-                active: true,
-                avatar: "📊",
-                avatarBg: "#8b5cf6",
-                name: "분석 에이전트",
-                desc: "데이터 분석, 통계 처리, 인사이트 도출, 시각화 등 분석 업무를 전담합니다.",
-                capabilities: ["데이터 분석", "통계 처리", "시각화", "예측 모델"],
-                model: "Claude-3 Sonnet",
-                description: "데이터 분석 및 인사이트 도출"
-            },
-            {
-                id: "writer",
-                active: false,
-                avatar: "✍️",
-                avatarBg: "#f59e0b",
-                name: "작성 에이전트",
-                desc: "문서 작성, 콘텐츠 제작, 번역, 교정 등 텍스트 관련 업무를 처리합니다.",
-                capabilities: ["문서 작성", "콘텐츠 제작", "번역", "교정"],
-                model: "Claude-3 Haiku",
-                description: "데이터 분석 및 인사이트 도출"
-            },
-            {
-                id: "creative",
-                active: false,
-                avatar: "🎨",
-                avatarBg: "#ec4899",
-                name: "창작 에이전트",
-                desc: "창의적 아이디어 발굴, 브레인스토밍, 디자인 기획 등 창작 업무를 담당합니다.",
-                capabilities: ["아이디어 발굴", "브레인스토밍", "기획", "스토리텔링"],
-                model: "Claude-3 Opus",
-                description: "데이터 분석 및 인사이트 도출"
-            },
-            {
-                id: "translator",
-                active: false,
-                avatar: "🌐",
-                avatarBg: "#06b6d4",
-                name: "번역 에이전트",
-                desc: "다국어 번역, 현지화, 문화적 맥락 고려 등 언어 관련 업무를 전문으로 합니다.",
-                capabilities: ["다국어 번역", "현지화", "문화 적응", "언어 교정"],
-                model: "Claude-3 Sonnet",
-                description: "데이터 분석 및 인사이트 도출"
-            }
-        ]
-    );
-
-    const [messages, setMessages] = useState(
-        [
-            // {
-            //     id: 1,
-            //     type: "user",
-            //     avatar: "👤",
-            //     sender: "사용자",
-            //     time: "01:32",
-            //     text: (
-            //         <>
-            //             주인 시스템의 성능을 위해서는 데이터 분석이 핵심입니다.
-            //             <br /><br />
-            //             보유한 데이터:
-            //             <br />• 사용자 행동 데이터 (클릭, 구매, 체류시간)
-            //             <br />• 상품 정보 (카테고리, 가격, 설명)
-            //             <br />• 사용자 프로필 (연령, 성별, 지역)
-            //             <br />• 계절성 및 트렌드 데이터
-            //             <br /><br />
-            //             성과 지표(KPI):
-            //             <br />• CTR (Click-Through Rate)
-            //             <br />• CVR (Conversion Rate)
-            //             <br />• 평균 주문 금액
-            //             <br />• 사용자 만족도
-            //         </>
-            //     )
-            // },
-            // {
-            //     id: 2,
-            //     type: "agent",
-            //     avatar: "🔍",
-            //     sender: "🔍 리서치 에이전트",
-            //     time: "01:33",
-            //     text: (
-            //         <>
-            //             네, 제공해주신 데이터와 KPI를 바탕으로 시장 조사를 진행했습니다.
-            //             <br /><br />
-            //             📚 참조 문서: 업로드된 지식베이스 파일을 기반으로 답변드리겠습니다.
-            //             <br /><br />
-            //             조사 결과:
-            //             <br />1. 경쟁사 분석 및 시장 트렌드
-            //             <br />2. 사용자 행동 패턴 연구
-            //             <br />3. 업계 벤치마크 데이터 수집
-            //             <br /><br />
-            //             분석 전문가에게 데이터를 전달하겠습니다.
-            //         </>
-            //     )
-            // },
-            // {
-            //     id: 3,
-            //     type: "agent",
-            //     avatar: "📊",
-            //     sender: "📊 분석 에이전트",
-            //     time: "01:34",
-            //     text: (
-            //         <>
-            //             리서치 에이전트가 수집한 데이터를 분석했습니다.
-            //             <br /><br />
-            //             분석 결과:
-            //             <br />1. 사용자 세그멘테이션 분석
-            //             <br />2. 구매 패턴 및 행동 분석
-            //             <br />3. 성과 지표 상관관계 분석
-            //             <br />4. 계절성 및 트렌드 영향 분석
-            //             <br /><br />
-            //             코딩 에이전트에게 구현 요청을 보내겠습니다.
-            //         </>
-            //     )
-            // },
-            // {
-            //     id: 4,
-            //     type: "agent",
-            //     avatar: "💻",
-            //     sender: "💻 코딩 에이전트",
-            //     time: "01:35",
-            //     avatarBg: "#10b981",
-            //     text: (
-            //         <>
-            //             분석 결과를 바탕으로 추천 시스템 코드를 구현했습니다.
-            //             <br /><br />
-            //             구현 내용:
-            //             <br />• Python 기반 데이터 전처리 스크립트
-            //             <br />• 머신러닝 모델 구현 (collaborative filtering)
-            //             <br />• 성과 지표 모니터링 대시보드
-            //             <br />• API 엔드포인트 설계
-            //             <br /><br />
-            //             모든 에이전트가 협업하여 완성된 솔루션입니다.
-            //         </>
-            //     )
-            // }
-        ]
-    );
-
-    const fileInputRef = useRef(null);
-    // 버튼 클릭 시 파일 선택창 열기
-    const handleFileSelect = () => {
-        fileInputRef.current.click();
-    };
-    // 파일 선택 후 동작
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            console.log("선택된 파일:", file.name);
-            // 여기서 업로드 로직 추가 가능
-        }
-    };
-
     // 에이전트 선택 모달 활성화
     const [Agent, setAgent] = useState(false);
-
-    // 어시스턴트 기본세팅 값
-    const [AssistantSettings, setAssistantSettings] = useState({
-        LLM: "gemini-1.5-flash",
-
-    });
-
-
-    // 채팅로직 시작
-    const [userInput, setuserInput] = useState("");
-    const sendMessage = async () => {
-        if (!userInput.trim()) return;
-        setuserInput(""); // userinput 초기화
-
-        const userMessage = {
-            id: Date.now(), // 고유 ID
-            type: "user",
-            avatar: "👤",
-            sender: "사용자",
-            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            text: userInput
-        };
-        setMessages(prev => [...prev, userMessage]);
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/googlerequest`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                messageInput: userInput,
-                selected_model: AssistantSettings.LLM,
-                project_id: 102,
-                user_email: "dudqls327@naver.com",
-                session: "newSession_2025-08-19",
-            }),
-        });
-        const data = await response.json();
-        if (response.ok) {
-            console.log("API 응답:", data);
-
-            // 3. agent 메시지 추가
-            const agentMessage = {
-                id: Date.now() + 1,
-                type: "agent",
-                avatar: "🤖",
-                sender: "AI 에이전트",
-                time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-                // text: data.response // API가 주는 응답
-                text: JSON.stringify(data.response)
-            };
-
-            setMessages(prev => [...prev, agentMessage]);
-
-        }
-    };
-
-    const chatEndRef = useRef(null);
-    useEffect(() => {
-        if (chatEndRef.current) {
-            chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-        }
-    }, [messages]);
-
-
-    const handleKeyDown = (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault(); // textarea 줄바꿈 방지
-            sendMessage();
-        }
-    };
-
-
-
-
-
-
-
 
     return (
         <>
             <div className={`modal-overlay ${Agent ? 'active' : ''}`}>
-                <AgentHandler setAgent={setAgent} agents={agents} setAgents={setAgents} />
+                <AgentHandler />
             </div>
 
+
+
             <div className="assistant_container">
-                {/* 헤더 */}
-                {/* <div className="header">
-                    <div className="header-title">
-                        <div>
-                            <h1 className="page-title">AI 어시스턴트</h1>
-                            <p className="page-subtitle" id="page-subtitle">멀티 에이전트와 함께 협업하세요</p>
-                        </div>
-                        <div className="header-controls">
-                            <button className="primary-btn" id="new-conversation-btn"
-                                onClick={() => alert("새대화 생성 요청")}
-                            >
+                {/* 좌측 채팅 사이드바 - 카드형 디자인 */}
+                <div className="assistant-chat-sidebar">
+                    {/* 최근 대화 카드 */}
+                    <div className="sidebar-card conversations-card">
+                        <div className="assistant-card-header">
+                            <div className="assistant-card-title">💬 최근 대화</div>
+                            <button className="assistant-primary-btn" >
                                 <span>+</span>
                                 <span>새 대화</span>
                             </button>
                         </div>
-                    </div>
-                </div> */}
 
-                {/* 멀티 에이전트 모드 콘텐츠 */}
-                <div className={`assistant-layout multi-agent`} id="multi-agent-layout">
-                    {/* 좌측 통합 사이드바 */}
-                    <div className="chat-sidebar">
-
-
-                        <div className="sidebar-section">
-                            <h3 className="sidebar-title">
-                                <span>🧠</span>
-                                <span>AI 모델</span>
-
-                            </h3>
-
-                            <select
-                                className="llm-selector"
-                                id="llm-selector"
-                                value={AssistantSettings.LLM}
-                                onChange={(e) =>
-                                    setAssistantSettings({
-                                        ...AssistantSettings,
-                                        LLM: e.target.value,
-                                    })
-                                }
-                            >
-                                <optgroup label="Anthropic (Claude)">
-                                    <option value="claude-3-opus">Claude 3 Opus</option>
-                                    <option value="claude-3-sonnet">Claude 3 Sonnet</option>
-                                    <option value="claude-3-haiku">Claude 3 Haiku</option>
-                                </optgroup>
-
-                                <optgroup label="OpenAI">
-                                    <option value="gpt-4">GPT-4</option>
-                                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                                </optgroup>
-
-                                <optgroup label="LG EXAONE">
-                                    <option value="exaone-3.5">Exaone-3.5</option>
-                                </optgroup>
-
-                                <optgroup label="K-Intelligence">
-                                    <option value="K-intelligence/Midm-2.0-Base-Instruct">Midm 2.0</option>
-                                </optgroup>
-
-                                <optgroup label="Meta">
-                                    <option value="meta-llama-3.1-8b-instruct">LLaMA 3.1 8B Instruct</option>
-                                </optgroup>
-
-                                <optgroup label="SKT">
-                                    <option value="skt/A.X-3.1">A.X 3.1</option>
-                                </optgroup>
-
-                                <optgroup label="Google Gemini">
-                                    <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
-                                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-                                    <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
-                                    <option value="gemini-live-2.5-flash-preview">Gemini Live 2.5 Flash Preview</option>
-                                    <option value="gemini-2.5-flash-preview-native-audio-dialog">
-                                        Gemini 2.5 Flash Preview Native Audio Dialog
-                                    </option>
-                                    <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-                                    <option value="gemini-2.0-flash-preview-image-generation">
-                                        Gemini 2.0 Flash Preview (Image Generation)
-                                    </option>
-                                    <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</option>
-                                    <option value="gemini-2.0-flash-live-001">Gemini 2.0 Flash Live 001</option>
-                                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                                    <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</option>
-                                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-                                </optgroup>
-                            </select>
-
-
-                            {/* <div className="llm-info" id="llm-info">
-                                <div className="llm-name">Claude 3 Sonnet</div>
-                                <div className="llm-description">균형잡힌 성능과 속도로 대부분의 작업에 적합한 모델입니다.</div>
-                            </div> */}
-                        </div>
-
-                        <div className="sidebar-section">
-                            <h3 className="sidebar-title">
-                                <span>💬</span>
-
-                                <span>대화 목록</span>
-                                <button className="primary-btn" id="new-conversation-btn"
-                                    onClick={() => alert("새대화 생성 요청")}
-                                    style={{ height: "20px" }}
-                                >
-                                    <span>+</span>
-                                    <span>새 대화</span>
-                                </button>
-                            </h3>
-                            <div className="conversations-list" id="multi-conversations-list">
-                                <div className="conversation-item">
-                                    <div className="conversation-header">
-                                        <div className="conversation-title">프로젝트 기획 논의</div>
-                                        <div className="conversation-time">01:32</div>
-                                    </div>
-                                    {/* <div className="conversation-preview">주인 시스템의 성능을 위해서는 데이터 ...</div> */}
+                        <div className="conversations-list" id="conversations-list">
+                            <div className="conversation-item active">
+                                <div className="conversation-header">
+                                    <div className="assistant-conversation-title">현재 대화</div>
+                                    <div className="conversation-time">진행중</div>
                                 </div>
+                                <div className="assistant-conversation-preview">새로운 대화를 시작해보세요...</div>
                             </div>
-                        </div>
-
-                        {/* 지식베이스 섹션 */}
-                        <div className="sidebar-section knowledge-section">
-                            <h3 className="sidebar-title">
-                                <span>📚</span>
-                                <span>지식베이스</span>
-                                <button className="manage-knowledge-btn"
-                                    onClick={handleFileSelect}
-                                >첨부</button>
-
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    style={{ display: "none" }}
-                                    onChange={handleFileChange}
-                                />
-                            </h3>
-                            <p className="knowledge-count">📁 첨부된 파일 (0개)</p>
-
-                            <div className="knowledge-files">
-                                <div className="empty-knowledge">
-                                    <div className="empty-icon">📚</div>
-                                    <p>이 대화에 지식베이스 파일을 첨부하여<br />더 정확한 답변을 받아보세요</p>
-                                    <button className="select-knowledge-btn"
-                                        onClick={handleFileSelect}
-                                    >
-                                        파일 첨부하기
-                                    </button>
+                            <div className="conversation-item">
+                                <div className="conversation-header">
+                                    <div className="assistant-conversation-title">프로젝트 기획 논의</div>
+                                    <div className="conversation-time">01:32</div>
                                 </div>
+                                <div className="assistant-conversation-preview">주요 시스템의 성능을 위해서는 데이터 처리 최적화가 필요합니다...</div>
                             </div>
-
-                            <div className="knowledge-help">
-                                <p
-                                    style={{
-                                        fontSize: "var(--text-xs)",
-                                        color: "var(--gray-500)",
-                                        marginTop: "var(--spacing-3)",
-                                        textAlign: "center",
-                                        lineHeight: 1.4,
-                                    }}
-                                >
-                                    💡 PDF, DOCX, TXT 등의 문서를 첨부하면<br />
-                                    에이전트들이 해당 내용을 참조하여 답변합니다
-                                </p>
+                            <div className="conversation-item">
+                                <div className="conversation-header">
+                                    <div className="assistant-conversation-title">Python 데이터 분석</div>
+                                    <div className="conversation-time">14:32</div>
+                                </div>
+                                <div className="assistant-conversation-preview">pandas를 사용한 데이터 전처리 방법에 대해 알아보겠습니다...</div>
                             </div>
                         </div>
-
-                        <div className="sidebar-section">
-                            <h3 className="sidebar-title">
-                                <span>🤖</span>
-                                <span>활성 에이전트</span>
-                                <button className="manage-agents-btn"
-                                    onClick={() => setAgent(true)}
-                                >관리</button>
-                            </h3>
-                            <div className="active-agents-list" id="active-agents-list">
-                                {agents.filter(agent => agent.active).length === 0 ? (
-                                    <div className="empty-agents">
-                                        <div className="empty-icon">🤖</div>
-                                        <p>활성 에이전트가 없습니다</p>
-                                    </div>
-                                ) : (
-                                    agents
-                                        .filter(agent => agent.active)
-                                        .map(agent => (
-                                            <div key={agent.id} className="agent-item">
-                                                <div
-                                                    className="agent-avatar"
-                                                    style={{ background: agent.avatarBg }}
-                                                >
-                                                    {agent.avatar}
-                                                </div>
-                                                <div className="agent-info">
-                                                    <div className="agent-name">📍 {agent.name}</div>
-                                                    <div className="agent-description">{agent.description}</div>
-                                                    <div className="agent-model">{agent.model}</div>
-                                                </div>
-                                                <div className="agent-status">
-                                                    <div className="status-dot"></div>
-                                                </div>
-                                            </div>
-                                        ))
-                                )}
-                            </div>
-                        </div>
-
-
                     </div>
 
-                    {/* 채팅 영역 */}
-                    <div className="chat-main">
+                    {/* 첨부파일 카드 */}
+                    <div className="sidebar-card files-card">
+                        <div className="assistant-card-header">
+                            <div className="assistant-card-title">📎 첨부파일</div>
+                        </div>
+
+                        <div className="files-count">📄 첨부된 파일 (0개)</div>
+
+                        <div className="knowledge-files" id="attached-files-list">
+                            <div className="empty-files">
+                                <div className="empty-icon">📁</div>
+                                <p>첨부된 파일이 없습니다</p>
+                            </div>
+                        </div>
+
+                        <div className="files-help">
+                            <p>💡 + 버튼에서 파일을 첨부하거나<br />
+                                입력창에 파일을 드래그놓으세요</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 채팅 영역 */}
+                <div className="assistant-chat-main">
+                    <div className="chat-card">
                         <div className="chat-header">
-
                             <div className="chat-info">
-                                <div className="chat-title" id="multi-chat-title">{projectName}</div>
-
+                                <div className="chat-title" id="chat-title">프로젝트명 / 대화명</div>
                                 <div className="chat-agents" id="chat-agents">
-                                    {agents
-                                        .filter(agent => agent.active)
-                                        .map(agent => (
-                                            <div key={agent.id} className="chat-agents" id="chat-agents">
-                                                <div className="chat-agent-badge" style={{ background: agent.avatarBg }}>🔍 {agent.name}</div>
-                                            </div>
-                                        ))
-                                    }
+                                    {/* 활성 에이전트 뱃지들이 여기에 동적으로 추가됩니다 */}
                                 </div>
                             </div>
 
                             <div className="chat-controls">
-                                <button className="control-btn" title="대화 지우기">🗑️</button>
-                                <button className="control-btn" title="설정">⚙️</button>
+                                <button className="control-btn" title="대화 지우기" >🗑️</button>
+                                <button className="control-btn" title="설정" >⚙️</button>
                             </div>
                         </div>
 
                         {/* 채팅창 영역 */}
-                        <div className="chat-messages" id="multi-chat-messages">
-                            {messages.map((msg) => (
-                                <div
-                                    key={msg.id}
-                                    className={`message ${msg.type === "user" ? "user-message" : ""}`}
-                                >
-                                    <div
-                                        className={`message-avatar ${msg.type === "agent" ? "agent-avatar-msg" : "user-avatar"}`}
-                                        style={msg.avatarBg ? { background: msg.avatarBg } : {}}
-                                    >
-                                        {msg.avatar}
-                                    </div>
-                                    <div className="message-content">
-                                        <div className={`message-header ${msg.sender === "사용자" ? "user" : ""}`}>
-                                            <div className="message-sender">{msg.sender}</div>
-                                            <div className="message-time">{msg.time}</div>
-                                        </div>
-                                        <div className="message-text">{msg.text}</div>
-                                    </div>
-                                </div>
-                            ))}
-
-                            {/* 마지막 메시지 참조 */}
-                            <div ref={chatEndRef} />
+                        <div className="chat-messages" id="chat-messages">
+                            {/* 초기 웰컴 메시지 */}
+                            <div className="welcome-message" id="welcome-message">
+                                <div className="welcome-icon">💬</div>
+                                <div className="welcome-title">김개발자님, 무엇을 도와드릴까요?</div>
+                                <div className="welcome-subtitle">멀티 에이전트와 함께 다양한 작업을 시작해보세요</div>
+                            </div>
                         </div>
 
                         <div className="chat-input-area">
-                            <div className="attachment-preview" id="multi-attachment-preview">
-                                {/* 첨부파일 미리보기가 여기에 동적으로 추가됩니다 */}
-                            </div>
-
                             <div className="chat-input-wrapper">
-                                <button className="attachment-btn"
-                                    // onClick="openFileAttachment('multi')"
-                                    title="파일 첨부">📎</button>
+                                {/* + 버튼 */}
+                                <div className="plus-btn" id="plus-btn" >
+                                    +
+                                    {/* 통합 팝업 메뉴 */}
+                                    <div className="plus-menu" id="plus-menu">
+                                        <div className="menu-section">
+                                            <div className="menu-section-title">AI 에이전트</div>
+                                            <div className="menu-item" >
+                                                <div className="menu-item-icon">👥</div>
+                                                <div className="menu-item-text">
+                                                    <div className="menu-item-title">에이전트</div>
+                                                    <div className="menu-item-desc">AI 에이전트 선택 및 관리</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="menu-section">
+                                            <div className="menu-section-title">지식베이스</div>
+                                            <div className="menu-item" >
+                                                <div className="menu-item-icon">📚</div>
+                                                <div className="menu-item-text">
+                                                    <div className="menu-item-title">지식베이스 라이브러리</div>
+                                                    <div className="menu-item-desc">저장된 지식베이스에서 선택</div>
+                                                </div>
+                                            </div>
+                                            <div className="menu-item" >
+                                                <div className="menu-item-icon">📎</div>
+                                                <div className="menu-item-text">
+                                                    <div className="menu-item-title">파일 첨부</div>
+                                                    <div className="menu-item-desc">현재 대화에 파일 첨부</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="menu-section">
+                                            <div className="menu-section-title">외부 연동</div>
+                                            <div className="menu-item" >
+                                                <div className="menu-item-icon">💾</div>
+                                                <div className="menu-item-text">
+                                                    <div className="menu-item-title">Google Drive</div>
+                                                    <div className="menu-item-desc">클라우드 파일 연동</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <textarea
                                     className="chat-input"
-                                    id="multi-chat-input"
+                                    id="chat-input"
                                     placeholder="메시지를 입력하세요... (Shift+Enter로 줄바꿈, Enter로 전송)"
                                     rows="1"
-                                    value={userInput}
-                                    onChange={(e) => setuserInput(e.target.value)}
-                                    onKeyDown={handleKeyDown}
                                 ></textarea>
 
+                                <div className="input-actions">
+                                    {/* 모델 선택 버튼  */}
+                                    <div className="model-selector-btn" id="model-selector-btn" >
+                                        <span className="model-icon" id="model-icon">🧠</span>
+                                        <span className="model-name" id="current-model-name">EXAONE 4.0</span>
+                                        <span className="dropdown-arrow">▼</span>
 
-
-                                <button className="send-btn" id="multi-send-btn"
-                                >
-                                    <span id="multi-send-icon">➤</span>
-                                </button>
+                                        {/* 모델 선택 드롭다운 */}
+                                        <div className="model-dropdown-menu" id="model-dropdown-menu">
+                                            <div className="model-item" >
+                                                <div className="model-item-info">
+                                                    <div className="model-item-icon">🧠</div>
+                                                    <div className="model-item-text">
+                                                        <div className="model-item-title">EXAONE 4.0</div>
+                                                        <div className="model-item-desc">LG AI Research의 최신 멀티모달 모델</div>
+                                                    </div>
+                                                </div>
+                                                <span className="model-check active" id="check-exaone-4">✓</span>
+                                            </div>
+                                            <div className="model-item" >
+                                                <div className="model-item-info">
+                                                    <div className="model-item-icon">🤖</div>
+                                                    <div className="model-item-text">
+                                                        <div className="model-item-title">Claude 3.5 Sonnet</div>
+                                                        <div className="model-item-desc">Anthropic의 고성능 대화 모델</div>
+                                                    </div>
+                                                </div>
+                                                <span className="model-check" id="check-claude-3.5-sonnet">✓</span>
+                                            </div>
+                                            <div className="model-item" >
+                                                <div className="model-item-info">
+                                                    <div className="model-item-icon">🚀</div>
+                                                    <div className="model-item-text">
+                                                        <div className="model-item-title">GPT-4o</div>
+                                                        <div className="model-item-desc">OpenAI의 최신 멀티모달 모델</div>
+                                                    </div>
+                                                </div>
+                                                <span className="model-check" id="check-gpt-4o">✓</span>
+                                            </div>
+                                            <div className="model-item" >
+                                                <div className="model-item-info">
+                                                    <div className="model-item-icon">⚡</div>
+                                                    <div className="model-item-text">
+                                                        <div className="model-item-title">Gemini 2.0 Flash</div>
+                                                        <div className="model-item-desc">Google의 차세대 AI 모델</div>
+                                                    </div>
+                                                </div>
+                                                <span className="model-check" id="check-gemini-2.0-flash">✓</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button className="send-btn" id="send-btn" >
+                                        <span id="send-icon">➤</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-            </div >
+
         </>
     );
 }
 
-function AgentHandler({ setAgent, agents, setAgents }) {
-    // 체크박스 토글 핸들러
-    const handleToggle = (id) => {
-        setAgents((prevAgents) =>
-            prevAgents.map((agent) =>
-                agent.id === id ? { ...agent, active: !agent.active } : agent
-            )
-        );
-    };
-
+function AgentHandler({ }) {
     return (
-        <div className="modal agents-management">
-            <div className="modal-header">
-                <h2 className="modal-title">에이전트 관리</h2>
-                <button className="modal-close" onClick={() => setAgent(false)}>
-                    &times;
-                </button>
-            </div>
-            <div className="modal-body">
-                <p
-                    style={{
-                        color: "var(--gray-600)",
-                        marginBottom: "var(--spacing-6)",
-                        textAlign: "center",
-                    }}
-                >
-                    활성화할 에이전트를 선택하세요. 선택된 에이전트들이 대화에 참여합니다.
-                </p>
-                <div className="agents-grid">
-                    {agents.map((agent) => (
-                        <div
-                            key={agent.id}
-                            className={`agent-card ${agent.active ? "active" : ""}`}
-                            data-agent={agent.id}
-                        >
-                            <div className="agent-card-header">
-                                <div
-                                    className="agent-card-avatar"
-                                    style={{ background: agent.avatarBg }}
-                                >
-                                    {agent.avatar}
-                                </div>
-                                <div className="agent-toggle">
-                                    <input
-                                        type="checkbox"
-                                        id={`${agent.id}-agent`}
-                                        checked={agent.active}
-                                        onChange={() => handleToggle(agent.id)}
-                                    />
-                                </div>
-                            </div>
-                            <div className="agent-card-info">
-                                <h5>{agent.name}</h5>
-                                <p>{agent.desc}</p>
-                                <div className="agent-capabilities">
-                                    {(agent.capabilities ?? []).map((cap, idx) => (
-                                        <span key={idx} className="capability-tag">
-                                            {cap}
-                                        </span>
-                                    ))}
-                                </div>
-                                <div className="agent-model-info">모델: {agent.model}</div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-            <div className="modal-footer">
-                <button className="secondary-btn">취소</button>
-                <button className="primary-btn">설정 저장</button>
-            </div>
-        </div>
+        <>
+            dkdk
+        </>
     );
 }

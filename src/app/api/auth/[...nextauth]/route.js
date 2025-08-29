@@ -29,7 +29,7 @@ export const handler = NextAuth({
       },
       async authorize(credentials) {
         try {
-          const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPLogin`, {
+          const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/MSP_USER/MSPLogin`, {
             user_email: credentials.email,
             user_pw: credentials.password,
             loginMethod: credentials.loginMethod,
@@ -61,7 +61,7 @@ export const handler = NextAuth({
     async signIn({ user, account }) {
       if (account.provider === "google") {
         try {
-          const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPSocialLogin`, {
+          const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/MSP_USER/MSPSocialLogin`, {
             email: user.email,
             name: user.name,
             image: user.image,
@@ -78,7 +78,7 @@ export const handler = NextAuth({
       if (account.provider === "kakao") {
         console.log(JSON.stringify(user, null, 2));
         try {
-          const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPSocialLogin`, {
+          const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/MSP_USER/MSPSocialLogin`, {
             email: user.email,
             name: user.name,
             image: user.image,

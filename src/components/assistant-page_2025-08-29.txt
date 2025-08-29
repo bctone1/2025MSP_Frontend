@@ -20,7 +20,7 @@ export default function AssistantPage({ onMenuClick, projectName }) {
             },
             {
                 id: "coding",
-                active: true,
+                active: false,
                 avatar: "💻",
                 avatarBg: "#10b981",
                 name: "코딩 에이전트",
@@ -31,7 +31,7 @@ export default function AssistantPage({ onMenuClick, projectName }) {
             },
             {
                 id: "analysis",
-                active: true,
+                active: false,
                 avatar: "📊",
                 avatarBg: "#8b5cf6",
                 name: "분석 에이전트",
@@ -207,7 +207,7 @@ export default function AssistantPage({ onMenuClick, projectName }) {
         };
         setMessages(prev => [...prev, userMessage]);
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_USER/googletest`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_USER/googlerequest`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

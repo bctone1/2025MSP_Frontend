@@ -145,7 +145,7 @@ export default function RegisterPage() {
             alert("유효한 이메일 형식이 아닙니다.");
             return
         }
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPCheckEmail`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_USER/MSPCheckEmail`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -166,7 +166,7 @@ export default function RegisterPage() {
             ...pre,
             secretCode: code
         }));
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPSendEmail`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_USER/MSPSendEmail`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -196,7 +196,7 @@ export default function RegisterPage() {
         if (!register.termsAgreed) return alert("이용약관에 동의해주세요.");
 
         
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/TEST/MSPRegister`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_USER/MSPRegister`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

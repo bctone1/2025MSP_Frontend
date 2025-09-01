@@ -9,6 +9,7 @@ export default function AssistantPage({ onMenuClick, projectName }) {
 
     // 에이전트 선택 모달 활성화
     const [Agent, setAgent] = useState(false);
+    const [Knowledge, setKnowledge] = useState(false);
 
     const conversations = [
         {
@@ -146,29 +147,29 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                 {agents.map((agent) => (
                     <div
                         key={agent.id}
-                        className={`agent-card ${agent.active ? "active" : ""}`}
+                        className={`assistant-agent-card ${agent.active ? "active" : ""}`}
                         data-agent={agent.id}
                     >
-                        <div className="agent-card-header">
+                        <div className="assistant-agent-card-header">
                             <div
-                                className="agent-card-avatar"
+                                className="assistant-agent-card-avatar"
                                 style={{ background: agent.avatarBg }}
                             >
                                 {agent.avatar}
                             </div>
-                            <div className="agent-card-info">
+                            <div className="assistant-agent-card-info">
                                 <h5>{agent.name}</h5>
                                 <p>{agent.desc}</p>
-                                <div className="agent-capabilities">
+                                <div className="assistant-agent-capabilities">
                                     {agent.capabilities.map((cap, idx) => (
-                                        <span key={idx} className="capability-tag">
+                                        <span key={idx} className="assistant-capability-tag">
                                             {cap}
                                         </span>
                                     ))}
                                 </div>
                                 <div className="agent-model-info">모델: {agent.model}</div>
                             </div>
-                            <div className="agent-toggle">
+                            <div className="assistant-agent-toggle">
                                 <input
                                     type="checkbox"
                                     checked={agent.active}
@@ -182,6 +183,154 @@ export default function AssistantPage({ onMenuClick, projectName }) {
         );
     };
 
+    const knowledgeFiles = [
+        {
+            id: 1,
+            name: "2024년 사업계획서.pdf",
+            type: "pdf",
+            size: "2.3MB",
+            folder: "projects",
+            description: "2024년 사업 계획 및 다음 연도 전략 분석",
+            tags: ["사업계획서", "2024", "전략", "기획"],
+            date: "2024.01.15",
+            usage: 174
+        },
+        {
+            id: 2,
+            name: "매출분석_Q4.xlsx",
+            type: "excel",
+            size: "1.8MB",
+            folder: "reports",
+            description: "Q4 매출 현황 및 매출 250만원, 전년 동기 대비 증가",
+            tags: ["매출분석", "Q4", "보고서", "엑셀"],
+            date: "2024.01.10",
+            usage: 89
+        },
+        {
+            id: 3,
+            name: "마케팅전략_2024.pptx",
+            type: "ppt",
+            size: "4.5MB",
+            folder: "projects",
+            description: "2024년 마케팅 전략 다각화를 통한 디지털 마케팅 방안",
+            tags: ["마케팅전략", "전략", "디지털마케팅", "브랜딩"],
+            date: "2024.01.08",
+            usage: 156
+        },
+        {
+            id: 4,
+            name: "기술문서_API.docx",
+            type: "doc",
+            size: "850KB",
+            folder: "references",
+            description: "REST API 설계 문서, 엔드포인트 구조 및 응답 형식 정리",
+            tags: ["기술문서", "API", "개발", "문서"],
+            date: "2024.01.05",
+            usage: 67
+        },
+        {
+            id: 5,
+            name: "Q4_재무보고서.xlsx",
+            type: "excel",
+            size: "3.2MB",
+            folder: "reports",
+            description: "SharePoint에서 정리한 Q4 재무 보고서 데이터",
+            tags: ["SharePoint", "재무", "Q4"],
+            date: "2024.01.02",
+            usage: 234
+        },
+        {
+            id: 6,
+            name: "제품로드맵_2024.gdoc",
+            type: "doc",
+            size: "1.2MB",
+            folder: "projects",
+            description: "Google Drive에서 상시간 공개한 2024년 제품 로드맵 문서",
+            tags: ["Google Drive", "제품기획", "로드맵"],
+            date: "2023.12.28",
+            usage: 89
+        }
+    ];
+
+    const filteredFiles = [...knowledgeFiles];
+    const selectedFiles = new Set();
+    const [isListView, setisListView] = useState("");
+
+    const RenderKnowledgeFiles = () => {
+        return (
+            <>
+                {filteredFiles.length === 0 && (
+                    <div
+                        style={{
+                            gridColumn: "1/-1",
+                            textAlign: "center",
+                            padding: "var(--spacing-8)",
+                            color: "var(--gray-500)",
+                        }}
+                    >
+                        <div
+                            style={{
+                                fontSize: "48px",
+                                marginBottom: "var(--spacing-4)",
+                            }}
+                        >
+                            📁
+                        </div>
+                        <p>검색 결과가 없습니다.</p>
+                    </div>
+                )}
+
+                {filteredFiles.map((file) => {
+                    const fileIcon = getKnowledgeFileIcon(file.type);
+                    const isSelected = selectedFiles.has(file.id);
+
+                    return (
+                        <div
+                            key={file.id}
+                            className={`assistant-knowledge-file-item ${isListView ? "list-view" : ""} ${isSelected ? "selected" : ""}`}
+                            data-file-id={file.id}
+                            onClick={() => toggleFileSelection(file.id)}
+                        >
+                            <input
+                                type="checkbox"
+                                className="assistant-file-checkbox"
+                                checked={isSelected}
+                                onChange={() => toggleFileSelection(file.id)}
+                                onClick={(e) => e.stopPropagation()}
+                            />
+
+                            <div className={`assistant-file-type-icon ${file.type}`}>{fileIcon}</div>
+
+                            <div className="assistant-knowledge-file-info">
+                                <div className="assistant-knowledge-file-title">{file.name}</div>
+
+                                <div className="assistant-knowledge-file-meta">
+                                    <span>{file.size}</span>
+                                    <span>{file.date}</span>
+                                    <span>{file.usage}회 사용됨</span>
+                                </div>
+
+                                <div className="assistant-knowledge-file-desc">{file.description}</div>
+
+                                <div className="assistant-knowledge-file-tags">
+                                    <span className="assistant-knowledge-tag folder">
+                                        {getFolderName(file.folder)}
+                                    </span>
+                                    {file.tags.map((tag, index) => (
+                                        <span key={index} className="assistant-knowledge-tag">
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </>
+        );
+    };
+
+
 
 
 
@@ -192,8 +341,16 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                     setAgent={setAgent}
                     AgentCards={<AgentCards agents={agents} setagents={setagents} />}
                 />
-
             </div>
+
+            <div className={`modal-overlay ${Knowledge ? 'active' : ''}`}>
+                <KnowledgeHandler
+                    setKnowledge={setKnowledge}
+                    RenderKnowledgeFiles={<RenderKnowledgeFiles />}
+                />
+            </div>
+
+
 
             <div className="assistant_container">
                 {/* 좌측 채팅 사이드바 - 카드형 디자인 */}
@@ -296,7 +453,9 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                                             </div>
                                         </div>
 
-                                        <div className="menu-section">
+                                        <div className="menu-section"
+                                            onClick={() => setKnowledge(true)}
+                                        >
                                             <div className="menu-section-title">지식베이스</div>
                                             <div className="menu-item" >
                                                 <div className="menu-item-icon">📚</div>
@@ -396,14 +555,14 @@ function UpdateChatAgentsBadges({ agents }) {
 function AgentHandler({ setAgent, AgentCards }) {
     return (
         <>
-            <div className="modal agents-management">
-                <div className="modal-header">
-                    <h2 className="modal-title">에이전트 관리</h2>
-                    <button className="modal-close"
+            <div className="assistant-modal assistant-agents-management">
+                <div className="assistant-modal-header">
+                    <h2 className="assistant-modal-title">에이전트 관리</h2>
+                    <button className="assistant-modal-close"
                         onClick={() => setAgent(false)}
                     >&times;</button>
                 </div>
-                <div className="modal-body">
+                <div className="assistant-modal-body">
                     <p
                         style={{
                             color: "var(--gray-600)",
@@ -413,17 +572,104 @@ function AgentHandler({ setAgent, AgentCards }) {
                     >
                         활성화할 에이전트를 선택하세요. 선택된 에이전트들이 대화에 참여합니다.
                     </p>
-                    <div className="agents-grid" id="agents-grid">
+                    <div className="assistant-agents-grid" id="agents-grid">
                         {/* 에이전트 카드들이 여기에 동적으로 추가됩니다  */}
                         {AgentCards}
                     </div>
                 </div>
-                <div className="modal-footer">
-                    <button className="secondary-btn" >취소</button>
-                    <button className="primary-btn" >설정 저장</button>
+                <div className="assistant-modal-footer">
+                    <button className="assistant-secondary-btn"
+                        onClick={() => setAgent(false)}
+                    >취소</button>
+                    <button className="assistant-primary-btn"
+                        onClick={() => setAgent(false)}
+                    >설정 저장</button>
                 </div>
             </div>
         </>
     );
 }
 
+function KnowledgeHandler({ setKnowledge, RenderKnowledgeFiles }) {
+    return (
+        <>
+            <div className="modal knowledge-library-modal" style={{ maxWidth: "1000px", width: "95%" }}>
+                <div className="assistant-modal-header">
+                    <h2 className="assistant-modal-title">지식베이스 라이브러리</h2>
+                    <button className="assistant-modal-close"
+                        onClick={() => setKnowledge(false)}
+                    >&times;</button>
+                </div>
+                <div className="assistant-modal-body">
+                    <div className="assistant-knowledge-toolbar">
+                        <div className="knowledge-search">
+                            <input type="text" id="knowledge-search-input" placeholder="파일명, 태그, 내용 검색..." className="knowledge-search-input" />
+                            <button className="knowledge-search-btn" >🔍</button>
+                        </div>
+                        <div className="knowledge-filters">
+                            <select id="folder-filter" className="filter-select">
+                                <option value="">모든 폴더</option>
+                                <option value="projects">프로젝트별 문서</option>
+                                <option value="reports">보고서</option>
+                                <option value="references">참고 자료</option>
+                                <option value="personal">개인 문서</option>
+                            </select>
+                            <select id="type-filter" className="filter-select">
+                                <option value="">모든 파일</option>
+                                <option value="pdf">PDF</option>
+                                <option value="doc">문서</option>
+                                <option value="excel">스프레드시트</option>
+                                <option value="ppt">프레젠테이션</option>
+                            </select>
+                            <button className="view-toggle-btn" id="view-toggle" >📋</button>
+                        </div>
+                    </div>
+
+                    <div className="knowledge-content">
+                        <div className="knowledge-stats">
+                            <span id="file-count">총 187개 파일</span>
+                            <span id="selected-count">0개 선택됨</span>
+                        </div>
+
+                        <div className="assistant-knowledge-files-grid" id="knowledge-files-grid">
+                            {/* 파일들이 동적으로 렌더링됩니다  */}
+                            {RenderKnowledgeFiles}
+                        </div>
+                    </div>
+                </div>
+                <div className="assistant-modal-footer">
+                    <div className="assistant-footer-left">
+                        <button className="assistant-secondary-btn" >전체 선택</button>
+                        <button className="assistant-secondary-btn" >선택 해제</button>
+                    </div>
+                    <div className="footer-right">
+                        <button className="assistant-secondary-btn">취소</button>
+                        <button className="primary-btn" id="add-selected-btn" disabled>
+                            선택된 파일 추가 (<span id="selected-file-count">0</span>)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+function getKnowledgeFileIcon(type) {
+    const icons = {
+        pdf: '📄',
+        doc: '📄',
+        excel: '📊',
+        ppt: '📽️'
+    };
+    return icons[type] || '📎';
+}
+
+function getFolderName(folder) {
+    const folderNames = {
+        projects: '프로젝트별 문서',
+        reports: '보고서',
+        references: '참고 자료',
+        personal: '개인 문서'
+    };
+    return folderNames[folder] || folder;
+}

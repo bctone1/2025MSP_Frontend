@@ -1376,7 +1376,7 @@
  }
 
  /* 모달 컨테이너 */
- .modal {
+ .assistant-modal {
      background: white;
      border-radius: 16px;
      padding: var(--spacing-6);
@@ -1393,7 +1393,7 @@
      transform: translateY(0) scale(1);
  }
 
- .modal-header {
+ .assistant-modal-header {
      display: flex;
      justify-content: space-between;
      align-items: center;
@@ -1402,13 +1402,13 @@
      border-bottom: 1px solid var(--gray-200);
  }
 
- .modal-title {
+ .assistant-modal-title {
      font-size: var(--text-xl);
      font-weight: 700;
      color: var(--gray-900);
  }
 
- .modal-close {
+ .assistant-modal-close {
      width: 32px;
      height: 32px;
      border: none;
@@ -1423,23 +1423,23 @@
      font-size: 18px;
  }
 
- .modal-close:hover {
+ .assistant-modal-close:hover {
      background: var(--gray-200);
      color: var(--gray-700);
  }
 
- .modal-body {
+ .assistant-modal-body {
      margin-bottom: var(--spacing-6);
  }
 
  /* 에이전트 그리드 */
- .agents-grid {
+ .assistant-agents-grid {
      display: grid;
      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
      gap: var(--spacing-4);
  }
 
- .agent-card {
+ .assistant-agent-card {
      border: 2px solid var(--gray-200);
      border-radius: 12px;
      padding: var(--spacing-4);
@@ -1448,25 +1448,25 @@
      position: relative;
  }
 
- .agent-card:hover {
+ .assistant-agent-card:hover {
      border-color: var(--primary-blue);
      transform: translateY(-2px);
      box-shadow: var(--shadow-md);
  }
 
- .agent-card.active {
+ .assistant-agent-card.active {
      border-color: var(--primary-blue);
      background: rgba(59, 130, 246, 0.05);
  }
 
- .agent-card-header {
+ .assistant-agent-card-header {
      display: flex;
      align-items: flex-start;
      justify-content: space-between;
      margin-bottom: var(--spacing-3);
  }
 
- .agent-card-avatar {
+ .assistant-agent-card-avatar {
      width: 48px;
      height: 48px;
      border-radius: 12px;
@@ -1478,33 +1478,33 @@
      flex-shrink: 0;
  }
 
- .agent-card-info {
+ .assistant-agent-card-info {
      flex: 1;
      margin-left: var(--spacing-3);
  }
 
- .agent-card-info h5 {
+ .assistant-agent-card-info h5 {
      font-size: var(--text-lg);
      font-weight: 600;
      color: var(--gray-900);
      margin-bottom: var(--spacing-2);
  }
 
- .agent-card-info p {
+ .assistant-agent-card-info p {
      font-size: var(--text-sm);
      color: var(--gray-600);
      line-height: 1.5;
      margin-bottom: var(--spacing-3);
  }
 
- .agent-capabilities {
+ .assistant-agent-capabilities {
      display: flex;
      flex-wrap: wrap;
      gap: var(--spacing-2);
      margin-bottom: var(--spacing-3);
  }
 
- .capability-tag {
+ .assistant-capability-tag {
      padding: var(--spacing-1) var(--spacing-2);
      background: rgba(59, 130, 246, 0.1);
      color: var(--primary-blue);
@@ -1518,12 +1518,12 @@
      color: var(--gray-500);
  }
 
- .agent-toggle {
+ .assistant-agent-toggle {
      display: flex;
      align-items: center;
  }
 
- .agent-toggle input[type="checkbox"] {
+ .assistant-agent-toggle input[type="checkbox"] {
      width: 44px;
      height: 24px;
      appearance: none;
@@ -1534,11 +1534,11 @@
      transition: all var(--transition-fast);
  }
 
- .agent-toggle input[type="checkbox"]:checked {
+ .assistant-agent-toggle input[type="checkbox"]:checked {
      background: var(--primary-blue);
  }
 
- .agent-toggle input[type="checkbox"]::after {
+ .assistant-agent-toggle input[type="checkbox"]::after {
      content: '';
      position: absolute;
      top: 2px;
@@ -1550,11 +1550,11 @@
      transition: all var(--transition-fast);
  }
 
- .agent-toggle input[type="checkbox"]:checked::after {
+ .assistant-agent-toggle input[type="checkbox"]:checked::after {
      transform: translateX(20px);
  }
 
- .modal-footer {
+ .assistant-modal-footer {
      display: flex;
      justify-content: space-between;
      align-items: center;
@@ -1562,7 +1562,7 @@
      border-top: 1px solid var(--gray-200);
  }
 
- .secondary-btn {
+ .assistant-secondary-btn {
      padding: var(--spacing-3) var(--spacing-4);
      background: var(--gray-100);
      border: 1px solid var(--gray-300);
@@ -1573,7 +1573,7 @@
      transition: all var(--transition-fast);
  }
 
- .secondary-btn:hover {
+ .assistant-secondary-btn:hover {
      background: var(--gray-200);
  }
 
@@ -1695,7 +1695,7 @@
      max-height: 85vh;
  }
 
- .knowledge-toolbar {
+ .assistant-knowledge-toolbar {
      display: flex;
      justify-content: space-between;
      align-items: center;
@@ -1821,7 +1821,7 @@
      color: var(--primary-blue);
  }
 
- .knowledge-files-grid {
+ .assistant-knowledge-files-grid {
      display: grid;
      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
      gap: var(--spacing-4);
@@ -1832,7 +1832,7 @@
      grid-template-columns: 1fr;
  }
 
- .knowledge-file-item {
+ .assistant-knowledge-file-item {
      background: white;
      border: 2px solid var(--gray-200);
      border-radius: 12px;
@@ -1845,24 +1845,24 @@
      gap: var(--spacing-3);
  }
 
- .knowledge-file-item:hover {
+ .assistant-knowledge-file-item:hover {
      border-color: var(--primary-blue);
      transform: translateY(-2px);
      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
  }
 
- .knowledge-file-item.selected {
+ .assistant-knowledge-file-item.selected {
      border-color: var(--primary-blue);
      background: rgba(59, 130, 246, 0.05);
  }
 
- .knowledge-file-item.list-view {
+ .assistant-knowledge-file-item.list-view {
      flex-direction: row;
      align-items: center;
      padding: var(--spacing-3) var(--spacing-4);
  }
 
- .file-checkbox {
+ .assistant-file-checkbox {
      position: absolute;
      top: var(--spacing-3);
      right: var(--spacing-3);
@@ -1872,7 +1872,7 @@
      cursor: pointer;
  }
 
- .file-type-icon {
+ .assistant-file-type-icon {
      font-size: 32px;
      flex-shrink: 0;
      width: 48px;
@@ -1884,32 +1884,32 @@
      background: var(--gray-100);
  }
 
- .file-type-icon.pdf {
+ .assistant-file-type-icon.pdf {
      background: #dc2626;
      color: white;
  }
 
- .file-type-icon.doc {
+ .assistant-file-type-icon.doc {
      background: #2563eb;
      color: white;
  }
 
- .file-type-icon.excel {
+ .assistant-file-type-icon.excel {
      background: #16a34a;
      color: white;
  }
 
- .file-type-icon.ppt {
+ .assistant-file-type-icon.ppt {
      background: #d97706;
      color: white;
  }
 
- .knowledge-file-info {
+ .assistant-knowledge-file-info {
      flex: 1;
      min-width: 0;
  }
 
- .knowledge-file-title {
+ .assistant-knowledge-file-title {
      font-weight: 600;
      font-size: var(--text-base);
      color: var(--gray-900);
@@ -1918,7 +1918,7 @@
      word-break: break-word;
  }
 
- .knowledge-file-meta {
+ .assistant-knowledge-file-meta {
      display: flex;
      flex-wrap: wrap;
      gap: var(--spacing-2);
@@ -1927,7 +1927,7 @@
      color: var(--gray-500);
  }
 
- .knowledge-file-desc {
+ .assistant-knowledge-file-desc {
      font-size: var(--text-sm);
      color: var(--gray-600);
      line-height: 1.4;
@@ -1938,13 +1938,13 @@
      margin-bottom: var(--spacing-3);
  }
 
- .knowledge-file-tags {
+ .assistant-knowledge-file-tags {
      display: flex;
      flex-wrap: wrap;
      gap: var(--spacing-1);
  }
 
- .knowledge-tag {
+ .assistant-knowledge-tag {
      padding: 2px 8px;
      background: rgba(59, 130, 246, 0.1);
      color: var(--primary-blue);
@@ -1953,12 +1953,12 @@
      font-weight: 500;
  }
 
- .knowledge-tag.folder {
+ .assistant-knowledge-tag.folder {
      background: rgba(16, 185, 129, 0.1);
      color: var(--success-green);
  }
 
- .footer-left,
+ .assistant-footer-left,
  .footer-right {
      display: flex;
      gap: var(--spacing-3);

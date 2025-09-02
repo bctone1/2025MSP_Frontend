@@ -469,7 +469,7 @@
 }
 
 .history-item {
-    position: relative;
+    /* position: relative;
     margin-bottom: var(--spacing-6);
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(20px);
@@ -477,7 +477,7 @@
     padding: var(--spacing-5);
     box-shadow: var(--shadow-md);
     border: 1px solid rgba(59, 130, 246, 0.1);
-    transition: all var(--transition-normal);
+    transition: all var(--transition-normal); */
 }
 
 .history-item::before {

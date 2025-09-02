@@ -45,7 +45,7 @@ export default function Sidebar({ onMenuClick, currentPage, setprojectName }) {
 
 
 
-            { page: 'dashboard', icon: '🏠', title: '홈', desc: '대시보드 및 전체 현황' },
+            // { page: 'dashboard', icon: '🏠', title: '홈', desc: '대시보드 및 전체 현황' },
             { page: 'assistant', icon: '💬', title: 'AI 어시스턴트', desc: '멀티에이전트 대화' },
             { page: 'projects', icon: '📁', title: '프로젝트', desc: '프로젝트 생성 및 관리' },
             { page: 'knowledge', icon: '📚', title: '지식베이스', desc: '지식베이스 관리' },
@@ -76,7 +76,7 @@ export default function Sidebar({ onMenuClick, currentPage, setprojectName }) {
           <div className={`nav-item settings-dropdown ${currentPage === "profile" || currentPage === "agents" || currentPage === "api-keys" || currentPage === "mcp" ? "active" : ""}`}>
             <div className="nav-icon">⚙️</div>
             <div className="nav-text"
-              data-page={'knowledge'}
+              data-page={'mcp'}
               onClick={handleClick}
             >
               <div className="nav-title">설정 및 관리</div>

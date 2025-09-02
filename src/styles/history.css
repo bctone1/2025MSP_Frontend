@@ -346,6 +346,7 @@ body {
     margin-left: 256px;
     padding: var(--spacing-6);
     max-width: none;
+    overflow: auto;
 }
 
 .header {

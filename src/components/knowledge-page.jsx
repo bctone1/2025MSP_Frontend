@@ -5,7 +5,7 @@ import "@/styles/knowledge.css";
 // import History from "@/components/history-component";
 
 
-export default function Knowledge() {
+export default function Knowledge({onMenuClick}) {
 
     const filesData = [
         {
@@ -277,7 +277,9 @@ export default function Knowledge() {
                                 />
                             </div>
                             <div className="header-actions">
-                                <button className="btn btn-chat" >💬 AI 어시스턴트</button>
+                                <button className="btn btn-chat"
+                                    onClick={() => onMenuClick('assistant')}
+                                >💬 AI 어시스턴트</button>
                                 <button className="btn btn-primary"
                                     onClick={() => fileInputRef.current?.click()}
                                 >
@@ -290,7 +292,7 @@ export default function Knowledge() {
                                     onChange={handleFileSelect}
                                 />
                                 {/* <button className="btn btn-secondary" >🔗 외부 연동</button> */}
-                                <button className="btn btn-secondary" >📁 새 폴더</button>
+                                {/* <button className="btn btn-secondary" >📁 새 폴더</button> */}
                             </div>
                         </div>
 

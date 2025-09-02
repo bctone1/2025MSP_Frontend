@@ -361,66 +361,66 @@ export default function McpPage() {
 
 
     return (
-        <div className="app-container">
-            <div className="container">
 
-                <div className="header">
-                    <div className="header-title">
-                        <div>
-                            <h1 className="page-title">MCP 관리</h1>
-                            <p className="page-subtitle">Model Context Protocol 서버 연결 및 도구 관리</p>
-                        </div>
-                        <div className="header-controls">
-                            <div className="mcp-status">
-                                <div className="status-indicator">
-                                    <span className="status-dot active"></span>
-                                    <span>2개 연결 활성</span>
-                                </div>
+        <div className="container">
+
+            <div className="header">
+                <div className="header-title">
+                    <div>
+                        <h1 className="page-title">MCP 관리</h1>
+                        <p className="page-subtitle">Model Context Protocol 서버 연결 및 도구 관리</p>
+                    </div>
+                    <div className="header-controls">
+                        <div className="mcp-status">
+                            <div className="status-indicator">
+                                <span className="status-dot active"></span>
+                                <span>2개 연결 활성</span>
                             </div>
-                            <button className="primary-btn" id="add-mcp-server-btn">
-                                <span>+</span>
-                                <span>서버 추가</span>
-                            </button>
                         </div>
+                        <button className="primary-btn" id="add-mcp-server-btn">
+                            <span>+</span>
+                            <span>서버 추가</span>
+                        </button>
                     </div>
                 </div>
-
-                <div className="mcp-dashboard">
-                    <div className="dashboard-stats">
-                        <StatCard icon="🔌" gradient="#3B82F6, #1D4ED8" label="총 서버" value={mcpServers.length} />
-                        <StatCard icon="✅" gradient="#10B981, #059669" label="연결됨" value={mcpServers.filter(s => s.status === 'connected').length} />
-                        <StatCard icon="🛠️" gradient="#8B5CF6, #7C3AED" label="사용 가능한 도구" value={availableTools.length} />
-                        <StatCard icon="📊" gradient="#F59E0B, #D97706" label="총 요청" value={metrics.totalRequests.toLocaleString()} />
-                    </div>
-
-                    <div className="mcp-tabs">
-                        <div className="tab-navigation">
-                            {['servers', 'tools', 'monitoring', 'security', 'logs'].map(tab => (
-                                <button key={tab} className={`tab-btn ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>
-                                    {tab === 'servers' && '서버 관리'}
-                                    {tab === 'tools' && '도구 목록'}
-                                    {tab === 'monitoring' && '모니터링'}
-                                    {tab === 'security' && '보안 설정'}
-                                    {tab === 'logs' && '로그'}
-                                </button>
-                            ))}
-                        </div>
-
-                        <div className="tab-content">
-                            {activeTab === 'servers' && <ServersTab servers={mcpServers} serverTypes={serverTypes} connectionStatus={connectionStatus} />}
-                            {activeTab === 'tools' && <ToolsTab tools={availableTools} />}
-                            {activeTab === 'monitoring' && <MonitoringTab metrics={metrics} servers={mcpServers} serverTypes={serverTypes} connectionStatus={connectionStatus} />}
-                            {activeTab === 'security' && <SecurityTab securitySettings={securitySettings} setSecuritySettings={setSecuritySettings} />}
-                            {activeTab === 'logs' && <LogsTab logs={logs} />}
-                        </div>
-                    </div>
-                </div>
-
-
-
-
             </div>
+
+            <div className="mcp-dashboard">
+                <div className="dashboard-stats">
+                    <StatCard icon="🔌" gradient="#3B82F6, #1D4ED8" label="총 서버" value={mcpServers.length} />
+                    <StatCard icon="✅" gradient="#10B981, #059669" label="연결됨" value={mcpServers.filter(s => s.status === 'connected').length} />
+                    <StatCard icon="🛠️" gradient="#8B5CF6, #7C3AED" label="사용 가능한 도구" value={availableTools.length} />
+                    <StatCard icon="📊" gradient="#F59E0B, #D97706" label="총 요청" value={metrics.totalRequests.toLocaleString()} />
+                </div>
+
+                <div className="mcp-tabs">
+                    <div className="tab-navigation">
+                        {['servers', 'tools', 'monitoring', 'security', 'logs'].map(tab => (
+                            <button key={tab} className={`tab-btn ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>
+                                {tab === 'servers' && '서버 관리'}
+                                {tab === 'tools' && '도구 목록'}
+                                {tab === 'monitoring' && '모니터링'}
+                                {tab === 'security' && '보안 설정'}
+                                {tab === 'logs' && '로그'}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="tab-content">
+                        {activeTab === 'servers' && <ServersTab servers={mcpServers} serverTypes={serverTypes} connectionStatus={connectionStatus} />}
+                        {activeTab === 'tools' && <ToolsTab tools={availableTools} />}
+                        {activeTab === 'monitoring' && <MonitoringTab metrics={metrics} servers={mcpServers} serverTypes={serverTypes} connectionStatus={connectionStatus} />}
+                        {activeTab === 'security' && <SecurityTab securitySettings={securitySettings} setSecuritySettings={setSecuritySettings} />}
+                        {activeTab === 'logs' && <LogsTab logs={logs} />}
+                    </div>
+                </div>
+            </div>
+
+
+
+
         </div>
+
     );
 }
 function renderToolsGrid(tools) {

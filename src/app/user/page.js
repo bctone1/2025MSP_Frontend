@@ -23,7 +23,7 @@ import "@/styles/home.css"
 // 필요한 다른 페이지 컴포넌트들도 import
 
 export default function HomePage() {
-  const [view, setView] = useState('dashboard');
+  const [view, setView] = useState('assistant');
   const [loading, setLoading] = useState(false);
   const [projectName, setprojectName] = useState("어시스턴트");
 
@@ -56,7 +56,7 @@ export default function HomePage() {
       case 'assistant':
         return <AssistantPage onMenuClick={handleMenuClick} projectName={projectName} />;
       case 'knowledge':
-        return <KnowledgePage />;
+        return <KnowledgePage onMenuClick={handleMenuClick} />;
       case 'history':
         return <HistoryPage onMenuClick={handleMenuClick} />;
       case 'profile':
@@ -77,12 +77,14 @@ export default function HomePage() {
 
 
   return (
-    <div className="flex">
-      {view !== "monitoring" && view !== "newproject" && (
-        <Sidebar onMenuClick={handleMenuClick} currentPage={view} setprojectName={setprojectName} />
-      )}
+    <>
+      <div className="app-container">
+        {/* <div className="flex"> */}
+        {view !== "monitoring" && view !== "newproject" && (
+          <Sidebar onMenuClick={handleMenuClick} currentPage={view} setprojectName={setprojectName} />
+        )}
 
-      <div className="flex-1 relative">
+        {/* <div className="flex-1 relative"> */}
         {loading && (
           <div className={`loading-overlay${loading ? ' active' : ''}`}>
             <div className="loading-spinner text-center text-white">
@@ -92,12 +94,16 @@ export default function HomePage() {
           </div>
         )}
 
-        <div className="p-4">
+        {/* <div className="p-4"> */}
 
-          {renderView()}
+        {renderView()}
 
-        </div>
       </div>
-    </div>
+      {/* </div> */}
+      {/* </div> */}
+      {/* </div> */}
+
+    </>
+
   );
 }

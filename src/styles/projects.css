@@ -57,6 +57,7 @@ body {
 .app-container {
     display: flex;
     min-height: 100vh;
+    /* overflow: auto; */
 }
 
 /* 사이드바 스타일 */

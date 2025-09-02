@@ -260,7 +260,8 @@
  .app-container {
      display: flex;
      height: 100vh;
-     overflow: hidden;
+     /* overflow: hidden; */
+     overflow: auto;
  }
 
  /* 메인 사이드바 (네비게이션) */
@@ -352,7 +353,7 @@
 
  .nav-item.active {
      background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
-     color: white;
+     /* color: white; */
      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
  }
 

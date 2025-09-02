@@ -94,7 +94,7 @@ export default function History({ onMenuClick }) {
 
     return (
         <>
-            <div className="history_container">
+            <div className="container">
                 <div className="header">
                     <div className="header-title">
                         <div>

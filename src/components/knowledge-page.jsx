@@ -124,7 +124,7 @@ export default function Knowledge({onMenuClick}) {
         // formData.append("user_email", "dudqls327@naver.com");
         // formData.append("session_id", 120157);
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_USER/uploadRAG`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_SERVICE/uploadRAG`, {
             method: "POST",
             body: formData
         });

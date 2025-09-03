@@ -168,7 +168,7 @@ export default function History({ onMenuClick }) {
                             <input type="text" placeholder="대화 내용, 프로젝트, 에이전트 검색..." className="search-input" id="historySearch" />
                         </div>
 
-                        <div className="conversation-type-toggle">
+                        {/* <div className="conversation-type-toggle">
                             <button
                                 className={`type-toggle-btn ${currentFilters.type === "all" ? "active" : ""}`}
                                 data-type="all"
@@ -209,7 +209,7 @@ export default function History({ onMenuClick }) {
                                 <span>🧠</span>
                                 <span>단일 LLM</span>
                             </button>
-                        </div>
+                        </div> */}
 
                         <div className="project-selector">
                             <select className="project-dropdown" id="projectSelect" value={filteredHistoryData.project}

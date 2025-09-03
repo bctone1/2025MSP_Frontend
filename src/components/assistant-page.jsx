@@ -6,31 +6,41 @@ import { useSession } from "next-auth/react";
 
 export default function AssistantPage({ onMenuClick, projectName }) {
     const { data: session } = useSession();
+    const hasFetched = useRef(false);
 
     // 에이전트 선택 모달 활성화
     const [Agent, setAgent] = useState(false);
     const [Knowledge, setKnowledge] = useState(false);
+    const [currentSession, setcurrentSession] = useState(0);
 
-    const conversations = [
-        {
-            title: "현재 대화",
-            time: "진행중",
-            preview: "새로운 대화를 시작해보세요...",
-            active: true,
-        },
-        {
-            title: "프로젝트 기획 논의",
-            time: "01:32",
-            preview: "주요 시스템의 성능을 위해서는 데이터 처리 최적화가 필요합니다...",
-            active: false,
-        },
-        {
-            title: "Python 데이터 분석",
-            time: "14:32",
-            preview: "pandas를 사용한 데이터 전처리 방법에 대해 알아보겠습니다...",
-            active: false,
-        },
-    ];
+    const [conversations, setconversations] = useState([]);
+    const fetchChatSessions = async () => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/MSP_CHAT/msp_read_chat_session_by_user`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ user_id: session?.user?.id }),
+                }
+            );
+            const data = await response.json();
+            console.log("✅ API 응답:", data);
+            setconversations(data.sessions);
+        } catch (error) {
+            console.error("❌ 네트워크 오류:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (!session?.user?.id) return;
+        if (hasFetched.current) return;
+        hasFetched.current = true;
+        fetchChatSessions();
+    }, [session?.user?.id]);
+
     const [agents, setagents] = useState([
         {
             id: "research",
@@ -102,32 +112,20 @@ export default function AssistantPage({ onMenuClick, projectName }) {
 
     const models = [
         {
-            id: "check-exaone-4",
-            icon: "🧠",
-            title: "EXAONE 4.0",
+            name: "EXAONE 4.0",
             desc: "LG AI Research의 최신 멀티모달 모델",
-            active: true,
         },
         {
-            id: "check-claude-3.5-sonnet",
-            icon: "🤖",
-            title: "Claude 3.5 Sonnet",
+            name: "Claude 3.5 Sonnet",
             desc: "Anthropic의 고성능 대화 모델",
-            active: false,
         },
         {
-            id: "check-gpt-4o",
-            icon: "🚀",
-            title: "GPT-4o",
+            name: "GPT-4o",
             desc: "OpenAI의 최신 멀티모달 모델",
-            active: false,
         },
         {
-            id: "check-gemini-2.0-flash",
-            icon: "⚡",
-            title: "Gemini 2.0 Flash",
+            name: "Gemini 2.0 Flash",
             desc: "Google의 차세대 AI 모델",
-            active: false,
         },
     ];
     const [dropdown, setdropdown] = useState(false);
@@ -253,10 +251,26 @@ export default function AssistantPage({ onMenuClick, projectName }) {
     ];
 
     const filteredFiles = [...knowledgeFiles];
-    const selectedFiles = new Set();
+    const [selectedFiles, setSelectedFiles] = useState(new Set());
     const [isListView, setisListView] = useState("");
 
     const RenderKnowledgeFiles = () => {
+        const toggleFileSelection = (fileId) => {
+            setSelectedFiles((prevSelected) => {
+                const newSelected = new Set(prevSelected);
+
+                if (newSelected.has(fileId)) {
+                    // 이미 선택된 경우 → 해제
+                    newSelected.delete(fileId);
+                } else {
+                    // 선택되지 않은 경우 → 추가
+                    newSelected.add(fileId);
+                }
+
+                return newSelected;
+            });
+        };
+
         return (
             <>
                 {filteredFiles.length === 0 && (
@@ -330,12 +344,104 @@ export default function AssistantPage({ onMenuClick, projectName }) {
         );
     };
 
+    const [Delete, setDelete] = useState(false);
+    const [Setting, setSetting] = useState(false);
 
+    const [messages, setMessages] = useState([]);
 
+    const chatEndRef = useRef(null);
+    useEffect(() => {
+        if (chatEndRef.current) {
+            chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [messages]);
+
+    const [userInput, setuserInput] = useState("");
+
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault(); // textarea 줄바꿈 방지
+            sendMessage();
+        }
+    };
+
+    const [AssistantSettings, setAssistantSettings] = useState({
+        LLM: "gemini-1.5-flash",
+    });
+
+    const sendMessage = async () => {
+        if (!userInput.trim()) return;
+        setuserInput("");
+        const userMessage = {
+            id: Date.now(), // 고유 ID
+            type: "user",
+            role: "user",
+            created_at: new Date(),
+            // time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            content: userInput
+        };
+        setMessages(prev => [...prev, userMessage]);
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_CHAT/msp_request_message`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                user_input: userInput,
+                chat_model: AssistantSettings.LLM,
+                session_id : currentSession,
+                role : "user"
+            }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+            console.log("API 응답:", data);
+            // 3. agent 메시지 추가
+            const agentMessage = {
+                id: Date.now() + 1,
+                type: "agent",
+                role: "assistant",
+                // created_at: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                created_at: new Date(),
+                content: JSON.stringify(data.response)
+            };
+            setMessages(prev => [...prev, agentMessage]);
+        }
+    };
+
+    const newChat = async () => {
+        alert("newchat");
+    }
+
+    const renderSession = async (conv) => {
+        setcurrentSession(conv.id)
+        // alert("msp_read_message_by_session");
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/MSP_CHAT/msp_read_message_by_session`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ session_id: conv.id }),
+                }
+            );
+            const data = await response.json();
+            console.log("✅ API 응답:", data);
+            setMessages(data.messages)
+
+        } catch (error) {
+            console.error("❌ 네트워크 오류:", error);
+        }
+    }
 
 
     return (
         <>
+
+            {/* 모달창 모음 */}
             <div className={`modal-overlay ${Agent ? 'active' : ''}`}>
                 <AgentHandler
                     setAgent={setAgent}
@@ -347,8 +453,18 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                 <KnowledgeHandler
                     setKnowledge={setKnowledge}
                     RenderKnowledgeFiles={<RenderKnowledgeFiles />}
+                    selectedFiles={selectedFiles}
                 />
             </div>
+
+            <div className={`modal-overlay ${Delete ? 'active' : ''}`}>
+                <ConfirmClearChat setDelete={setDelete} setMessages={setMessages} />
+            </div>
+
+            <div className={`modal-overlay ${Setting ? 'active' : ''}`}>
+                <SettingChat setSetting={setSetting} />
+            </div>
+
 
 
 
@@ -359,7 +475,10 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                     <div className="sidebar-card conversations-card">
                         <div className="assistant-card-header">
                             <div className="assistant-card-title">💬 최근 대화</div>
-                            <button className="assistant-primary-btn" >
+                            <button className="assistant-primary-btn" id="assistant-new-chat-btn"
+                                onClick={() => newChat()}
+                                disabled={currentSession === 0}
+                            >
                                 <span>+</span>
                                 <span>새 대화</span>
                             </button>
@@ -370,6 +489,7 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                                 <div
                                     key={index}
                                     className={`conversation-item ${conv.active ? "active" : ""}`}
+                                    onClick={() => renderSession(conv)}
                                 >
                                     <div className="conversation-header">
                                         <div className="assistant-conversation-title">{conv.title}</div>
@@ -411,24 +531,63 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                                 <div className="chat-title" id="chat-title">{projectName}</div>
                                 <div className="chat-agents" id="chat-agents">
                                     {/* 활성 에이전트 뱃지들이 여기에 동적으로 추가됩니다 */}
-                                    {<UpdateChatAgentsBadges agents={agents} />}
+                                    <UpdateChatAgentsBadges agents={agents} />
                                 </div>
                             </div>
 
                             <div className="chat-controls">
-                                <button className="control-btn" title="대화 지우기" >🗑️</button>
-                                <button className="control-btn" title="설정" >⚙️</button>
+                                <button className="control-btn" title="대화 지우기"
+                                    onClick={() => setDelete(true)}>🗑️</button>
+                                <button className="control-btn" title="설정"
+                                    onClick={() => setSetting(true)}
+                                >⚙️</button>
                             </div>
                         </div>
 
                         {/* 채팅창 영역 */}
                         <div className="chat-messages" id="chat-messages">
                             {/* 초기 웰컴 메시지 */}
-                            <div className="welcome-message" id="welcome-message">
-                                <div className="welcome-icon">💬</div>
-                                <div className="welcome-title">{session?.user?.name}님, 무엇을 도와드릴까요?</div>
-                                <div className="welcome-subtitle">멀티 에이전트와 함께 다양한 작업을 시작해보세요</div>
-                            </div>
+                            {messages.length === 0 && (
+                                <div className="welcome-message" id="welcome-message">
+                                    <div className="welcome-icon">💬</div>
+                                    <div className="welcome-title">{session?.user?.name}님, 무엇을 도와드릴까요?</div>
+                                    <div className="welcome-subtitle">멀티 에이전트와 함께 다양한 작업을 시작해보세요</div>
+                                </div>
+                            )}
+
+
+                            {messages.map((msg) => (
+                                <div
+                                    key={msg.id}
+                                    className={`message ${msg.role === "user" ? "user-message" : ""}`}
+                                >
+                                    <div
+                                        className={`message-avatar ${msg.role === "assistant" ? "agent-avatar-msg" : "user-avatar"}`}
+                                        style={msg.avatarBg ? { background: msg.avatarBg } : {}}
+                                    >
+                                        {msg.role === "assistant" ? "🤖" : "👤"}
+                                    </div>
+                                    <div className="message-content">
+                                        <div className={`message-header ${msg.role === "사용자" ? "user" : ""}`}>
+                                            <div className="message-sender">{msg.role}</div>
+                                            <div className="message-time">
+                                                {new Date(msg.created_at).toLocaleString("ko-KR", {
+                                                    month: "2-digit",
+                                                    day: "2-digit",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                    hour12: false,
+                                                }).replace(/\.\s/g, "-").replace(" ", " ")}
+                                            </div>
+                                        </div>
+                                        <div className="message-text">{msg.content}</div>
+                                    </div>
+                                </div>
+                            ))}
+
+                            {/* 마지막 메시지 참조 */}
+                            <div ref={chatEndRef} />
+
                         </div>
 
                         <div className="chat-input-area">
@@ -491,6 +650,9 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                                     id="chat-input"
                                     placeholder="메시지를 입력하세요... (Shift+Enter로 줄바꿈, Enter로 전송)"
                                     rows="1"
+                                    value={userInput}
+                                    onChange={(e) => setuserInput(e.target.value)}
+                                    onKeyDown={handleKeyDown}
                                 ></textarea>
 
                                 <div className="input-actions">
@@ -498,23 +660,30 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                                     <div className="model-selector-btn" id="model-selector-btn"
                                         onClick={() => setdropdown((prev) => !prev)}
                                     >
-                                        <span className="model-icon" id="model-icon">🧠</span>
-                                        <span className="model-name" id="current-model-name">EXAONE 4.0</span>
+                                        {/* <span className="model-icon" id="model-icon">🧠</span> */}
+                                        <span className="model-name" id="current-model-name">{AssistantSettings.LLM}</span>
                                         <span className="dropdown-arrow">▼</span>
 
                                         {/* 모델 선택 드롭다운 */}
                                         <div className={`model-dropdown-menu ${dropdown ? "open" : ""}`} id="model-dropdown-menu">
                                             {models.map((model) => (
-                                                <div className="model-item" key={model.id}>
+                                                <div className="model-item" key={model.name}
+                                                    onClick={() =>
+                                                        setAssistantSettings({
+                                                            ...AssistantSettings,
+                                                            LLM: model.name
+                                                        })
+                                                    }
+                                                >
                                                     <div className="model-item-info">
-                                                        <div className="model-item-icon">{model.icon}</div>
+                                                        {/* <div className="model-item-icon">{model.icon}</div> */}
                                                         <div className="model-item-text">
-                                                            <div className="model-item-title">{model.title}</div>
+                                                            <div className="model-item-title">{model.name}</div>
                                                             <div className="model-item-desc">{model.desc}</div>
                                                         </div>
                                                     </div>
                                                     <span
-                                                        className={`model-check ${model.active ? "active" : ""}`}
+                                                        className={`model-check ${model.name === AssistantSettings.LLM ? "active" : ""}`}
                                                         id={model.id}
                                                     >
                                                         ✓
@@ -536,6 +705,90 @@ export default function AssistantPage({ onMenuClick, projectName }) {
 
         </>
     );
+}
+
+function SettingChat({ setSetting }) {
+    return (
+        <>
+            <div className="assistant-modal settings-modal">
+                <div className="assistant-modal-header">
+                    <h2 className="assistant-modal-title">설정</h2>
+                    <button className="assistant-modal-close"
+                        onClick={() => setSetting(false)}
+                    >&times;</button>
+                </div>
+                <div className="assistant-modal-body">
+                    {/* 자동저장 설정  */}
+                    <div className="settings-section">
+                        <h3 className="settings-section-title">대화 설정</h3>
+                        <div className="setting-item">
+                            <div className="setting-info">
+                                <div className="setting-label">자동저장</div>
+                                <div className="setting-desc">대화를 자동으로 저장합니다</div>
+                            </div>
+                            <div className="setting-toggle">
+                                <input type="checkbox" id="auto-save-toggle" checked readOnly />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 인터페이스 설정  */}
+                    <div className="settings-section">
+                        <h3 className="settings-section-title">인터페이스 설정</h3>
+                        <div className="setting-item">
+                            <div className="setting-info">
+                                <div className="setting-label">다크모드</div>
+                                <div className="setting-desc">어두운 테마로 전환합니다</div>
+                            </div>
+                            <div className="setting-toggle">
+                                <input type="checkbox" id="dark-mode-toggle" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="assistant-modal-footer">
+                    <button className="assistant-primary-btn"
+                        onClick={() => setSetting(false)}
+                    >확인</button>
+                </div>
+            </div>
+
+        </>
+    )
+}
+
+function ConfirmClearChat({ setDelete, setMessages }) {
+    return (
+        <>
+            <div className="assistant-modal clear-chat-modal" style={{ maxWidth: "400px" }}>
+                <div className="assistant-modal-header">
+                    <h2 className="assistant-modal-title">대화 지우기</h2>
+                    <button className="assistant-modal-close"
+                        onClick={() => setDelete(false)}
+                    >&times;</button>
+                </div>
+                <div className="assistant-modal-body">
+                    <p style={{ color: "var(--gray-600)", textAlign: "center", marginBottom: "var(--spacing-4)" }}>
+                        현재 대화의 모든 메시지와 첨부파일이 삭제됩니다.
+                    </p>
+                    <p style={{ color: "var(--danger-red)", textAlign: "center", fontWeight: "600" }}>
+                        이 작업은 되돌릴 수 없습니다.
+                    </p>
+                </div>
+                <div className="assistant-modal-footer">
+                    <button className="assistant-secondary-btn"
+                        onClick={() => setDelete(false)}
+                    >취소</button>
+                    <button className="assistant-primary-btn" style={{ background: "var(--danger-red)" }}
+                        onClick={() => {
+                            setMessages([]);
+                            setDelete(false);
+                        }}
+                    >지우기</button>
+                </div>
+            </div >
+        </>
+    )
 }
 
 function UpdateChatAgentsBadges({ agents }) {
@@ -590,7 +843,7 @@ function AgentHandler({ setAgent, AgentCards }) {
     );
 }
 
-function KnowledgeHandler({ setKnowledge, RenderKnowledgeFiles }) {
+function KnowledgeHandler({ setKnowledge, RenderKnowledgeFiles, selectedFiles }) {
     return (
         <>
             <div className="modal knowledge-library-modal" style={{ maxWidth: "1000px", width: "95%" }}>
@@ -642,10 +895,12 @@ function KnowledgeHandler({ setKnowledge, RenderKnowledgeFiles }) {
                         <button className="assistant-secondary-btn" >전체 선택</button>
                         <button className="assistant-secondary-btn" >선택 해제</button>
                     </div>
-                    <div className="footer-right">
+                    <div className="assistant-footer-right">
                         <button className="assistant-secondary-btn">취소</button>
-                        <button className="primary-btn" id="add-selected-btn" disabled>
-                            선택된 파일 추가 (<span id="selected-file-count">0</span>)
+                        <button className="assistant-primary-btn" id="add-selected-btn" disabled={selectedFiles.size === 0}
+                            onClick={() => alert("파일추가 요청")}
+                        >
+                            선택된 파일 추가 (<span id="selected-file-count">{selectedFiles.size}</span>)
                         </button>
                     </div>
                 </div>

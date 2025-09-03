@@ -166,7 +166,7 @@ export default function RegisterPage() {
             ...pre,
             secretCode: code
         }));
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_USER/MSPSendEmail`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_SERVICE/MSPSendEmail`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

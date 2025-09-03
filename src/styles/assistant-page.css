@@ -618,6 +618,11 @@
      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
  }
 
+ #assistant-new-chat-btn:disabled {
+     opacity: 0.5;
+     cursor: not-allowed;
+ }
+
  /* 대화 목록 개선 */
  .conversations-list {
      display: flex;
@@ -1960,7 +1965,7 @@
  }
 
  .assistant-footer-left,
- .footer-right {
+ .assistant-footer-right {
      display: flex;
      gap: var(--spacing-3);
      align-items: center;
@@ -1972,10 +1977,10 @@
  }
 
  #add-selected-btn:not(:disabled) {
-     animation: pulse 2s infinite;
+     animation: assistant-pulse 2s infinite;
  }
 
- @keyframes pulse {
+ @keyframes assistant-pulse {
      0% {
          box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
      }

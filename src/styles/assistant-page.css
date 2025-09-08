@@ -919,7 +919,7 @@
 
  .message.user-message {
      flex-direction: row-reverse;
-     margin-left: auto;
+     /* margin-left: auto; */
  }
 
  .message-avatar {

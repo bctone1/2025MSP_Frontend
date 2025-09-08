@@ -369,6 +369,8 @@ export default function AssistantPage({ onMenuClick, projectName }) {
         LLM: "gemini-1.5-flash",
     });
 
+
+
     const sendMessage = async () => {
         if (!userInput.trim()) return;
         setuserInput("");
@@ -390,15 +392,18 @@ export default function AssistantPage({ onMenuClick, projectName }) {
             body: JSON.stringify({
                 user_input: userInput,
                 chat_model: AssistantSettings.LLM,
-                session_id : currentSession,
-                role : "user"
+                session_id: currentSession,
+                user_id: session?.user?.id,
+                role: "user",
+                // project_id =                 
             }),
         });
         const data = await response.json();
         if (response.ok) {
             console.log("API 응답:", data);
-            // 3. agent 메시지 추가
-            const agentMessage = {
+            fetchChatSessions();
+            setcurrentSession(data.session_id);
+            const Message = {
                 id: Date.now() + 1,
                 type: "agent",
                 role: "assistant",
@@ -406,12 +411,14 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                 created_at: new Date(),
                 content: JSON.stringify(data.response)
             };
-            setMessages(prev => [...prev, agentMessage]);
+            setMessages(prev => [...prev, Message]);
         }
     };
 
     const newChat = async () => {
-        alert("newchat");
+        // alert("newchat");
+        setcurrentSession(0);
+        setMessages([]);
     }
 
     const renderSession = async (conv) => {
@@ -436,6 +443,20 @@ export default function AssistantPage({ onMenuClick, projectName }) {
             console.error("❌ 네트워크 오류:", error);
         }
     }
+
+    const fileInputRef = useRef(null);
+    // 버튼 클릭 시 파일 선택창 열기
+    const handleFileSelect = () => {
+        fileInputRef.current.click();
+    };
+    // 파일 선택 후 동작
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            console.log("선택된 파일:", file.name);
+            // 여기서 업로드 로직 추가 가능
+        }
+    };
 
 
     return (
@@ -484,11 +505,11 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                             </button>
                         </div>
 
-                        <div className="conversations-list" id="conversations-list">
+                        <div className="assistant-conversations-list" id="conversations-list">
                             {conversations.map((conv, index) => (
                                 <div
                                     key={index}
-                                    className={`conversation-item ${conv.active ? "active" : ""}`}
+                                    className={`conversation-item ${conv.id === currentSession ? "active" : ""}`}
                                     onClick={() => renderSession(conv)}
                                 >
                                     <div className="conversation-header">
@@ -568,8 +589,8 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                                         {msg.role === "assistant" ? "🤖" : "👤"}
                                     </div>
                                     <div className="message-content">
-                                        <div className={`message-header ${msg.role === "사용자" ? "user" : ""}`}>
-                                            <div className="message-sender">{msg.role}</div>
+                                        <div className={`message-header ${msg.role === "user" ? "user" : ""}`}>
+                                            <div className="message-sender">{msg.role === "user" ? session?.user?.name : msg.role}</div>
                                             <div className="message-time">
                                                 {new Date(msg.created_at).toLocaleString("ko-KR", {
                                                     month: "2-digit",
@@ -612,24 +633,35 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                                             </div>
                                         </div>
 
-                                        <div className="menu-section"
-                                            onClick={() => setKnowledge(true)}
-                                        >
+                                        <div className="menu-section">
                                             <div className="menu-section-title">지식베이스</div>
-                                            <div className="menu-item" >
+                                            <div className="menu-item"
+                                                onClick={() => setKnowledge(true)}
+                                            >
                                                 <div className="menu-item-icon">📚</div>
                                                 <div className="menu-item-text">
                                                     <div className="menu-item-title">지식베이스 라이브러리</div>
                                                     <div className="menu-item-desc">저장된 지식베이스에서 선택</div>
                                                 </div>
                                             </div>
-                                            <div className="menu-item" >
+                                            <div className="menu-item"
+                                                onClick={handleFileSelect}
+                                            >
                                                 <div className="menu-item-icon">📎</div>
                                                 <div className="menu-item-text">
                                                     <div className="menu-item-title">파일 첨부</div>
                                                     <div className="menu-item-desc">현재 대화에 파일 첨부</div>
                                                 </div>
+
+                                                <input
+                                                    type="file"
+                                                    ref={fileInputRef}
+                                                    style={{ display: "none" }}
+                                                    onChange={handleFileChange}
+                                                />
+
                                             </div>
+
                                         </div>
 
                                         <div className="menu-section">
@@ -896,7 +928,9 @@ function KnowledgeHandler({ setKnowledge, RenderKnowledgeFiles, selectedFiles })
                         <button className="assistant-secondary-btn" >선택 해제</button>
                     </div>
                     <div className="assistant-footer-right">
-                        <button className="assistant-secondary-btn">취소</button>
+                        <button className="assistant-secondary-btn"
+                            onClick={() => setKnowledge(false)}
+                        >취소</button>
                         <button className="assistant-primary-btn" id="add-selected-btn" disabled={selectedFiles.size === 0}
                             onClick={() => alert("파일추가 요청")}
                         >

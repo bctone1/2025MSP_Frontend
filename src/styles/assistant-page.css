@@ -624,7 +624,7 @@
  }
 
  /* 대화 목록 개선 */
- .conversations-list {
+ .assistant-conversations-list {
      display: flex;
      flex-direction: column;
      gap: var(--spacing-3);
@@ -957,7 +957,7 @@
      max-width: 85%;
  }
 
- .message-header {
+ /* .message-header {
      display: flex;
      justify-content: space-between;
      align-items: center;
@@ -966,7 +966,18 @@
 
  .message-header.user {
      flex-direction: row-reverse;
+ } */
+
+ .message-header {
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: var(--spacing-2);
  }
+
+ .message-header.user {
+     text-align: right;
+ }
+
 
  .message-sender {
      font-weight: 600;
@@ -990,6 +1001,7 @@
      max-width: 100%;
      overflow-wrap: break-word;
      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+     display: inline-block;
  }
 
  .user-message .message-text {

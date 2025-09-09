@@ -17,7 +17,7 @@ export default function Sidebar({ onMenuClick, currentPage, setcurrentProject, v
     if (page === view) return console.log("현재 페이지입니다.");
     onMenuClick(page);
 
-    setcurrentProject({ name: null });
+    setcurrentProject({});
     setcurrentSession({ id: 0 });
 
   };

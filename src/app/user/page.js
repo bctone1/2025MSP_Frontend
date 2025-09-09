@@ -25,6 +25,8 @@ import "@/styles/home.css"
 export default function HomePage() {
   const [view, setView] = useState('assistant');
   const [loading, setLoading] = useState(false);
+
+  
   const [currentProject, setcurrentProject] = useState({
     id: null,
     user_id: null,

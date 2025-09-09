@@ -444,15 +444,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
 
     const newChat = async () => {
         // alert("newchat");
-        setcurrentProject({
-            id: null,
-            user_id: null,
-            name: null,
-            description: null,
-            status: null,
-            create_at: null,
-            category: null
-        });
+        setcurrentProject({});
         setcurrentSession({ id: 0 });
         setMessages([]);
     }
@@ -463,7 +455,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
 
         conv.project_name
             ? setcurrentProject({ name: conv.project_name })
-            : setcurrentProject({ name: null });
+            : setcurrentProject({});
 
         try {
             const response = await fetch(

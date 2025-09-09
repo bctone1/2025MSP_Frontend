@@ -28,13 +28,16 @@ export default function HomePage() {
   const [currentProject, setcurrentProject] = useState({
     id: null,
     user_id: null,
-    name: "그냥 어시스턴트",
+    name: null,
     description: null,
     status: null,
     create_at: null,
     category: null
   });
-  const [currentSession, setcurrentSession] = useState(0);
+  const [currentSession, setcurrentSession] = useState({
+    id: 0,
+    title: ""
+  });
 
 
 

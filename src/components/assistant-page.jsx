@@ -41,7 +41,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
     }, [session?.user?.id]);
 
     useEffect(() => {
-        if (currentSession === 0) return;
+        if (currentSession.id === 0) return;
         const fetchMessages = async () => {
             try {
                 const response = await fetch(
@@ -51,7 +51,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                         headers: {
                             "Content-Type": "application/json",
                         },
-                        body: JSON.stringify({ session_id: currentSession }),
+                        body: JSON.stringify({ session_id: currentSession.id }),
                     }
                 );
                 const data = await response.json();
@@ -419,7 +419,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
             body: JSON.stringify({
                 user_input: userInput,
                 chat_model: AssistantSettings.LLM,
-                session_id: currentSession,
+                session_id: currentSession.id,
                 user_id: session?.user?.id,
                 role: "user",
                 project_id: currentProject.id
@@ -429,7 +429,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
         if (response.ok) {
             console.log("API 응답:", data);
             fetchChatSessions();
-            setcurrentSession(data.session_id);
+            setcurrentSession({ id: data.session_id, title: data.title });
             const Message = {
                 id: Date.now() + 1,
                 type: "agent",
@@ -447,23 +447,23 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
         setcurrentProject({
             id: null,
             user_id: null,
-            name: "그냥 어시스턴트",
+            name: null,
             description: null,
             status: null,
             create_at: null,
             category: null
         });
-        setcurrentSession(0);
+        setcurrentSession({ id: 0 });
         setMessages([]);
     }
 
     const renderSession = async (conv) => {
-        if (currentSession === conv.id) return console.log("동일한 세션이라 요청 취소");
-        setcurrentSession(conv.id);
+        if (currentSession.id === conv.id) return console.log("동일한 세션이라 요청 취소");
+        setcurrentSession({ id: conv.id, title: conv.title });
 
         conv.project_name
             ? setcurrentProject({ name: conv.project_name })
-            : setcurrentProject({ name: "그냥 어시스턴트" });
+            : setcurrentProject({ name: null });
 
         try {
             const response = await fetch(
@@ -538,7 +538,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                             <div className="assistant-card-title">💬 최근 대화</div>
                             <button className="assistant-primary-btn" id="assistant-new-chat-btn"
                                 onClick={() => newChat()}
-                                disabled={currentSession === 0}
+                                disabled={currentSession.id === 0}
                             >
                                 <span>+</span>
                                 <span>새 대화</span>
@@ -549,7 +549,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                             {conversations.map((conv, index) => (
                                 <div
                                     key={index}
-                                    className={`conversation-item ${conv.id === currentSession ? "active" : ""}`}
+                                    className={`conversation-item ${conv.id === currentSession.id ? "active" : ""}`}
                                     onClick={() => renderSession(conv)}
                                 >
                                     <div className="conversation-header">
@@ -589,7 +589,12 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                     <div className="chat-card">
                         <div className="chat-header">
                             <div className="chat-info">
-                                <div className="chat-title" id="chat-title">{currentProject.name}</div>
+                                <div className="chat-title" id="chat-title">
+                                    {currentSession.title}
+                                    {currentProject?.name && (
+                                        <span className="project-name">( {currentProject.name} )</span>
+                                    )}
+                                </div>
                                 <div className="chat-agents" id="chat-agents">
                                     {/* 활성 에이전트 뱃지들이 여기에 동적으로 추가됩니다 */}
                                     <UpdateChatAgentsBadges agents={agents} />

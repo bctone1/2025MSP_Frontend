@@ -270,7 +270,7 @@ function RenderConversations({ selectedProject, setcurrentProject, onMenuClick, 
         date.setHours(date.getHours() + 9);
         return (
           <div className="conversation-item" key={index}
-            onClick={() => { onMenuClick('assistant'), setcurrentProject(selectedProject), setcurrentSession(conv.id) }}
+            onClick={() => { onMenuClick('assistant'), setcurrentProject(selectedProject), setcurrentSession({ id: conv.id, title: conv.title }) }}
           >
             <div className="conversation-header">
               <div className="conversation-title">{conv.title}</div>

@@ -968,6 +968,12 @@
      flex-direction: row-reverse;
  } */
 
+ .chat-title .project-name {
+     margin-left: 8px;
+     color: #666;
+     font-style: italic;
+ }
+
  .message-header {
      justify-content: space-between;
      align-items: center;

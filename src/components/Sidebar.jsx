@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 
 export default function Sidebar({ onMenuClick, currentPage, setcurrentProject, view, setcurrentSession }) {
@@ -142,7 +143,9 @@ export default function Sidebar({ onMenuClick, currentPage, setcurrentProject, v
             <div className="user-email">{session?.user?.email}</div>
           </div>
         </div>
-        <button className="logout-btn" title="로그아웃">
+        <button className="logout-btn" title="로그아웃"
+          onClick={() => signOut({ callbackUrl: "/" })}
+        >
           <span>🚪</span>
         </button>
       </div>

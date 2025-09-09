@@ -4,7 +4,7 @@ import React from 'react';
 import { useSession } from "next-auth/react";
 
 
-export default function Sidebar({ onMenuClick, currentPage, setprojectName }) {
+export default function Sidebar({ onMenuClick, currentPage, setcurrentProject, view, setcurrentSession }) {
   const { data: session } = useSession();
   // console.log(data);
 
@@ -13,9 +13,13 @@ export default function Sidebar({ onMenuClick, currentPage, setprojectName }) {
   const handleClick = (e) => {
     const item = e.currentTarget;
     const page = item.getAttribute('data-page');
+
+    if (page === view) return console.log("현재 페이지입니다.");
     onMenuClick(page);
 
-    setprojectName("어시스턴트")
+    setcurrentProject({ name: "사이드에서 클릭한 어시스턴트" });
+    setcurrentSession(0);
+
   };
 
   return (

@@ -4,14 +4,13 @@ import { formatDate, storage, formatFileSize, modalheader } from '@/utill/utill'
 import "@/styles/assistant-page.css"
 import { useSession } from "next-auth/react";
 
-export default function AssistantPage({ onMenuClick, projectName }) {
+export default function AssistantPage({ onMenuClick, currentProject, setcurrentProject, currentSession, setcurrentSession }) {
     const { data: session } = useSession();
     const hasFetched = useRef(false);
 
     // 에이전트 선택 모달 활성화
     const [Agent, setAgent] = useState(false);
     const [Knowledge, setKnowledge] = useState(false);
-    const [currentSession, setcurrentSession] = useState(0);
 
     const [conversations, setconversations] = useState([]);
     const fetchChatSessions = async () => {
@@ -40,6 +39,31 @@ export default function AssistantPage({ onMenuClick, projectName }) {
         hasFetched.current = true;
         fetchChatSessions();
     }, [session?.user?.id]);
+
+    useEffect(() => {
+        if (currentSession === 0) return;
+        const fetchMessages = async () => {
+            try {
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/MSP_CHAT/msp_read_message_by_session`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ session_id: currentSession }),
+                    }
+                );
+                const data = await response.json();
+                console.log("✅ API 응답:", data);
+                setMessages(data.messages);
+            } catch (error) {
+                console.error("❌ 네트워크 오류:", error);
+            }
+        };
+
+        fetchMessages();
+    }, [currentSession]);
 
     const [agents, setagents] = useState([
         {
@@ -112,19 +136,19 @@ export default function AssistantPage({ onMenuClick, projectName }) {
 
     const models = [
         {
-            name: "EXAONE 4.0",
+            name: "exaone-3.5",
             desc: "LG AI Research의 최신 멀티모달 모델",
         },
         {
-            name: "Claude 3.5 Sonnet",
+            name: "claude-3-sonnet",
             desc: "Anthropic의 고성능 대화 모델",
         },
         {
-            name: "GPT-4o",
+            name: "gpt-4o",
             desc: "OpenAI의 최신 멀티모달 모델",
         },
         {
-            name: "Gemini 2.0 Flash",
+            name: "gemini-1.5-flash",
             desc: "Google의 차세대 AI 모델",
         },
     ];
@@ -372,6 +396,9 @@ export default function AssistantPage({ onMenuClick, projectName }) {
 
 
     const sendMessage = async () => {
+        // return alert(currentProject.id);
+        // return alert(currentSession);
+
         if (!userInput.trim()) return;
         setuserInput("");
         const userMessage = {
@@ -395,7 +422,7 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                 session_id: currentSession,
                 user_id: session?.user?.id,
                 role: "user",
-                // project_id =                 
+                project_id: currentProject.id
             }),
         });
         const data = await response.json();
@@ -417,13 +444,27 @@ export default function AssistantPage({ onMenuClick, projectName }) {
 
     const newChat = async () => {
         // alert("newchat");
+        setcurrentProject({
+            id: null,
+            user_id: null,
+            name: "그냥 어시스턴트",
+            description: null,
+            status: null,
+            create_at: null,
+            category: null
+        });
         setcurrentSession(0);
         setMessages([]);
     }
 
     const renderSession = async (conv) => {
-        setcurrentSession(conv.id)
-        // alert("msp_read_message_by_session");
+        if (currentSession === conv.id) return console.log("동일한 세션이라 요청 취소");
+        setcurrentSession(conv.id);
+
+        conv.project_name
+            ? setcurrentProject({ name: conv.project_name })
+            : setcurrentProject({ name: "그냥 어시스턴트" });
+
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/MSP_CHAT/msp_read_message_by_session`,
@@ -438,7 +479,6 @@ export default function AssistantPage({ onMenuClick, projectName }) {
             const data = await response.json();
             console.log("✅ API 응답:", data);
             setMessages(data.messages)
-
         } catch (error) {
             console.error("❌ 네트워크 오류:", error);
         }
@@ -549,7 +589,7 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                     <div className="chat-card">
                         <div className="chat-header">
                             <div className="chat-info">
-                                <div className="chat-title" id="chat-title">{projectName}</div>
+                                <div className="chat-title" id="chat-title">{currentProject.name}</div>
                                 <div className="chat-agents" id="chat-agents">
                                     {/* 활성 에이전트 뱃지들이 여기에 동적으로 추가됩니다 */}
                                     <UpdateChatAgentsBadges agents={agents} />
@@ -557,11 +597,8 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                             </div>
 
                             <div className="chat-controls">
-                                <button className="control-btn" title="대화 지우기"
-                                    onClick={() => setDelete(true)}>🗑️</button>
-                                <button className="control-btn" title="설정"
-                                    onClick={() => setSetting(true)}
-                                >⚙️</button>
+                                <button className="control-btn" title="대화 지우기" onClick={() => setDelete(true)}>🗑️</button>
+                                <button className="control-btn" title="설정" onClick={() => setSetting(true)}>⚙️</button>
                             </div>
                         </div>
 
@@ -577,34 +614,38 @@ export default function AssistantPage({ onMenuClick, projectName }) {
                             )}
 
 
-                            {messages.map((msg) => (
-                                <div
-                                    key={msg.id}
-                                    className={`message ${msg.role === "user" ? "user-message" : ""}`}
-                                >
+                            {messages.map((msg) => {
+                                const date = new Date(msg.created_at);
+                                date.setHours(date.getHours() + 9);
+                                return (
                                     <div
-                                        className={`message-avatar ${msg.role === "assistant" ? "agent-avatar-msg" : "user-avatar"}`}
-                                        style={msg.avatarBg ? { background: msg.avatarBg } : {}}
+                                        key={msg.id}
+                                        className={`message ${msg.role === "user" ? "user-message" : ""}`}
                                     >
-                                        {msg.role === "assistant" ? "🤖" : "👤"}
-                                    </div>
-                                    <div className="message-content">
-                                        <div className={`message-header ${msg.role === "user" ? "user" : ""}`}>
-                                            <div className="message-sender">{msg.role === "user" ? session?.user?.name : msg.role}</div>
-                                            <div className="message-time">
-                                                {new Date(msg.created_at).toLocaleString("ko-KR", {
-                                                    month: "2-digit",
-                                                    day: "2-digit",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    hour12: false,
-                                                }).replace(/\.\s/g, "-").replace(" ", " ")}
-                                            </div>
+                                        <div
+                                            className={`message-avatar ${msg.role === "assistant" ? "agent-avatar-msg" : "user-avatar"}`}
+                                            style={msg.avatarBg ? { background: msg.avatarBg } : {}}
+                                        >
+                                            {msg.role === "assistant" ? "🤖" : "👤"}
                                         </div>
-                                        <div className="message-text">{msg.content}</div>
+                                        <div className="message-content">
+                                            <div className={`message-header ${msg.role === "user" ? "user" : ""}`}>
+                                                <div className="message-sender">{msg.role === "user" ? session?.user?.name : msg.role}</div>
+                                                <div className="message-time">
+                                                    {date.toLocaleString("ko-KR", {
+                                                        month: "2-digit",
+                                                        day: "2-digit",
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                        hour12: false,
+                                                    })}
+                                                </div>
+                                            </div>
+                                            <div className="message-text">{msg.content}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                )
+                            })}
 
                             {/* 마지막 메시지 참조 */}
                             <div ref={chatEndRef} />

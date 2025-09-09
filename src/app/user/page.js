@@ -25,7 +25,16 @@ import "@/styles/home.css"
 export default function HomePage() {
   const [view, setView] = useState('assistant');
   const [loading, setLoading] = useState(false);
-  const [projectName, setprojectName] = useState("어시스턴트");
+  const [currentProject, setcurrentProject] = useState({
+    id: null,
+    user_id: null,
+    name: "그냥 어시스턴트",
+    description: null,
+    status: null,
+    create_at: null,
+    category: null
+  });
+  const [currentSession, setcurrentSession] = useState(0);
 
 
 
@@ -44,7 +53,7 @@ export default function HomePage() {
       case 'dashboard':
         return <Dashboard onMenuClick={handleMenuClick} />;
       case 'projects':
-        return <ProjectsPage onMenuClick={handleMenuClick} setprojectName={setprojectName} />;
+        return <ProjectsPage onMenuClick={handleMenuClick} setcurrentProject={setcurrentProject} setcurrentSession={setcurrentSession} />;
       case 'agents':
         return <AgentsPage />;
       case 'workflow':
@@ -54,7 +63,7 @@ export default function HomePage() {
       case 'api-keys':
         return <ApikeysPage />;
       case 'assistant':
-        return <AssistantPage onMenuClick={handleMenuClick} projectName={projectName} />;
+        return <AssistantPage onMenuClick={handleMenuClick} currentProject={currentProject} setcurrentProject={setcurrentProject} currentSession={currentSession} setcurrentSession={setcurrentSession} />;
       case 'knowledge':
         return <KnowledgePage onMenuClick={handleMenuClick} />;
       case 'history':
@@ -81,7 +90,7 @@ export default function HomePage() {
       <div className="app-container">
         {/* <div className="flex"> */}
         {view !== "monitoring" && view !== "newproject" && (
-          <Sidebar onMenuClick={handleMenuClick} currentPage={view} setprojectName={setprojectName} />
+          <Sidebar onMenuClick={handleMenuClick} currentPage={view} setcurrentProject={setcurrentProject} view={view} setcurrentSession={setcurrentSession} />
         )}
 
         {/* <div className="flex-1 relative"> */}

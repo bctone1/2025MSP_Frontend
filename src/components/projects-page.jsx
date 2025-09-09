@@ -4,7 +4,7 @@ import { formatDate, modalheader } from '@/utill/utill';
 import "@/styles/projects.css"
 import { useSession } from "next-auth/react";
 
-export default function ProjectsPage({ onMenuClick, setprojectName }) {
+export default function ProjectsPage({ onMenuClick, setcurrentProject, setcurrentSession }) {
   const { data: session } = useSession();
   const [projects, setProjects] = useState([]);
   const hasFetched = useRef(false); // 한번 호출했는지 체크
@@ -76,7 +76,7 @@ export default function ProjectsPage({ onMenuClick, setprojectName }) {
               </button>
               <button
                 className="quick-chat-btn"
-                onClick={() => { onMenuClick('assistant'), setprojectName("빠른대화") }}
+                onClick={() => { onMenuClick('assistant'), setcurrentProject({ name: "빠른대화" }) }}
               >
                 <span>💬</span>
                 <span>빠른 대화</span>
@@ -98,8 +98,8 @@ export default function ProjectsPage({ onMenuClick, setprojectName }) {
             </div>
             <div className="filter-buttons">
               <button className={`filter-btn ${statusFilter === "all" ? "active" : ""}`} onClick={() => setStatusFilter("all")}>전체</button>
-              <button className={`filter-btn ${statusFilter === "active" ? "active" : ""}`} onClick={() => setStatusFilter("진행중")}>진행중</button>
-              <button className={`filter-btn ${statusFilter === "planning" ? "active" : ""}`} onClick={() => setStatusFilter("계획중")}>계획중</button>
+              <button className={`filter-btn ${statusFilter === "active" ? "active" : ""}`} onClick={() => setStatusFilter("active")}>active</button>
+              <button className={`filter-btn ${statusFilter === "deactive" ? "active" : ""}`} onClick={() => setStatusFilter("deactive")}>deactive</button>
             </div>
           </div>
         </div>
@@ -151,7 +151,7 @@ export default function ProjectsPage({ onMenuClick, setprojectName }) {
             </div>
             <div className="project-actions-detail">
               <button className="action-btn-detail primary"
-                onClick={() => { onMenuClick('assistant'), setprojectName(selectedProject.name) }}
+                onClick={() => { onMenuClick('assistant'), setcurrentProject(selectedProject) }}
               >
                 <span>💬</span>
                 <span>새 대화 시작</span>
@@ -184,7 +184,7 @@ export default function ProjectsPage({ onMenuClick, setprojectName }) {
             </h2>
 
             <button className="new-conversation-btn"
-              onClick={() => { onMenuClick('assistant'), setprojectName(selectedProject.name) }}
+              onClick={() => { onMenuClick('assistant'), setcurrentProject(selectedProject) }}
             >
               <span>💬</span>
               <span>새 대화 시작</span>
@@ -192,7 +192,8 @@ export default function ProjectsPage({ onMenuClick, setprojectName }) {
 
             <div className="conversations-list" id="conversations-list">
               {/* 대화 목록이 여기에 동적으로 삽입됩니다 */}
-              {<RenderConversations conversations={selectedProject?.conversations || []} />}
+              {/* {<RenderConversations conversations={selectedProject?.conversations || []} setcurrentProject={setcurrentProject} onMenuClick={onMenuClick} />} */}
+              {<RenderConversations selectedProject={selectedProject} setcurrentProject={setcurrentProject} onMenuClick={onMenuClick} setcurrentSession={setcurrentSession} />}
             </div>
           </div>
 
@@ -252,7 +253,8 @@ function RenderKnowledgeBase({ knowledge }) {
   );
 }
 
-function RenderConversations({ conversations }) {
+function RenderConversations({ selectedProject, setcurrentProject, onMenuClick, setcurrentSession }) {
+  const conversations = selectedProject?.conversations || []
   return (
     <>
       {!conversations && (
@@ -263,25 +265,33 @@ function RenderConversations({ conversations }) {
         </div>
       )}
 
-      {conversations.map((conv, index) => (
-        <div className="conversation-item" key={index}>
-          <div className="conversation-header">
-            <div>
+      {conversations.map((conv, index) => {
+        const date = new Date(conv.date);
+        date.setHours(date.getHours() + 9);
+        return (
+          <div className="conversation-item" key={index}
+            onClick={() => { onMenuClick('assistant'), setcurrentProject(selectedProject), setcurrentSession(conv.id) }}
+          >
+            <div className="conversation-header">
               <div className="conversation-title">{conv.title}</div>
               <div className="conversation-meta">
                 <span>{conv.messages}개 메시지</span>
                 <span>•</span>
-                <span>{conv.date}</span>
+                <span>
+                  {date.toLocaleString("ko-KR", {
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  })}
+                </span>
               </div>
             </div>
-            <div className={`conversation-status ${conv.status}`}>
-              {conv.status === 'active' ? '진행중' : '완료'}
-            </div>
-          </div>
-          <div className="conversation-preview">{conv.preview}</div>
-        </div >
-      ))
-      }
+            <div className="conversation-preview">{conv.preview}</div>
+          </div >
+        )
+      })}
 
     </>
   );
@@ -346,6 +356,7 @@ function ProjectRow({ project, setviewStatus, setcurrentPorject }) {
 const getStatusInfo = (status) => {
   const statusMap = {
     active: 'active',
+    deactive: 'paused',
     planning: 'planning',
     completed: 'completed',
     paused: 'paused',
@@ -380,7 +391,7 @@ function NewProjectform({ setNewProject, fetchProjects }) {
     name: "",
     category: "",
     description: "",
-    status: "진행중",
+    status: "진행",
     cost: "",
   });
   const handleCreate = async () => {

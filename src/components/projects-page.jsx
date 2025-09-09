@@ -391,7 +391,7 @@ function NewProjectform({ setNewProject, fetchProjects }) {
     name: "",
     category: "",
     description: "",
-    status: "진행",
+    status: "active",
     cost: "",
   });
   const handleCreate = async () => {

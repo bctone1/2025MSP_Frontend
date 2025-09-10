@@ -429,7 +429,11 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
         if (response.ok) {
             console.log("API 응답:", data);
             fetchChatSessions();
-            setcurrentSession({ id: data.session_id, title: data.title });
+            if (data.title) {
+                setcurrentSession({ id: data.session_id, title: data.title });
+            } else {
+                setcurrentSession(prev => ({ ...prev, id: data.session_id }));
+            }
             const Message = {
                 id: Date.now() + 1,
                 type: "agent",

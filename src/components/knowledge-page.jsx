@@ -267,7 +267,7 @@ export default function Knowledge({onMenuClick}) {
                         <div className="content-header">
                             <div className="search-bar">
                                 <span className="search-icon">🔍</span>
-                                <input type="text" className="knowledge_search-input" placeholder="문서명, 내용, 태그로 검색..."
+                                <input type="text" className="knowledge_search-input" placeholder="문서명, 내용, 태그로 검색..." value={filters.search}
                                     onChange={(e) =>
                                         setfilters((prev) => ({
                                             ...prev,
@@ -277,9 +277,9 @@ export default function Knowledge({onMenuClick}) {
                                 />
                             </div>
                             <div className="header-actions">
-                                <button className="btn btn-chat"
+                                {/* <button className="btn btn-chat"
                                     onClick={() => onMenuClick('assistant')}
-                                >💬 AI 어시스턴트</button>
+                                >💬 AI 어시스턴트</button> */}
                                 <button className="btn btn-primary"
                                     onClick={() => fileInputRef.current?.click()}
                                 >
@@ -339,7 +339,7 @@ export default function Knowledge({onMenuClick}) {
                                     >
                                         {/* 액션 버튼 */}
                                         <div className="file-actions">
-                                            <button className="action-btn chat-btn" title="AI 대화에 첨부">💬</button>
+                                            {/* <button className="action-btn chat-btn" title="AI 대화에 첨부">💬</button> */}
                                             {file.source ? (
                                                 <>
                                                     <button className="action-btn" title="원본 동기화">🔄</button>

@@ -55,7 +55,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                     }
                 );
                 const data = await response.json();
-                console.log("✅ API 응답:", data);
+                // console.log("✅ API 응답:", data);
                 setMessages(data.messages);
             } catch (error) {
                 console.error("❌ 네트워크 오류:", error);
@@ -205,7 +205,32 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
         );
     };
 
-    const knowledgeFiles = [
+    const fetchKnowledges = async () => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/MSP_KNOWLEDGE/msp_get_knowledge_by_user`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ user_id: session?.user?.id }),
+                }
+            );
+            const data = await response.json();
+            console.log("✅ API 응답:", data);
+            if (data.kbowledges) setknowledgeFiles(data.kbowledges);
+        } catch (error) {
+            console.error("❌ 네트워크 오류:", error);
+        }
+    }
+    useEffect(() => {
+        if (!session?.user?.id) return;
+        
+        fetchKnowledges();
+    }, [session?.user?.id])
+
+    const [knowledgeFiles,setknowledgeFiles] = useState([
         {
             id: 1,
             name: "2024년 사업계획서.pdf",
@@ -272,7 +297,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
             date: "2023.12.28",
             usage: 89
         }
-    ];
+    ]);
 
     const filteredFiles = [...knowledgeFiles];
     const [selectedFiles, setSelectedFiles] = useState(new Set());
@@ -489,7 +514,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            console.log("선택된 파일:", file.name);
+            // console.log("선택된 파일:", file.name);
             // 여기서 업로드 로직 추가 가능
         }
     };

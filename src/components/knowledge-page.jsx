@@ -2,12 +2,42 @@
 import { useState, useEffect, useRef } from 'react';
 // import { formatDate, storage, formatFileSize } from '@/utill/utill';
 import "@/styles/knowledge.css";
-// import History from "@/components/history-component";
+import { useSession } from "next-auth/react";
 
 
-export default function Knowledge({onMenuClick}) {
+export default function Knowledge({ onMenuClick }) {
+    const { data: session } = useSession();
+    const hasFetched = useRef(false);
 
-    const filesData = [
+    const fetchKnowledges = async () => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/MSP_KNOWLEDGE/msp_get_knowledge_by_user`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ user_id: session?.user?.id }),
+                }
+            );
+            const data = await response.json();
+            console.log("✅ API 응답:", data);
+            if (data.kbowledges) setfilesData(data.kbowledges);
+        } catch (error) {
+            console.error("❌ 네트워크 오류:", error);
+        }
+    }
+    useEffect(() => {
+        if (!session?.user?.id) return;
+        if (hasFetched.current) return;
+        hasFetched.current = true;
+        fetchKnowledges();
+    }, [session?.user?.id])
+
+
+
+    const [filesData, setfilesData] = useState([
         {
             id: 1,
             project: "파일분석하기",
@@ -90,7 +120,7 @@ export default function Knowledge({onMenuClick}) {
             connection: { status: "active", text: "실시간 동기화" },
             source: "gdrive"
         }
-    ];
+    ]);
 
     const [viewMode, setViewMode] = useState('grid');
     const [filters, setfilters] = useState({
@@ -120,17 +150,15 @@ export default function Knowledge({onMenuClick}) {
         if (!selectedFile) return;
         const formData = new FormData();
         formData.append("file", selectedFile);
-        // formData.append("project_id", 102);
-        // formData.append("user_email", "dudqls327@naver.com");
-        // formData.append("session_id", 120157);
+        formData.append("user_id", session?.user?.id);
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_SERVICE/uploadRAG`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_KNOWLEDGE/msp_upload_file`, {
             method: "POST",
             body: formData
         });
-
         const data = await response.json();
         console.log(data);
+        fetchKnowledges();
 
     };
 
@@ -199,18 +227,6 @@ export default function Knowledge({onMenuClick}) {
                                 </select>
                             </div>
 
-                            {/* <div className="knowledge_filter-group">
-                                <label className="knowledge_filter-label">데이터 소스</label>
-                                <select className="knowledge_filter-select" id="source-filter"
-                                >
-                                    <option value="">전체</option>
-                                    <option value="upload">직접 업로드</option>
-                                    <option value="sharepoint">SharePoint</option>
-                                    <option value="gdrive">Google Drive</option>
-                                    <option value="notion">Notion</option>
-                                    <option value="dms">사내 DMS</option>
-                                </select>
-                            </div> */}
 
                             <div className="knowledge_filter-group">
                                 <label className="knowledge_filter-label">파일 타입</label>
@@ -234,32 +250,6 @@ export default function Knowledge({onMenuClick}) {
                                 </select>
                             </div>
                         </div>
-
-                        {/* 외부 연동 상태 */}
-                        {/* <div className="sidebar-section">
-                            <h3 className="section-title">
-                                <span>🔗</span>
-                                <span>외부 연동 상태</span>
-                            </h3>
-                            <div className="stats-card">
-                                <div className="knowledge_stat-item">
-                                    <span>📊 SharePoint</span>
-                                    <span className="knowledge_stat-value" style={{ color: "var(--success-green)" }}>연결됨</span>
-                                </div>
-                                <div className="knowledge_stat-item">
-                                    <span>📁 Google Drive</span>
-                                    <span className="knowledge_stat-value" style={{ color: "var(--success-green)" }}>연결됨</span>
-                                </div>
-                                <div className="knowledge_stat-item">
-                                    <span>📋 Notion</span>
-                                    <span className="knowledge_stat-value" style={{ color: "var(--warning-orange)" }}>대기중</span>
-                                </div>
-                                <div className="knowledge_stat-item">
-                                    <span>🏢 사내 DMS</span>
-                                    <span className="knowledge_stat-value" style={{ color: "var(--success-green)" }}>연결됨</span>
-                                </div>
-                            </div>
-                        </div> */}
                     </div>
 
                     {/* 메인 콘텐츠 */}
@@ -277,9 +267,6 @@ export default function Knowledge({onMenuClick}) {
                                 />
                             </div>
                             <div className="header-actions">
-                                {/* <button className="btn btn-chat"
-                                    onClick={() => onMenuClick('assistant')}
-                                >💬 AI 어시스턴트</button> */}
                                 <button className="btn btn-primary"
                                     onClick={() => fileInputRef.current?.click()}
                                 >
@@ -291,8 +278,6 @@ export default function Knowledge({onMenuClick}) {
                                     className="hidden"
                                     onChange={handleFileSelect}
                                 />
-                                {/* <button className="btn btn-secondary" >🔗 외부 연동</button> */}
-                                {/* <button className="btn btn-secondary" >📁 새 폴더</button> */}
                             </div>
                         </div>
 
@@ -310,21 +295,7 @@ export default function Knowledge({onMenuClick}) {
                                 >
                                     📋 목록
                                 </button>
-
-                                {/* <button className={`knowledge_tab-btn ${viewMode === 'history' ? 'active' : ''}`}
-                                    onClick={() => setViewMode('history')}
-                                >
-                                    📈 히스토리
-                                </button> */}
-
                             </div>
-
-                            {/* 히스토리 임포트 */}
-                            {/* <div style={{ display: `${viewMode === "history" ? "" : "none"}` }}>
-                                {<History />}
-                            </div> */}
-
-
 
 
                             {/* 그리드 뷰 */}
@@ -336,31 +307,25 @@ export default function Knowledge({onMenuClick}) {
                                         data-file-id={file.id}
                                         data-project={file.project}
                                         data-source={file.source || undefined}
+                                        title={file.origin_name}
                                     >
                                         {/* 액션 버튼 */}
                                         <div className="file-actions">
-                                            {/* <button className="action-btn chat-btn" title="AI 대화에 첨부">💬</button> */}
-                                            {file.source ? (
-                                                <>
-                                                    <button className="action-btn" title="원본 동기화">🔄</button>
-                                                    <button className="action-btn" title="원본에서 열기">🔗</button>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <button className="action-btn" title="편집">✏️</button>
-                                                    <button className="action-btn" title="삭제">🗑️</button>
-                                                </>
-                                            )}
+                                            <button className="action-btn" title="편집">✏️</button>
+                                            <button className="action-btn" title="삭제">🗑️</button>
                                         </div>
 
                                         {/* 파일 헤더 */}
                                         <div className="file-header">
-                                            <div className="file-icon" style={{ background: file.bgColor }}>
-                                                {file.icon}
+                                            <div className="file-icon" style={{ background: "#4285f4" }}>
+                                                📊
                                             </div>
+
+
                                             <div className="file-info">
-                                                <div className="file-name">{file.name}</div>
-                                                <div className="file-meta">{file.meta}</div>
+                                                <div className="file-name">{file.origin_name}</div>
+                                                <div className="file-meta">{file.type}</div>
+                                                <div className="file-meta">{file.size}bytes</div>
                                             </div>
                                         </div>
 
@@ -391,14 +356,11 @@ export default function Knowledge({onMenuClick}) {
 
                                         {/* 파일 통계 */}
                                         <div className="file-stats">
-                                            <span>{file.chunks}</span>
-                                            <div className="connection-status">
-                                                <div
-                                                    className={`connection-dot ${file.connection.status === "inactive" ? "inactive" : ""
-                                                        }`}
-                                                ></div>
+                                            <span>~개의 청크</span>
+                                            {/* <div className="connection-status">
+                                                <div className={`connection-dot ${file.connection.status === "inactive" ? "inactive" : ""}`} ></div>
                                                 <span>{file.connection.text}</span>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
                                 ))}
@@ -407,17 +369,16 @@ export default function Knowledge({onMenuClick}) {
                             {/* 리스트 뷰 */}
                             <div className={`files-list ${viewMode === 'list' ? 'active' : ''}`} id="list-view">
                                 {filteredKnowledge.map((file) => (
-                                    <div className="list-item" data-file-id={file.id} key={file.id}>
+                                    <div className="list-item" data-file-id={file.id} key={file.id} title={file.origin_name}>
                                         <input type="checkbox" />
-                                        <div className="file-icon" style={{ background: file.bgColor }}>
-                                            {file.icon}
+                                        <div className="file-icon" style={{ background: "#4285f4" }}>
+                                            📊
                                         </div>
                                         <div className="file-info" style={{ flex: 1 }}>
-                                            <div className="file-name">{file.name}</div>
+                                            <div className="file-name">{file.origin_name}</div>
                                             <div className="file-meta">
-                                                {file.meta}
-                                                {/* 청크 정보가 meta에 없으면 표시하기 */}
-                                                {!file.meta.includes("청크") && file.chunks ? ` • ${file.chunks}` : ""}
+                                                {file.type} /
+                                                {file.size} bytes
                                             </div>
                                         </div>
                                         <div className="file-tags">
@@ -436,20 +397,11 @@ export default function Knowledge({onMenuClick}) {
                                                 )
                                             )}
                                         </div>
+
                                         <div className="connection-status">
-                                            <div
-                                                className={`connection-dot ${file.connection.status === "inactive" ? "inactive" : ""
-                                                    }`}
-                                            ></div>
-                                            <span>
-                                                {file.connection.text.includes("대화")
-                                                    ? file.connection.text.replace("대화", "연결")
-                                                    : file.connection.text}
-                                            </span>
+                                            <span>~개의 청크</span>
                                         </div>
-                                        <button className="action-btn chat-btn" title="AI 대화에 첨부">
-                                            💬
-                                        </button>
+
                                     </div>
                                 ))}
                             </div>

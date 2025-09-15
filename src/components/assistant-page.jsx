@@ -55,8 +55,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                     }
                 );
                 const data = await response.json();
-                // console.log("✅ API 응답:", data);
-                setMessages(data.messages);
+                setMessages(data);
             } catch (error) {
                 console.error("❌ 네트워크 오류:", error);
             }
@@ -218,7 +217,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                 }
             );
             const data = await response.json();
-            console.log("✅ API 응답:", data);
+            console.log("✅ 지식베이스:", data);
             if (data.kbowledges) setknowledgeFiles(data.kbowledges);
         } catch (error) {
             console.error("❌ 네트워크 오류:", error);
@@ -226,97 +225,63 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
     }
     useEffect(() => {
         if (!session?.user?.id) return;
-        
+
         fetchKnowledges();
     }, [session?.user?.id])
 
-    const [knowledgeFiles,setknowledgeFiles] = useState([
-        {
-            id: 1,
-            name: "2024년 사업계획서.pdf",
-            type: "pdf",
-            size: "2.3MB",
-            folder: "projects",
-            description: "2024년 사업 계획 및 다음 연도 전략 분석",
-            tags: ["사업계획서", "2024", "전략", "기획"],
-            date: "2024.01.15",
-            usage: 174
-        },
-        {
-            id: 2,
-            name: "매출분석_Q4.xlsx",
-            type: "excel",
-            size: "1.8MB",
-            folder: "reports",
-            description: "Q4 매출 현황 및 매출 250만원, 전년 동기 대비 증가",
-            tags: ["매출분석", "Q4", "보고서", "엑셀"],
-            date: "2024.01.10",
-            usage: 89
-        },
-        {
-            id: 3,
-            name: "마케팅전략_2024.pptx",
-            type: "ppt",
-            size: "4.5MB",
-            folder: "projects",
-            description: "2024년 마케팅 전략 다각화를 통한 디지털 마케팅 방안",
-            tags: ["마케팅전략", "전략", "디지털마케팅", "브랜딩"],
-            date: "2024.01.08",
-            usage: 156
-        },
-        {
-            id: 4,
-            name: "기술문서_API.docx",
-            type: "doc",
-            size: "850KB",
-            folder: "references",
-            description: "REST API 설계 문서, 엔드포인트 구조 및 응답 형식 정리",
-            tags: ["기술문서", "API", "개발", "문서"],
-            date: "2024.01.05",
-            usage: 67
-        },
-        {
-            id: 5,
-            name: "Q4_재무보고서.xlsx",
-            type: "excel",
-            size: "3.2MB",
-            folder: "reports",
-            description: "SharePoint에서 정리한 Q4 재무 보고서 데이터",
-            tags: ["SharePoint", "재무", "Q4"],
-            date: "2024.01.02",
-            usage: 234
-        },
-        {
-            id: 6,
-            name: "제품로드맵_2024.gdoc",
-            type: "doc",
-            size: "1.2MB",
-            folder: "projects",
-            description: "Google Drive에서 상시간 공개한 2024년 제품 로드맵 문서",
-            tags: ["Google Drive", "제품기획", "로드맵"],
-            date: "2023.12.28",
-            usage: 89
-        }
-    ]);
-
+    // 데이터에 있는 파일 목록
+    const [knowledgeFiles, setknowledgeFiles] = useState([]);
+    // 필터 적용된 파일 목록
     const filteredFiles = [...knowledgeFiles];
+    // 세션에 저장된 파일
     const [selectedFiles, setSelectedFiles] = useState(new Set());
-    const [isListView, setisListView] = useState("");
+    // 임시 저장된 파일
+    const [tempSelectedFiles, setTempSelectedFiles] = useState(new Set());
+
+    const handleAddSelected = async () => {
+        alert("세션에 지식 베이스 추가 요청");
+        console.log(tempSelectedFiles);
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/MSP_KNOWLEDGE/msp_add_session_knowledge_association`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        user_id: session?.user?.id,
+                        session_id: currentSession?.id,
+                        knowledge_ids: Array.from(tempSelectedFiles)
+                    }),
+                }
+            );
+            const data = await response.json();
+            console.log("✅ 세션에 추가된 지식:", data);
+            setSelectedFiles(new Set([...selectedFiles, ...tempSelectedFiles]));
+            setKnowledge(false);
+            fetchChatSessions();
+            if (data.title) {
+                setcurrentSession({ id: data.session_id, title: data.title });
+            } else {
+                setcurrentSession(prev => ({ ...prev, id: data.session_id }));
+            }
+
+            // if (data.kbowledges) setknowledgeFiles(data.kbowledges);
+        } catch (error) {
+            console.error("❌ 네트워크 오류:", error);
+        }
+
+
+    };
 
     const RenderKnowledgeFiles = () => {
         const toggleFileSelection = (fileId) => {
-            setSelectedFiles((prevSelected) => {
-                const newSelected = new Set(prevSelected);
-
-                if (newSelected.has(fileId)) {
-                    // 이미 선택된 경우 → 해제
-                    newSelected.delete(fileId);
-                } else {
-                    // 선택되지 않은 경우 → 추가
-                    newSelected.add(fileId);
-                }
-
-                return newSelected;
+            setTempSelectedFiles(prev => {
+                const newSet = new Set(prev);
+                if (newSet.has(fileId)) newSet.delete(fileId);
+                else newSet.add(fileId);
+                return newSet;
             });
         };
 
@@ -345,14 +310,15 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
 
                 {filteredFiles.map((file) => {
                     const fileIcon = getKnowledgeFileIcon(file.type);
-                    const isSelected = selectedFiles.has(file.id);
+                    const isSelected = tempSelectedFiles.has(file.id);
 
                     return (
                         <div
                             key={file.id}
-                            className={`assistant-knowledge-file-item ${isListView ? "list-view" : ""} ${isSelected ? "selected" : ""}`}
+                            className={`assistant-knowledge-file-item ${isSelected ? "selected" : ""}`}
                             data-file-id={file.id}
                             onClick={() => toggleFileSelection(file.id)}
+                            title={file.origin_name}
                         >
                             <input
                                 type="checkbox"
@@ -365,20 +331,17 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                             <div className={`assistant-file-type-icon ${file.type}`}>{fileIcon}</div>
 
                             <div className="assistant-knowledge-file-info">
-                                <div className="assistant-knowledge-file-title">{file.name}</div>
+                                <div className="assistant-knowledge-file-title">{file.origin_name}</div>
 
                                 <div className="assistant-knowledge-file-meta">
-                                    <span>{file.size}</span>
-                                    <span>{file.date}</span>
-                                    <span>{file.usage}회 사용됨</span>
+                                    <span>{file.size}KB</span> <br />
+                                    <span>{file.created_at?.split("T")[0]}</span>
                                 </div>
 
                                 <div className="assistant-knowledge-file-desc">{file.description}</div>
 
                                 <div className="assistant-knowledge-file-tags">
-                                    <span className="assistant-knowledge-tag folder">
-                                        {getFolderName(file.folder)}
-                                    </span>
+                                    {/* <span className="assistant-knowledge-tag folder">{getFolderName(file.folder)}</span> */}
                                     {file.tags.map((tag, index) => (
                                         <span key={index} className="assistant-knowledge-tag">
                                             {tag}
@@ -421,9 +384,6 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
 
 
     const sendMessage = async () => {
-        // return alert(currentProject.id);
-        // return alert(currentSession);
-
         if (!userInput.trim()) return;
         setuserInput("");
         const userMessage = {
@@ -431,7 +391,6 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
             type: "user",
             role: "user",
             created_at: new Date(),
-            // time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             content: userInput
         };
         setMessages(prev => [...prev, userMessage]);
@@ -476,6 +435,30 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
         setcurrentProject({});
         setcurrentSession({ id: 0 });
         setMessages([]);
+        setSelectedFiles(new Set());
+    }
+
+    const renderKnowledge = async (conv) => {
+        if (currentSession.id === conv.id) return console.log("동일한 세션이라 요청 취소");
+        // alert("knowledge 랜더링");
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/MSP_KNOWLEDGE/msp_get_session_knowledge_association`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ session_id: conv.id }),
+                }
+            );
+            const data = await response.json();
+            const ids = data.knowledge_ids || [];
+            console.log("✅ API 응답:", data);
+            setSelectedFiles(new Set(ids));
+        } catch (error) {
+            console.error("❌ 네트워크 오류:", error);
+        }
     }
 
     const renderSession = async (conv) => {
@@ -499,7 +482,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
             );
             const data = await response.json();
             console.log("✅ API 응답:", data);
-            setMessages(data.messages)
+            setMessages(data)
         } catch (error) {
             console.error("❌ 네트워크 오류:", error);
         }
@@ -520,6 +503,43 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
     };
 
 
+    const UpdateAttachedFilesList = () => {
+        // selectedFiles에 포함된 파일만 필터링
+        const attachedFilesList = knowledgeFiles.filter((file) =>
+            selectedFiles.has(file.id)
+        );
+
+        const handleRemoveFile = (fileId) => {
+            const newSelectedFiles = new Set(selectedFiles);
+            newSelectedFiles.delete(fileId);
+            setSelectedFiles(newSelectedFiles);
+        };
+
+        return (
+            <>
+                {selectedFiles.size === 0 && (
+                    <div className="empty-files">
+                        <div className="empty-icon">📁</div>
+                        <p>첨부된 파일이 없습니다</p>
+                    </div>
+                )}
+
+                {attachedFilesList.map((file) => (
+                    <div className="attached-file-item" key={file.id}>
+                        <div className="file-icon">{getKnowledgeFileIcon(file.type)}</div>
+                        <div className="file-info">
+                            <div className="file-name" title={`${file.name}`}>{truncateFileName(file.origin_name)}</div>
+                            <div className="file-size">{file.size}KB</div>
+                        </div>
+                        <button className="remove-file-btn" onClick={() => handleRemoveFile(file.id)}>
+                            ✕
+                        </button>
+                    </div>
+                ))}
+            </>
+        );
+    };
+
     return (
         <>
 
@@ -535,7 +555,8 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                 <KnowledgeHandler
                     setKnowledge={setKnowledge}
                     RenderKnowledgeFiles={<RenderKnowledgeFiles />}
-                    selectedFiles={selectedFiles}
+                    selectedFiles={tempSelectedFiles}
+                    handleAddSelected={handleAddSelected}
                 />
             </div>
 
@@ -571,7 +592,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                                 <div
                                     key={index}
                                     className={`conversation-item ${conv.id === currentSession.id ? "active" : ""}`}
-                                    onClick={() => renderSession(conv)}
+                                    onClick={() => { renderSession(conv), renderKnowledge(conv) }}
                                 >
                                     <div className="conversation-header">
                                         <div className="assistant-conversation-title">{conv.title}</div>
@@ -589,13 +610,10 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                             <div className="assistant-card-title">📎 첨부파일</div>
                         </div>
 
-                        <div className="files-count">📄 첨부된 파일 (0개)</div>
+                        <div className="files-count">📄 첨부된 파일 ({selectedFiles.size}개)</div>
 
                         <div className="knowledge-files" id="attached-files-list">
-                            <div className="empty-files">
-                                <div className="empty-icon">📁</div>
-                                <p>첨부된 파일이 없습니다</p>
-                            </div>
+                            {<UpdateAttachedFilesList />}
                         </div>
 
                         <div className="files-help">
@@ -703,7 +721,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                                         <div className="menu-section">
                                             <div className="menu-section-title">지식베이스</div>
                                             <div className="menu-item"
-                                                onClick={() => setKnowledge(true)}
+                                                onClick={() => { setKnowledge(true), setTempSelectedFiles(selectedFiles); }}
                                             >
                                                 <div className="menu-item-icon">📚</div>
                                                 <div className="menu-item-text">
@@ -942,7 +960,11 @@ function AgentHandler({ setAgent, AgentCards }) {
     );
 }
 
-function KnowledgeHandler({ setKnowledge, RenderKnowledgeFiles, selectedFiles }) {
+function KnowledgeHandler({ setKnowledge, RenderKnowledgeFiles, selectedFiles, handleAddSelected }) {
+    const handle_knowledge = async () => {
+        console.log(selectedFiles);
+        setKnowledge(false);
+    }
     return (
         <>
             <div className="modal knowledge-library-modal" style={{ maxWidth: "1000px", width: "95%" }}>
@@ -999,7 +1021,9 @@ function KnowledgeHandler({ setKnowledge, RenderKnowledgeFiles, selectedFiles })
                             onClick={() => setKnowledge(false)}
                         >취소</button>
                         <button className="assistant-primary-btn" id="add-selected-btn" disabled={selectedFiles.size === 0}
-                            onClick={() => alert("파일추가 요청")}
+                            // onClick={() => handle_knowledge()}
+                            onClick={handleAddSelected}
+
                         >
                             선택된 파일 추가 (<span id="selected-file-count">{selectedFiles.size}</span>)
                         </button>
@@ -1012,7 +1036,7 @@ function KnowledgeHandler({ setKnowledge, RenderKnowledgeFiles, selectedFiles })
 
 function getKnowledgeFileIcon(type) {
     const icons = {
-        pdf: '📄',
+        "application/pdf": '📄',
         doc: '📄',
         excel: '📊',
         ppt: '📽️'
@@ -1028,4 +1052,13 @@ function getFolderName(folder) {
         personal: '개인 문서'
     };
     return folderNames[folder] || folder;
+}
+
+// 파일명 자르기 함수
+function truncateFileName(fileName, maxLength = 20) {
+    if (fileName.length <= maxLength) return fileName;
+    const extension = fileName.split('.').pop();
+    const baseName = fileName.substring(0, fileName.lastIndexOf('.'));
+    const truncatedBaseName = baseName.substring(0, maxLength - extension.length - 4);
+    return `${truncatedBaseName}...${extension}`;
 }

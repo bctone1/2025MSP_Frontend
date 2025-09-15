@@ -23,7 +23,7 @@ export default function Knowledge({ onMenuClick }) {
             );
             const data = await response.json();
             console.log("✅ API 응답:", data);
-            if (data.kbowledges) setfilesData(data.kbowledges);
+            if (data.knowledges) setfilesData(data.knowledges);
         } catch (error) {
             console.error("❌ 네트워크 오류:", error);
         }

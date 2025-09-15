@@ -218,7 +218,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
             );
             const data = await response.json();
             console.log("✅ 지식베이스:", data);
-            if (data.kbowledges) setknowledgeFiles(data.kbowledges);
+            if (data.knowledges) setknowledgeFiles(data.knowledges);
         } catch (error) {
             console.error("❌ 네트워크 오류:", error);
         }
@@ -267,7 +267,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                 setcurrentSession(prev => ({ ...prev, id: data.session_id }));
             }
 
-            // if (data.kbowledges) setknowledgeFiles(data.kbowledges);
+            // if (data.knowledges) setknowledgeFiles(data.knowledges);
         } catch (error) {
             console.error("❌ 네트워크 오류:", error);
         }

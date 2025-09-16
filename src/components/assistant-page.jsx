@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { formatDate, storage, formatFileSize, modalheader } from '@/utill/utill';
 import "@/styles/assistant-page.css"
 import { useSession } from "next-auth/react";
+import ReactMarkdown from "react-markdown";
 
 export default function AssistantPage({ onMenuClick, currentProject, setcurrentProject, currentSession, setcurrentSession }) {
     const { data: session } = useSession();
@@ -67,7 +68,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
     const [agents, setagents] = useState([
         {
             id: "research",
-            active: true,
+            active: false,
             avatar: "🔍",
             avatarBg: "#3b82f6",
             name: "리서치 에이전트",
@@ -89,7 +90,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
         },
         {
             id: "analysis",
-            active: true,
+            active: false,
             avatar: "📊",
             avatarBg: "#8b5cf6",
             name: "분석 에이전트",
@@ -239,7 +240,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
     const [tempSelectedFiles, setTempSelectedFiles] = useState(new Set());
 
     const handleAddSelected = async () => {
-        alert("세션에 지식 베이스 추가 요청");
+        // alert("세션에 지식 베이스 추가 요청");
         console.log(tempSelectedFiles);
         try {
             const response = await fetch(
@@ -384,6 +385,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
 
 
     const sendMessage = async () => {
+        // alert(Array.from(selectedFiles));
         if (!userInput.trim()) return;
         setuserInput("");
         const userMessage = {
@@ -406,7 +408,8 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                 session_id: currentSession.id,
                 user_id: session?.user?.id,
                 role: "user",
-                project_id: currentProject.id
+                project_id: currentProject.id,
+                knowledge_ids: Array.from(selectedFiles)
             }),
         });
         const data = await response.json();
@@ -422,7 +425,6 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                 id: Date.now() + 1,
                 type: "agent",
                 role: "assistant",
-                // created_at: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
                 created_at: new Date(),
                 content: JSON.stringify(data.response)
             };
@@ -685,7 +687,9 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                                                     })}
                                                 </div>
                                             </div>
-                                            <div className="message-text">{msg.content}</div>
+                                            <div className="message-text">
+                                                <ReactMarkdown>{msg.content}</ReactMarkdown>
+                                            </div>
                                         </div>
                                     </div>
                                 )

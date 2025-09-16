@@ -54,7 +54,7 @@ export default function Sidebar({ onMenuClick, currentPage, setcurrentProject, v
             { page: 'assistant', icon: '💬', title: 'AI 어시스턴트', desc: '멀티에이전트 대화' },
             { page: 'projects', icon: '📁', title: '프로젝트', desc: '프로젝트 생성 및 관리' },
             { page: 'knowledge', icon: '📚', title: '지식베이스', desc: '지식베이스 관리' },
-            { page: 'history', icon: '📈', title: '히스토리', desc: '대화 기록 및 분석' },
+            // { page: 'history', icon: '📈', title: '히스토리', desc: '대화 기록 및 분석' },
 
           ].map(({ page, icon, title, desc }) => (
             <div

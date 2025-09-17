@@ -240,8 +240,10 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
     const [tempSelectedFiles, setTempSelectedFiles] = useState(new Set());
 
     const handleAddSelected = async () => {
-        // alert("세션에 지식 베이스 추가 요청");
-        console.log(tempSelectedFiles);
+        const knowledge_titles = knowledgeFiles
+            .filter(file => tempSelectedFiles.has(file.id))
+            .map(file => file.origin_name);
+        // console.log(knowledge_titles);
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/MSP_KNOWLEDGE/msp_add_session_knowledge_association`,
@@ -253,7 +255,8 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                     body: JSON.stringify({
                         user_id: session?.user?.id,
                         session_id: currentSession?.id,
-                        knowledge_ids: Array.from(tempSelectedFiles)
+                        knowledge_ids: Array.from(tempSelectedFiles),
+                        knowledge_titles: knowledge_titles
                     }),
                 }
             );
@@ -424,7 +427,8 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
             const Message = {
                 id: Date.now() + 1,
                 type: "agent",
-                role: "assistant",
+                // role: "assistant",
+                role: data.role,
                 created_at: new Date(),
                 content: JSON.stringify(data.response)
             };
@@ -669,10 +673,10 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                                         className={`message ${msg.role === "user" ? "user-message" : ""}`}
                                     >
                                         <div
-                                            className={`message-avatar ${msg.role === "assistant" ? "agent-avatar-msg" : "user-avatar"}`}
+                                            className={`message-avatar ${msg.role !== "user" ? "agent-avatar-msg" : "user-avatar"}`}
                                             style={msg.avatarBg ? { background: msg.avatarBg } : {}}
                                         >
-                                            {msg.role === "assistant" ? "🤖" : "👤"}
+                                            {msg.role !== "user" ? "🤖" : "👤"}
                                         </div>
                                         <div className="message-content">
                                             <div className={`message-header ${msg.role === "user" ? "user" : ""}`}>

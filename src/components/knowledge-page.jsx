@@ -212,10 +212,9 @@ export default function Knowledge({ onMenuClick }) {
                                 <span>필터</span>
                             </h3>
 
-                            <div className="knowledge_filter-group">
+                            {/* <div className="knowledge_filter-group">
                                 <label className="knowledge_filter-label">프로젝트</label>
                                 <select className="knowledge_filter-select" id="project-filter"
-                                // onchange="filterByProject(this.value)"
                                 >
                                     <option value="all">🌟 전체 문서 (231개)</option>
                                     <option value="파일분석하기">📊 파일분석하기 (89개)</option>
@@ -223,7 +222,7 @@ export default function Knowledge({ onMenuClick }) {
                                     <option value="코드 리뷰 자동화">💻 코드 리뷰 자동화 (67개)</option>
                                     <option value="마케팅 캠페인 분석">📈 마케팅 캠페인 분석 (33개)</option>
                                 </select>
-                            </div>
+                            </div> */}
 
 
                             <div className="knowledge_filter-group">
@@ -238,7 +237,7 @@ export default function Knowledge({ onMenuClick }) {
                                 </select>
                             </div>
 
-                            <div className="knowledge_filter-group">
+                            {/* <div className="knowledge_filter-group">
                                 <label className="knowledge_filter-label">연결 상태</label>
                                 <select className="knowledge_filter-select" id="connection-filter" >
                                     <option value="">전체</option>
@@ -246,7 +245,7 @@ export default function Knowledge({ onMenuClick }) {
                                     <option value="available">연결 가능</option>
                                     <option value="inactive">비활성화됨</option>
                                 </select>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
 

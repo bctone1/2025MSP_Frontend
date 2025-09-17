@@ -569,7 +569,7 @@ body {
     border-radius: 8px;
     font-size: 0.875rem;
     color: var(--gray-700);
-    max-height: 60px;
+    max-height: 160px;
     overflow: hidden;
     margin-bottom: var(--spacing-3);
 }

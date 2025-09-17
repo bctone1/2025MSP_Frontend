@@ -47,7 +47,7 @@ export default function Knowledge({ onMenuClick }) {
             meta: "2.5MB • 2시간 전",
             preview: "2024년 사업 계획은 다음과 같은 핵심 목표를 바탕으로 수립되었습니다. 디지털 전환을 통한 업무 효율성 증대...",
             tags: ["파일분석하기", "사업계획", "2024", "전략"],
-            chunks: "127개 청크",
+            chunks: 0,
             connection: { status: "active", text: "3개 대화 연결" }
         },
         {
@@ -59,7 +59,7 @@ export default function Knowledge({ onMenuClick }) {
             meta: "1.8MB • 1일 전",
             preview: "Q4 매출 현황: 총 매출 250억원, 전년 동기 대비 15% 증가. 주요 성장 동력은 온라인 채널...",
             tags: ["파일분석하기", "매출", "분석", "Q4"],
-            chunks: "89개 청크",
+            chunks: 89,
             connection: { status: "active", text: "2개 대화 연결" }
         },
         {
@@ -71,7 +71,7 @@ export default function Knowledge({ onMenuClick }) {
             meta: "3.2MB • 3일 전",
             preview: "2024년 마케팅 전략: 타겟 고객층 확대, 디지털 마케팅 강화, 브랜드 인지도 향상...",
             tags: ["마케팅 캠페인 분석", "마케팅", "전략", "브랜딩"],
-            chunks: "156개 청크",
+            chunks: 156,
             connection: { status: "inactive", text: "연결 가능" }
         },
         {
@@ -83,7 +83,7 @@ export default function Knowledge({ onMenuClick }) {
             meta: "0.9MB • 1주 전",
             preview: "REST API 설계 문서: 엔드포인트 구조, 인증 방식, 응답 형식에 대한 상세 가이드...",
             tags: ["코드 리뷰 자동화", "API", "기술문서", "개발"],
-            chunks: "67개 청크",
+            chunks: 67,
             connection: { status: "active", text: "5개 대화 연결" }
         },
         {
@@ -99,7 +99,7 @@ export default function Knowledge({ onMenuClick }) {
                 "재무",
                 "Q4"
             ],
-            chunks: "156개 청크",
+            chunks: 156,
             connection: { status: "active", text: "실시간 동기화" },
             source: "sharepoint"
         },
@@ -116,7 +116,7 @@ export default function Knowledge({ onMenuClick }) {
                 "제품기획",
                 "로드맵"
             ],
-            chunks: "89개 청크",
+            chunks: 89,
             connection: { status: "active", text: "실시간 동기화" },
             source: "gdrive"
         }
@@ -159,15 +159,13 @@ export default function Knowledge({ onMenuClick }) {
         const data = await response.json();
         console.log(data);
         fetchKnowledges();
-
     };
 
 
-
-
-
-
-
+    const totalSizeBytes = filesData.reduce(
+        (acc, file) => acc + Number(file.size || 0),
+        0
+    );
 
 
     return (
@@ -190,19 +188,19 @@ export default function Knowledge({ onMenuClick }) {
                             <div className="stats-card">
                                 <div className="knowledge_stat-item">
                                     <span>활성 문서</span>
-                                    <span className="knowledge_stat-value" id="active-docs">187개</span>
+                                    <span className="knowledge_stat-value" id="active-docs">{filesData.length}개</span>
                                 </div>
-                                <div className="knowledge_stat-item">
+                                {/* <div className="knowledge_stat-item">
                                     <span>대화 연결</span>
                                     <span className="knowledge_stat-value" id="connected-chats">45개</span>
-                                </div>
+                                </div> */}
                                 <div className="knowledge_stat-item">
                                     <span>벡터 청크</span>
-                                    <span className="knowledge_stat-value" id="vector-chunks">15,342개</span>
+                                    <span className="knowledge_stat-value" id="vector-chunks">{filesData.reduce((acc, file) => acc + file.chunk_count, 0)}개</span>
                                 </div>
                                 <div className="knowledge_stat-item">
                                     <span>총 용량</span>
-                                    <span className="knowledge_stat-value" id="total-size">2.4GB</span>
+                                    <span className="knowledge_stat-value" id="total-size">  {formatBytes(totalSizeBytes)}</span>
                                 </div>
                             </div>
                         </div>
@@ -311,7 +309,7 @@ export default function Knowledge({ onMenuClick }) {
                                     >
                                         {/* 액션 버튼 */}
                                         <div className="file-actions">
-                                            <button className="action-btn" title="편집">✏️</button>
+                                            {/* <button className="action-btn" title="편집">✏️</button> */}
                                             <button className="action-btn" title="삭제">🗑️</button>
                                         </div>
 
@@ -325,7 +323,7 @@ export default function Knowledge({ onMenuClick }) {
                                             <div className="file-info">
                                                 <div className="file-name">{file.origin_name}</div>
                                                 <div className="file-meta">{file.type}</div>
-                                                <div className="file-meta">{file.size}bytes</div>
+                                                <div className="file-meta">{formatBytes(file.size)}</div>
                                             </div>
                                         </div>
 
@@ -356,7 +354,7 @@ export default function Knowledge({ onMenuClick }) {
 
                                         {/* 파일 통계 */}
                                         <div className="file-stats">
-                                            <span>~개의 청크</span>
+                                            <span>{file.chunk_count} chunks</span>
                                             {/* <div className="connection-status">
                                                 <div className={`connection-dot ${file.connection.status === "inactive" ? "inactive" : ""}`} ></div>
                                                 <span>{file.connection.text}</span>
@@ -399,7 +397,7 @@ export default function Knowledge({ onMenuClick }) {
                                         </div>
 
                                         <div className="connection-status">
-                                            <span>~개의 청크</span>
+                                            <span>{file.chunk_count} chunks</span>
                                         </div>
 
                                     </div>
@@ -417,3 +415,9 @@ export default function Knowledge({ onMenuClick }) {
     );
 }
 
+function formatBytes(bytes) {
+    if (bytes >= 1024 * 1024 * 1024) return (bytes / (1024 * 1024 * 1024)).toFixed(2) + " GB";
+    if (bytes >= 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+    if (bytes >= 1024) return (bytes / 1024).toFixed(2) + " KB";
+    return bytes + " B";
+}

@@ -830,7 +830,11 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                                             ))}
                                         </div>
                                     </div>
-                                    <button className="send-btn" id="send-btn" onClick={sendMessage()}>
+                                    <button
+                                        className="send-btn"
+                                        id="send-btn"
+                                        onClick={() => sendMessage(arg1, arg2)}
+                                    >
                                         <span id="send-icon">➤</span>
                                     </button>
                                 </div>

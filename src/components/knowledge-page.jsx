@@ -132,8 +132,8 @@ export default function Knowledge({ onMenuClick }) {
 
     const filteredKnowledge = filesData.filter((p) => {
         const matchesSearch = !filters.search ||
-            p.project.toLowerCase().includes(filters.search.toLowerCase()) ||
-            p.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+            // p.project.toLowerCase().includes(filters.search.toLowerCase()) ||
+            p.origin_name.toLowerCase().includes(filters.search.toLowerCase()) ||
             p.preview.toLowerCase().includes(filters.search.toLowerCase());
         return matchesSearch;
     });
@@ -166,6 +166,28 @@ export default function Knowledge({ onMenuClick }) {
         (acc, file) => acc + Number(file.size || 0),
         0
     );
+
+    const msp_delete_by_knowledge_id = async (file) => {
+        console.log(file);
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/MSP_KNOWLEDGE/msp_delete_by_knowledge_id`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ knowledge_id: file.id }),
+                }
+            );
+            const data = await response.json();
+            console.log("✅ API 응답:", data);
+            if (data.status) alert(data.response);
+            fetchKnowledges();
+        } catch (error) {
+            console.error("❌ 네트워크 오류:", error);
+        }
+    }
 
 
     return (
@@ -309,7 +331,12 @@ export default function Knowledge({ onMenuClick }) {
                                         {/* 액션 버튼 */}
                                         <div className="file-actions">
                                             {/* <button className="action-btn" title="편집">✏️</button> */}
-                                            <button className="action-btn" title="삭제">🗑️</button>
+                                            <button className="action-btn" title="삭제"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    msp_delete_by_knowledge_id(file);
+                                                }}
+                                            >🗑️</button>
                                         </div>
 
                                         {/* 파일 헤더 */}

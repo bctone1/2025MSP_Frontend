@@ -239,6 +239,15 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
     // 임시 저장된 파일
     const [tempSelectedFiles, setTempSelectedFiles] = useState(new Set());
 
+    const selectAllFiles = () => {
+        const allIds = filteredFiles.map(file => file.id);
+        setTempSelectedFiles(new Set(allIds));
+    };
+
+    const deselectAllFiles = () => {
+        setTempSelectedFiles(new Set());
+    };
+
     const handleAddSelected = async () => {
         const knowledge_titles = knowledgeFiles
             .filter(file => tempSelectedFiles.has(file.id))
@@ -563,6 +572,8 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                     RenderKnowledgeFiles={<RenderKnowledgeFiles />}
                     selectedFiles={tempSelectedFiles}
                     handleAddSelected={handleAddSelected}
+                    handleSelectAll={selectAllFiles}
+                    handleDeselectAll={deselectAllFiles}
                 />
             </div>
 
@@ -759,7 +770,9 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
 
                                         <div className="menu-section">
                                             <div className="menu-section-title">외부 연동</div>
-                                            <div className="menu-item" >
+                                            <div className="menu-item"
+                                                onClick={() => alert("준비중입니다.")}
+                                            >
                                                 <div className="menu-item-icon">💾</div>
                                                 <div className="menu-item-text">
                                                     <div className="menu-item-title">Google Drive</div>
@@ -968,11 +981,7 @@ function AgentHandler({ setAgent, AgentCards }) {
     );
 }
 
-function KnowledgeHandler({ setKnowledge, RenderKnowledgeFiles, selectedFiles, handleAddSelected }) {
-    const handle_knowledge = async () => {
-        console.log(selectedFiles);
-        setKnowledge(false);
-    }
+function KnowledgeHandler({ setKnowledge, RenderKnowledgeFiles, selectedFiles, handleAddSelected, handleSelectAll, handleDeselectAll }) {
     return (
         <>
             <div className="modal knowledge-library-modal" style={{ maxWidth: "1000px", width: "95%" }}>
@@ -1021,17 +1030,15 @@ function KnowledgeHandler({ setKnowledge, RenderKnowledgeFiles, selectedFiles, h
                 </div>
                 <div className="assistant-modal-footer">
                     <div className="assistant-footer-left">
-                        <button className="assistant-secondary-btn" >전체 선택</button>
-                        <button className="assistant-secondary-btn" >선택 해제</button>
+                        <button className="assistant-secondary-btn" onClick={handleSelectAll}>전체 선택</button>
+                        <button className="assistant-secondary-btn" onClick={handleDeselectAll}>선택 해제</button>
                     </div>
                     <div className="assistant-footer-right">
                         <button className="assistant-secondary-btn"
                             onClick={() => setKnowledge(false)}
                         >취소</button>
                         <button className="assistant-primary-btn" id="add-selected-btn" disabled={selectedFiles.size === 0}
-                            // onClick={() => handle_knowledge()}
                             onClick={handleAddSelected}
-
                         >
                             선택된 파일 추가 (<span id="selected-file-count">{selectedFiles.size}</span>)
                         </button>

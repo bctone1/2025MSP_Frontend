@@ -111,6 +111,7 @@ export default function ProjectsPage({ onMenuClick, setcurrentProject, setcurren
               project={p}
               setviewStatus={setviewStatus}
               setcurrentPorject={setcurrentPorject}
+              fetchProjects={fetchProjects}
             />
           ))}
         </div>
@@ -297,8 +298,28 @@ function RenderConversations({ selectedProject, setcurrentProject, onMenuClick, 
   );
 }
 
-function ProjectRow({ project, setviewStatus, setcurrentPorject }) {
+function ProjectRow({ project, setviewStatus, setcurrentPorject, fetchProjects }) {
   const status = getStatusInfo(project.status);
+
+  const delete_project_by_id = async (project) => {
+    // alert(project.id + "삭제요청")
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/MSP_PROJECT/msp_delete_project_by_id`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ project_id: project.id }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      console.log(data);
+      if (data.status) alert(data.response);
+      fetchProjects();
+    } else {
+      alert("프로젝트 오류발생");
+    }
+  };
+
   return (
     <>
       <div className="project-card" data-project-id={project.id}
@@ -313,19 +334,11 @@ function ProjectRow({ project, setviewStatus, setcurrentPorject }) {
             <div className={`status-pill status-${status}`}>{project.status}</div>
           </div>
           <div className="project-actions">
-            {/* <button
-              className="action-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                setonEdit(true);
-              }}
-              title="편집"
-            >✏️</button> */}
             <button
               className="action-btn"
               onClick={(e) => {
                 e.stopPropagation();
-                alert("삭제요청")
+                delete_project_by_id(project);
               }}
               title="삭제"
             >🗑️</button>

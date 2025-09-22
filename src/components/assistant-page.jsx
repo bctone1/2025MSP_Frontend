@@ -830,7 +830,7 @@ export default function AssistantPage({ onMenuClick, currentProject, setcurrentP
                                             ))}
                                         </div>
                                     </div>
-                                    <button className="send-btn" id="send-btn" >
+                                    <button className="send-btn" id="send-btn" onClick={sendMessage()}>
                                         <span id="send-icon">➤</span>
                                     </button>
                                 </div>
